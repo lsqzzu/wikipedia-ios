@@ -19,7 +19,7 @@
 
 @interface WMFPicOfTheDayTableViewCellVisualTests : FBSnapshotTestCase
 
-@property (nonatomic, strong) WMFPicOfTheDayTableViewCell* cell;
+@property (nonatomic, strong) WMFPicOfTheDayTableViewCell *cell;
 
 @end
 
@@ -27,9 +27,9 @@
 
 - (void)setUp {
     [super setUp];
-    self.recordMode     = [[NSUserDefaults standardUserDefaults] wmf_visualTestBatchRecordMode];
+    self.recordMode = [[NSUserDefaults standardUserDefaults] wmf_visualTestBatchRecordMode];
     self.deviceAgnostic = YES;
-    self.cell           = [WMFPicOfTheDayTableViewCell wmf_viewFromClassNib];
+    self.cell = [WMFPicOfTheDayTableViewCell wmf_viewFromClassNib];
     [self.cell setDisplayTitle:@"Hey! I'm a display title!"];
     self.cell.potdImageView.wmf_imageController = [WMFImageController temporaryController];
 }
@@ -51,22 +51,22 @@
 
 - (void)testShowsCaptionWhenImageIsFinallyDownloaded {
     [[LSNocilla sharedInstance] start];
-    NSURL* testURL = [NSURL URLWithString:@"http://dummyimage.com/foo"];
+    NSURL *testURL = [NSURL URLWithString:@"http://dummyimage.com/foo"];
 
     // using a plain-white image to ensure the gradient is visible
-    UIImage* testImage = [UIImage wmf_imageFromColor:[UIColor whiteColor]];
+    UIImage *testImage = [UIImage wmf_imageFromColor:[UIColor whiteColor]];
 
-    NSData* imageData = UIImagePNGRepresentation(testImage);
+    NSData *imageData = UIImagePNGRepresentation(testImage);
 
     stubRequest(@"GET", testURL.absoluteString)
-    .andReturnRawResponse(imageData);
+        .andReturnRawResponse(imageData);
 
     [self.cell setImageURL:testURL];
 
-    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL (UIImageView* _Nonnull potdImageView, NSDictionary < NSString*, id > * _Nullable bindings) {
-        NSData* currentImageData = UIImagePNGRepresentation(potdImageView.image);
-        return [currentImageData isEqualToData:imageData];
-    }]
+    [self expectationForPredicate:[NSPredicate predicateWithBlock:^BOOL(UIImageView *_Nonnull potdImageView, NSDictionary<NSString *, id> *_Nullable bindings) {
+            NSData *currentImageData = UIImagePNGRepresentation(potdImageView.image);
+            return [currentImageData isEqualToData:imageData];
+          }]
               evaluatedWithObject:self.cell.potdImageView
                           handler:nil];
 

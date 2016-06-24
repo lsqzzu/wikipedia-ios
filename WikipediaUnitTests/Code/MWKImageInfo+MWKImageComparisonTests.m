@@ -21,16 +21,16 @@
 @implementation MWKImageInfo_MWKImageComparisonTests
 
 - (void)testAssociation {
-    MWKImage* image    = [MWKImage imageAssociatedWithSourceURL:@"some_file_name.jpg/400px-some_file_name.jpg"];
-    MWKImageInfo* info = [MWKImageInfo infoAssociatedWithSourceURL:@"some_file_name.jpg/800px-some_file_name.jpg"];
+    MWKImage *image = [MWKImage imageAssociatedWithSourceURL:@"some_file_name.jpg/400px-some_file_name.jpg"];
+    MWKImageInfo *info = [MWKImageInfo infoAssociatedWithSourceURL:@"some_file_name.jpg/800px-some_file_name.jpg"];
     assertThat(image.infoAssociationValue, is(equalTo(info.imageAssociationValue)));
     XCTAssertTrue([info isAssociatedWithImage:image]);
     XCTAssertTrue([image isAssociatedWithInfo:info]);
 }
 
 - (void)testDisassociation {
-    MWKImage* image    = [MWKImage imageAssociatedWithSourceURL:@"some_file_name.jpg/400px-some_file_name.jpg"];
-    MWKImageInfo* info = [MWKImageInfo infoAssociatedWithSourceURL:@"other_file_name.jpg/800px-other_file_name.jpg"];
+    MWKImage *image = [MWKImage imageAssociatedWithSourceURL:@"some_file_name.jpg/400px-some_file_name.jpg"];
+    MWKImageInfo *info = [MWKImageInfo infoAssociatedWithSourceURL:@"other_file_name.jpg/800px-other_file_name.jpg"];
     assertThat([image infoAssociationValue], isNot(equalTo([info imageAssociationValue])));
     XCTAssertFalse([info isAssociatedWithImage:image]);
 }

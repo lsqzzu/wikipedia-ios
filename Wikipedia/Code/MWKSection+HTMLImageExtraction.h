@@ -12,7 +12,7 @@
 
 @interface MWKSection (HTMLImageParsing)
 
-- (NSArray<TFHppleElement*>*)parseImageElements;
+- (NSArray<TFHppleElement *> *)parseImageElements;
 
 @end
 

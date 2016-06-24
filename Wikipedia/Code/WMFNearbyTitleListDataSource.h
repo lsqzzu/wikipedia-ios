@@ -7,14 +7,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WMFNearbyTitleListDataSource : SSArrayDataSource
-    <WMFTitleListDataSource>
+@interface WMFNearbyTitleListDataSource : SSArrayDataSource <WMFTitleListDataSource>
 
-@property (nonatomic, strong, readonly) MWKSite* site;
+@property (nonatomic, strong, readonly) MWKSite *site;
 
-@property (nonatomic, strong) CLLocation* location;
+@property (nonatomic, strong) CLLocation *location;
 
-- (instancetype)initWithSite:(MWKSite*)site NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSite:(MWKSite *)site NS_DESIGNATED_INITIALIZER;
 
 @end
 

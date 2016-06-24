@@ -17,7 +17,7 @@
 #import <OCHamcrest/OCHamcrest.h>
 
 @interface MWKHistoryListCorruptDataTests : XCTestCase
-@property (strong, nonatomic) MWKHistoryList* historyList;
+@property (strong, nonatomic) MWKHistoryList *historyList;
 
 @end
 
@@ -27,7 +27,7 @@
 #pragma clang diagnostic ignored "-Wnonnull"
 
 - (void)testPrunesEntriesWithEmptyTitles {
-    MWKHistoryList* list = [[MWKHistoryList alloc] initWithEntries:nil];
+    MWKHistoryList *list = [[MWKHistoryList alloc] initWithEntries:nil];
     [list addPageToHistoryWithTitle:[[MWKSite siteWithCurrentLocale] titleWithString:@"Foo"]];
     assertThat(@([list countOfEntries]), is(@1));
 
@@ -36,6 +36,5 @@
 }
 
 #pragma clang diagnostic pop
-
 
 @end

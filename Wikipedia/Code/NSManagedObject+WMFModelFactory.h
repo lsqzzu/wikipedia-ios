@@ -10,8 +10,8 @@
 
 @interface NSManagedObject (WMFModelFactory)
 
-+ (NSString*)wmf_entityName;
++ (NSString *)wmf_entityName;
 
-+ (instancetype)wmf_newWithContext:(NSManagedObjectContext*)context;
++ (instancetype)wmf_newWithContext:(NSManagedObjectContext *)context;
 
 @end

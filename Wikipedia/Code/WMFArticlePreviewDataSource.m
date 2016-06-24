@@ -25,64 +25,64 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WMFArticlePreviewDataSource ()
 
-@property (nonatomic, strong) WMFArticlePreviewFetcher* titlesSearchFetcher;
-@property (nonatomic, strong, readwrite, nullable) NSArray<MWKSearchResult*>* previewResults;
-@property (nonatomic, strong) MWKSite* site;
-@property (nonatomic, strong) NSArray<MWKTitle*>* titles;
+@property (nonatomic, strong) WMFArticlePreviewFetcher *titlesSearchFetcher;
+@property (nonatomic, strong, readwrite, nullable) NSArray<MWKSearchResult *> *previewResults;
+@property (nonatomic, strong) MWKSite *site;
+@property (nonatomic, strong) NSArray<MWKTitle *> *titles;
 @property (nonatomic, assign) NSUInteger resultLimit;
 
-@property (nonatomic, strong) MWKDataStore* dataStore;
+@property (nonatomic, strong) MWKDataStore *dataStore;
 
 @end
 
 @implementation WMFArticlePreviewDataSource
 
-- (NSString*)analyticsContext {
+- (NSString *)analyticsContext {
     return @"Article Disambiguation";
 }
 
-- (instancetype)initWithTitles:(NSArray<MWKTitle*>*)titles
-                          site:(MWKSite*)site
-                     dataStore:(MWKDataStore*)dataStore
-                       fetcher:(WMFArticlePreviewFetcher*)fetcher {
+- (instancetype)initWithTitles:(NSArray<MWKTitle *> *)titles
+                          site:(MWKSite *)site
+                     dataStore:(MWKDataStore *)dataStore
+                       fetcher:(WMFArticlePreviewFetcher *)fetcher {
     NSParameterAssert(titles);
     NSParameterAssert(fetcher);
     NSParameterAssert(dataStore);
     self = [super initWithItems:nil];
     if (self) {
-        self.dataStore           = dataStore;
-        self.titles              = titles;
-        self.site                = site;
+        self.dataStore = dataStore;
+        self.titles = titles;
+        self.site = site;
         self.titlesSearchFetcher = fetcher;
 
         self.cellClass = [WMFArticlePreviewTableViewCell class];
 
         @weakify(self);
-        self.cellConfigureBlock = ^(WMFArticlePreviewTableViewCell* cell,
-                                    MWKSearchResult* searchResult,
-                                    UITableView* tableView,
-                                    NSIndexPath* indexPath) {
-            @strongify(self);
-            MWKTitle* title = [self titleForIndexPath:indexPath];
-            NSParameterAssert([title.site isEqualToSite:site]);
-            cell.titleText       = title.text;
-            cell.descriptionText = searchResult.wikidataDescription;
-            cell.snippetText     = searchResult.extract;
-            [cell setImageURL:searchResult.thumbnailURL];
+        self.cellConfigureBlock = ^(WMFArticlePreviewTableViewCell *cell,
+                                    MWKSearchResult *searchResult,
+                                    UITableView *tableView,
+                                    NSIndexPath *indexPath) {
+          @strongify(self);
+          MWKTitle *title = [self titleForIndexPath:indexPath];
+          NSParameterAssert([title.site isEqualToSite:site]);
+          cell.titleText = title.text;
+          cell.descriptionText = searchResult.wikidataDescription;
+          cell.snippetText = searchResult.extract;
+          [cell setImageURL:searchResult.thumbnailURL];
 
-            [cell setSaveableTitle:title savedPageList:self.savedPageList];
+          [cell setSaveableTitle:title savedPageList:self.savedPageList];
 
-            [cell wmf_layoutIfNeededIfOperatingSystemVersionLessThan9_0_0];
+          [cell wmf_layoutIfNeededIfOperatingSystemVersionLessThan9_0_0];
         };
     }
     return self;
 }
 
-- (MWKSavedPageList*)savedPageList {
+- (MWKSavedPageList *)savedPageList {
     return self.dataStore.userDataStore.savedPageList;
 }
 
-- (void)setTableView:(nullable UITableView*)tableView {
+- (void)setTableView:(nullable UITableView *)tableView {
     [super setTableView:tableView];
     [self.tableView registerNib:[WMFArticlePreviewTableViewCell wmf_classNib] forCellReuseIdentifier:[WMFArticlePreviewTableViewCell identifier]];
 }
@@ -92,25 +92,25 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)fetch {
     @weakify(self);
     [self.titlesSearchFetcher fetchArticlePreviewResultsForTitles:self.titles site:self.site]
-    .then(^(NSArray<MWKSearchResult*>* searchResults) {
-        @strongify(self);
-        if (!self) {
-            return;
-        }
-        self.previewResults = searchResults;
-        [self updateItems:searchResults];
-    });
+        .then(^(NSArray<MWKSearchResult *> *searchResults) {
+          @strongify(self);
+          if (!self) {
+              return;
+          }
+          self.previewResults = searchResults;
+          [self updateItems:searchResults];
+        });
 }
 
 #pragma mark - WMFArticleListDataSource
 
-- (MWKSearchResult*)searchResultForIndexPath:(NSIndexPath*)indexPath {
-    MWKSearchResult* result = self.previewResults[indexPath.row];
+- (MWKSearchResult *)searchResultForIndexPath:(NSIndexPath *)indexPath {
+    MWKSearchResult *result = self.previewResults[indexPath.row];
     return result;
 }
 
-- (MWKTitle*)titleForIndexPath:(NSIndexPath*)indexPath {
-    MWKSearchResult* result = [self searchResultForIndexPath:indexPath];
+- (MWKTitle *)titleForIndexPath:(NSIndexPath *)indexPath {
+    MWKSearchResult *result = [self searchResultForIndexPath:indexPath];
     return [self.site titleWithString:result.displayTitle];
 }
 
@@ -118,11 +118,11 @@ NS_ASSUME_NONNULL_BEGIN
     return [self.previewResults count];
 }
 
-- (nullable NSString*)displayTitle {
+- (nullable NSString *)displayTitle {
     return MWLocalizedString(@"page-similar-titles", nil);
 }
 
-- (BOOL)canDeleteItemAtIndexpath:(NSIndexPath* __nonnull)indexPath {
+- (BOOL)canDeleteItemAtIndexpath:(NSIndexPath *__nonnull)indexPath {
     return NO;
 }
 

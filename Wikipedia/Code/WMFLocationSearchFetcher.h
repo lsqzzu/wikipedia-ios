@@ -9,10 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WMFLocationSearchFetcher : NSObject
 
-- (AnyPromise*)fetchArticlesWithSite:(MWKSite*)site
-                            location:(CLLocation*)location
-                         resultLimit:(NSUInteger)resultLimit
-                         cancellable:(inout id<Cancellable> __nullable* __nullable)outCancellable;
+- (AnyPromise *)fetchArticlesWithSite:(MWKSite *)site
+                             location:(CLLocation *)location
+                          resultLimit:(NSUInteger)resultLimit
+                          cancellable:(inout id<Cancellable> __nullable *__nullable)outCancellable;
 
 @end
 

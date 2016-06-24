@@ -17,7 +17,7 @@
 #import "MWKTitle.h"
 
 @interface WMFArticleRevisionFetcher ()
-@property (nonatomic, strong) AFHTTPSessionManager* requestManager;
+@property (nonatomic, strong) AFHTTPSessionManager *requestManager;
 @end
 
 @implementation WMFArticleRevisionFetcher
@@ -25,7 +25,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.requestManager                    = [AFHTTPSessionManager wmf_createDefaultManager];
+        self.requestManager = [AFHTTPSessionManager wmf_createDefaultManager];
         self.requestManager.responseSerializer =
             [WMFMantleJSONResponseSerializer serializerForArrayOf:[WMFRevisionQueryResults class]
                                                       fromKeypath:@"query.pages"];
@@ -37,21 +37,25 @@
     self.requestManager.requestSerializer.timeoutInterval = timeoutInterval;
 }
 
-- (AnyPromise*)fetchLatestRevisionsForTitle:(MWKTitle*)title
-                                resultLimit:(NSUInteger)numberOfResults
-                         endingWithRevision:(NSUInteger)revisionId {
-    return [self.requestManager wmf_GETWithSite:title.site parameters:@{
-                @"format": @"json",
-                @"continue": @"",
-                @"formatversion": @2,
-                @"action": @"query",
-                @"prop": @"revisions",
-                @"redirects": @1,
-                @"titles": title.text,
-                @"rvlimit": @(numberOfResults),
-                @"rvendid": @(revisionId),
-                @"rvprop": WMFJoinedPropertyParameters(@[@"ids", @"size", @"flags"])
-            }].then(^(NSArray<WMFRevisionQueryResults*>* results) { return results.firstObject; });
+- (AnyPromise *)fetchLatestRevisionsForTitle:(MWKTitle *)title
+                                 resultLimit:(NSUInteger)numberOfResults
+                          endingWithRevision:(NSUInteger)revisionId {
+    return [self.requestManager wmf_GETWithSite:title.site
+                                     parameters:@{
+                                         @"format" : @"json",
+                                         @"continue" : @"",
+                                         @"formatversion" : @2,
+                                         @"action" : @"query",
+                                         @"prop" : @"revisions",
+                                         @"redirects" : @1,
+                                         @"titles" : title.text,
+                                         @"rvlimit" : @(numberOfResults),
+                                         @"rvendid" : @(revisionId),
+                                         @"rvprop" : WMFJoinedPropertyParameters(@[ @"ids", @"size", @"flags" ])
+                                     }]
+        .then(^(NSArray<WMFRevisionQueryResults *> *results) {
+          return results.firstObject;
+        });
 }
 
 @end

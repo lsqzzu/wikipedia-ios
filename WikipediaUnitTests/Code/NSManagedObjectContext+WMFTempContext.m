@@ -12,7 +12,7 @@
 @implementation NSManagedObjectContext (WMFTempContext)
 
 + (instancetype)wmf_tempContext {
-    NSManagedObjectContext* ctxt = [NSManagedObjectContext new];
+    NSManagedObjectContext *ctxt = [NSManagedObjectContext new];
     ctxt.persistentStoreCoordinator = [NSPersistentStoreCoordinator wmf_tempCoordinator];
     return ctxt;
 }

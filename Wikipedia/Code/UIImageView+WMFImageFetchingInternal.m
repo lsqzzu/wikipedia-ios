@@ -19,62 +19,62 @@
 #import "CIDetector+WMFFaceDetection.h"
 #import "WMFFaceDetectionCache.h"
 
-static const char* const MWKURLAssociationKey = "MWKURL";
+static const char *const MWKURLAssociationKey = "MWKURL";
 
-static const char* const MWKImageAssociationKey = "MWKImage";
+static const char *const MWKImageAssociationKey = "MWKImage";
 
-static const char* const WMFImageControllerAssociationKey = "WMFImageController";
+static const char *const WMFImageControllerAssociationKey = "WMFImageController";
 
 @implementation UIImageView (WMFImageFetchingInternal)
 
 #pragma mark - Associated Objects
 
-- (WMFImageController* __nullable)wmf_imageController {
-    WMFImageController* controller = [self bk_associatedValueForKey:WMFImageControllerAssociationKey];
+- (WMFImageController *__nullable)wmf_imageController {
+    WMFImageController *controller = [self bk_associatedValueForKey:WMFImageControllerAssociationKey];
     if (!controller) {
         controller = [WMFImageController sharedInstance];
     }
     return controller;
 }
 
-- (void)wmf_setImageController:(nullable WMFImageController*)imageController {
+- (void)wmf_setImageController:(nullable WMFImageController *)imageController {
     [self bk_associateValue:imageController withKey:WMFImageControllerAssociationKey];
 }
 
-- (MWKImage* __nullable)wmf_imageMetadata {
+- (MWKImage *__nullable)wmf_imageMetadata {
     return [self bk_associatedValueForKey:MWKImageAssociationKey];
 }
 
-- (void)wmf_setImageMetadata:(nullable MWKImage*)imageMetadata {
+- (void)wmf_setImageMetadata:(nullable MWKImage *)imageMetadata {
     [self bk_associateValue:imageMetadata withKey:MWKImageAssociationKey];
 }
 
-- (NSURL* __nullable)wmf_imageURL {
+- (NSURL *__nullable)wmf_imageURL {
     return [self bk_associatedValueForKey:MWKURLAssociationKey];
 }
 
-- (void)wmf_setImageURL:(nullable NSURL*)imageURL {
+- (void)wmf_setImageURL:(nullable NSURL *)imageURL {
     [self bk_associateValue:imageURL withKey:MWKURLAssociationKey];
 }
 
 #pragma mark - Cached Image
 
-- (UIImage*)wmf_cachedImage {
-    UIImage* cachedImage = [self.wmf_imageController cachedImageInMemoryWithURL:[self wmf_imageURLToFetch]];
+- (UIImage *)wmf_cachedImage {
+    UIImage *cachedImage = [self.wmf_imageController cachedImageInMemoryWithURL:[self wmf_imageURLToFetch]];
     return cachedImage;
 }
 
-- (NSURL*)wmf_imageURLToFetch {
-    return self.wmf_imageURL ? : self.wmf_imageMetadata.sourceURL;
+- (NSURL *)wmf_imageURLToFetch {
+    return self.wmf_imageURL ?: self.wmf_imageMetadata.sourceURL;
 }
 
 #pragma mark - Face Detection
 
-+ (WMFFaceDetectionCache*)faceDetectionCache {
-    static WMFFaceDetectionCache* _faceDetectionCache = nil;
++ (WMFFaceDetectionCache *)faceDetectionCache {
+    static WMFFaceDetectionCache *_faceDetectionCache = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _faceDetectionCache = [[WMFFaceDetectionCache alloc] init];
+      _faceDetectionCache = [[WMFFaceDetectionCache alloc] init];
     });
     return _faceDetectionCache;
 }
@@ -87,7 +87,7 @@ static const char* const WMFImageControllerAssociationKey = "WMFImageController"
     }
 }
 
-- (NSValue*)wmf_faceBoundsInImage:(UIImage*)image {
+- (NSValue *)wmf_faceBoundsInImage:(UIImage *)image {
     if (self.wmf_imageURL) {
         return [[[self class] faceDetectionCache] faceBoundsForURL:self.wmf_imageURL];
     } else {
@@ -95,7 +95,7 @@ static const char* const WMFImageControllerAssociationKey = "WMFImageController"
     }
 }
 
-- (AnyPromise*)wmf_getFaceBoundsInImage:(UIImage*)image {
+- (AnyPromise *)wmf_getFaceBoundsInImage:(UIImage *)image {
     if (self.wmf_imageURL) {
         return [[[self class] faceDetectionCache] detectFaceBoundsInImage:image URL:self.wmf_imageURL];
     } else {
@@ -105,14 +105,14 @@ static const char* const WMFImageControllerAssociationKey = "WMFImageController"
 
 #pragma mark - Set Image
 
-- (AnyPromise*)wmf_fetchImageDetectFaces:(BOOL)detectFaces {
-    NSURL* imageURL = [self wmf_imageURLToFetch];
+- (AnyPromise *)wmf_fetchImageDetectFaces:(BOOL)detectFaces {
+    NSURL *imageURL = [self wmf_imageURLToFetch];
 
     if (!imageURL) {
         return [AnyPromise promiseWithValue:[NSError cancelledError]];
     }
 
-    UIImage* cachedImage = [self wmf_cachedImage];
+    UIImage *cachedImage = [self wmf_cachedImage];
     if (cachedImage) {
         return [self wmf_setImage:cachedImage detectFaces:detectFaces animated:NO];
     }
@@ -120,74 +120,73 @@ static const char* const WMFImageControllerAssociationKey = "WMFImageController"
     @weakify(self);
 
     return [self.wmf_imageController fetchImageWithURL:imageURL]
-           .then(^id (WMFImageDownload* download) {
-        @strongify(self);
-        if (!WMF_EQUAL([self wmf_imageURLToFetch], isEqual:, imageURL)) {
-            return [NSError cancelledError];
-        } else {
-            return download.image;
-        }
-    })
-           .then(^(UIImage* image) {
-        @strongify(self);
-        return [self wmf_setImage:image detectFaces:detectFaces animated:YES];
-    });
+        .then(^id(WMFImageDownload *download) {
+          @strongify(self);
+          if (!WMF_EQUAL([self wmf_imageURLToFetch], isEqual:, imageURL)) {
+              return [NSError cancelledError];
+          } else {
+              return download.image;
+          }
+        })
+        .then(^(UIImage *image) {
+          @strongify(self);
+          return [self wmf_setImage:image detectFaces:detectFaces animated:YES];
+        });
 }
 
-- (AnyPromise*)wmf_setImage:(UIImage*)image
-                detectFaces:(BOOL)detectFaces
-                   animated:(BOOL)animated {
+- (AnyPromise *)wmf_setImage:(UIImage *)image
+                 detectFaces:(BOOL)detectFaces
+                    animated:(BOOL)animated {
     if (!detectFaces) {
         return [self wmf_setImage:image faceBoundsValue:nil animated:animated];
     }
 
     if (![self wmf_imageRequiresFaceDetection]) {
-        NSValue* faceBoundsValue = [self wmf_faceBoundsInImage:image];
+        NSValue *faceBoundsValue = [self wmf_faceBoundsInImage:image];
         return [self wmf_setImage:image faceBoundsValue:faceBoundsValue animated:animated];
     }
 
-    NSURL* imageURL = [self wmf_imageURLToFetch];
+    NSURL *imageURL = [self wmf_imageURLToFetch];
     return [self wmf_getFaceBoundsInImage:image]
-           .then(^id (NSValue* bounds) {
-        if (!WMF_EQUAL([self wmf_imageURLToFetch], isEqual:, imageURL)) {
-            return [NSError cancelledError];
-        } else {
-            return [self wmf_setImage:image faceBoundsValue:bounds animated:animated];
-        }
-    });
+        .then(^id(NSValue *bounds) {
+          if (!WMF_EQUAL([self wmf_imageURLToFetch], isEqual:, imageURL)) {
+              return [NSError cancelledError];
+          } else {
+              return [self wmf_setImage:image faceBoundsValue:bounds animated:animated];
+          }
+        });
 }
 
-- (AnyPromise*)wmf_setImage:(UIImage*)image
-            faceBoundsValue:(nullable NSValue*)faceBoundsValue
-                   animated:(BOOL)animated {
+- (AnyPromise *)wmf_setImage:(UIImage *)image
+             faceBoundsValue:(nullable NSValue *)faceBoundsValue
+                    animated:(BOOL)animated {
     return [AnyPromise promiseWithResolverBlock:^(PMKResolver _Nonnull resolve) {
-        CGRect faceBounds = [faceBoundsValue CGRectValue];
-        if (!CGRectIsEmpty(faceBounds)) {
-            [self wmf_cropContentsByVerticallyCenteringFrame:[image wmf_denormalizeRect:faceBounds]
-                                         insideBoundsOfImage:image];
-        } else {
-            [self wmf_resetContentsRect];
-        }
+      CGRect faceBounds = [faceBoundsValue CGRectValue];
+      if (!CGRectIsEmpty(faceBounds)) {
+          [self wmf_cropContentsByVerticallyCenteringFrame:[image wmf_denormalizeRect:faceBounds]
+                                       insideBoundsOfImage:image];
+      } else {
+          [self wmf_resetContentsRect];
+      }
 
-        [UIView transitionWithView:self
-                          duration:animated ? [CATransaction animationDuration] : 0.0
-                           options:UIViewAnimationOptionTransitionCrossDissolve
-                        animations:^{
+      [UIView transitionWithView:self
+          duration:animated ? [CATransaction animationDuration] : 0.0
+          options:UIViewAnimationOptionTransitionCrossDissolve
+          animations:^{
             self.contentMode = UIViewContentModeScaleAspectFill;
             self.backgroundColor = [UIColor whiteColor];
             self.image = image;
-        }
-                        completion:^(BOOL finished) {
+          }
+          completion:^(BOOL finished) {
             resolve(nil);
-        }];
+          }];
     }];
 }
 
 - (void)wmf_cancelImageDownload {
     [self.wmf_imageController cancelFetchForURL:[self wmf_imageURLToFetch]];
-    self.wmf_imageURL      = nil;
+    self.wmf_imageURL = nil;
     self.wmf_imageMetadata = nil;
 }
 
 @end
-

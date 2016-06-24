@@ -26,6 +26,6 @@
  *  @param imageNode The image node to extract image metadata from.
  *  @param sectionID The section to add the image to.
  */
-- (void)importAndSaveImagesFromElement:(TFHppleElement*)imageNode intoSection:(int)sectionID;
+- (void)importAndSaveImagesFromElement:(TFHppleElement *)imageNode intoSection:(int)sectionID;
 
 @end

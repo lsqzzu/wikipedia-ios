@@ -10,9 +10,9 @@ static DDLogLevel WMFLocationManagerLogLevel = DDLogLevelInfo;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WMFLocationManager ()<CLLocationManagerDelegate>
+@interface WMFLocationManager () <CLLocationManagerDelegate>
 
-@property (nonatomic, strong, readwrite) CLLocationManager* locationManager;
+@property (nonatomic, strong, readwrite) CLLocationManager *locationManager;
 @property (nonatomic, strong, nullable) id orientationNotificationToken;
 
 /**
@@ -25,12 +25,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  The last-known location reported by the @c locationManager.
  */
-@property (nonatomic, strong, readwrite, nullable) CLLocation* lastLocation;
+@property (nonatomic, strong, readwrite, nullable) CLLocation *lastLocation;
 
 /**
  *  The last-known heading reported by the @c locationManager.
  */
-@property (nonatomic, strong, readwrite, nullable) CLHeading* lastHeading;
+@property (nonatomic, strong, readwrite, nullable) CLHeading *lastHeading;
 
 /**
  *  Whether or not the receiver is listening for updates to location & heading.
@@ -39,9 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  CLLocationmanager doesn't always immediately listen to the request for stopping location updates
  *  We use this to ignore events after a stop has been requested
  */
-@property (nonatomic, assign, readwrite, getter = isUpdating) BOOL updating;
+@property (nonatomic, assign, readwrite, getter=isUpdating) BOOL updating;
 
-- (instancetype)initWithLocationManager:(CLLocationManager*)locationManager NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithLocationManager:(CLLocationManager *)locationManager NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -55,10 +55,10 @@ NS_ASSUME_NONNULL_BEGIN
     return [[self alloc] initWithLocationManager:[CLLocationManager wmf_coarseLocationManager]];
 }
 
-- (instancetype)initWithLocationManager:(CLLocationManager*)locationManager {
+- (instancetype)initWithLocationManager:(CLLocationManager *)locationManager {
     self = [super init];
     if (self) {
-        self.locationManager     = locationManager;
+        self.locationManager = locationManager;
         locationManager.delegate = self;
     }
     return self;
@@ -71,18 +71,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Accessors
 
-- (CLHeading*)heading {
+- (CLHeading *)heading {
     return self.lastHeading;
 }
 
-- (CLLocation*)location {
+- (CLLocation *)location {
     return self.lastLocation;
 }
 
-- (NSString*)description {
-    NSString* delegateDesc = [self.delegate description] ? : @"nil";
+- (NSString *)description {
+    NSString *delegateDesc = [self.delegate description] ?: @"nil";
     return [NSString stringWithFormat:@"<%@ manager: %@ delegate: %@ is updating: %d>",
-            [super description], _locationManager, delegateDesc, self.isUpdating];
+                                      [super description], _locationManager, delegateDesc, self.isUpdating];
 }
 
 #pragma mark - Permissions
@@ -151,38 +151,38 @@ NS_ASSUME_NONNULL_BEGIN
         [[NSNotificationCenter defaultCenter] addObserverForName:UIDeviceOrientationDidChangeNotification
                                                           object:nil
                                                            queue:nil
-                                                      usingBlock:^(NSNotification* _) {
-        @strongify(self);
-        [self updateHeadingOrientation];
-    }];
+                                                      usingBlock:^(NSNotification *_) {
+                                                        @strongify(self);
+                                                        [self updateHeadingOrientation];
+                                                      }];
     [self updateHeadingOrientation];
     [self.locationManager startUpdatingHeading];
 }
 
 - (void)updateHeadingOrientation {
     switch ([[UIDevice currentDevice] orientation]) {
-        case UIDeviceOrientationFaceDown:
-            self.locationManager.headingOrientation = CLDeviceOrientationFaceDown;
-            break;
-        case UIDeviceOrientationLandscapeLeft:
-            self.locationManager.headingOrientation = CLDeviceOrientationLandscapeLeft;
-            break;
-        case UIDeviceOrientationLandscapeRight:
-            self.locationManager.headingOrientation = CLDeviceOrientationLandscapeRight;
-            break;
-        case UIDeviceOrientationFaceUp:
-            self.locationManager.headingOrientation = CLDeviceOrientationFaceUp;
-            break;
-        case UIDeviceOrientationPortrait:
-            self.locationManager.headingOrientation = CLDeviceOrientationPortrait;
-            break;
-        case UIDeviceOrientationPortraitUpsideDown:
-            self.locationManager.headingOrientation = CLDeviceOrientationPortraitUpsideDown;
-            break;
-        case UIDeviceOrientationUnknown:
-        default:
-            self.locationManager.headingOrientation = CLDeviceOrientationUnknown;
-            break;
+    case UIDeviceOrientationFaceDown:
+        self.locationManager.headingOrientation = CLDeviceOrientationFaceDown;
+        break;
+    case UIDeviceOrientationLandscapeLeft:
+        self.locationManager.headingOrientation = CLDeviceOrientationLandscapeLeft;
+        break;
+    case UIDeviceOrientationLandscapeRight:
+        self.locationManager.headingOrientation = CLDeviceOrientationLandscapeRight;
+        break;
+    case UIDeviceOrientationFaceUp:
+        self.locationManager.headingOrientation = CLDeviceOrientationFaceUp;
+        break;
+    case UIDeviceOrientationPortrait:
+        self.locationManager.headingOrientation = CLDeviceOrientationPortrait;
+        break;
+    case UIDeviceOrientationPortraitUpsideDown:
+        self.locationManager.headingOrientation = CLDeviceOrientationPortraitUpsideDown;
+        break;
+    case UIDeviceOrientationUnknown:
+    default:
+        self.locationManager.headingOrientation = CLDeviceOrientationUnknown;
+        break;
     }
     // Force location manager to re-emit the current heading which will take into account the current device orientation
     [self.locationManager stopUpdatingHeading];
@@ -201,35 +201,35 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - CLLocationManagerDelegate
 
-- (void)locationManager:(CLLocationManager*)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     switch (status) {
-        case kCLAuthorizationStatusNotDetermined:
-        case kCLAuthorizationStatusRestricted: {
-            DDLogVerbose(@"Ignoring not determined status call, should have already requested authorization.");
-            break;
-        }
+    case kCLAuthorizationStatusNotDetermined:
+    case kCLAuthorizationStatusRestricted: {
+        DDLogVerbose(@"Ignoring not determined status call, should have already requested authorization.");
+        break;
+    }
 
-        case kCLAuthorizationStatusDenied: {
-            if ([self.delegate respondsToSelector:@selector(nearbyController:didChangeEnabledState:)]) {
-                DDLogInfo(@"Informing delegate about denied access to user's location.");
-                [self.delegate nearbyController:self didChangeEnabledState:NO];
-            }
-            break;
+    case kCLAuthorizationStatusDenied: {
+        if ([self.delegate respondsToSelector:@selector(nearbyController:didChangeEnabledState:)]) {
+            DDLogInfo(@"Informing delegate about denied access to user's location.");
+            [self.delegate nearbyController:self didChangeEnabledState:NO];
         }
+        break;
+    }
 
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-        case kCLAuthorizationStatusAuthorizedAlways: {
-            DDLogInfo(@"%@ was granted access to location when in use, attempting to monitor location.", self);
-            if ([self.delegate respondsToSelector:@selector(nearbyController:didChangeEnabledState:)]) {
-                [self.delegate nearbyController:self didChangeEnabledState:YES];
-            }
-            [self startMonitoringLocation];
-            break;
+    case kCLAuthorizationStatusAuthorizedWhenInUse:
+    case kCLAuthorizationStatusAuthorizedAlways: {
+        DDLogInfo(@"%@ was granted access to location when in use, attempting to monitor location.", self);
+        if ([self.delegate respondsToSelector:@selector(nearbyController:didChangeEnabledState:)]) {
+            [self.delegate nearbyController:self didChangeEnabledState:YES];
         }
+        [self startMonitoringLocation];
+        break;
+    }
     }
 }
 
-- (void)locationManager:(CLLocationManager*)manager didUpdateLocations:(NSArray*)locations {
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     // ignore nil values to keep last known heading on the screen
     if (!self.isUpdating || !manager.location) {
         return;
@@ -239,7 +239,7 @@ NS_ASSUME_NONNULL_BEGIN
     [self.delegate nearbyController:self didUpdateLocation:self.lastLocation];
 }
 
-- (void)locationManager:(CLLocationManager*)manager didUpdateHeading:(CLHeading*)newHeading {
+- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
     // ignore nil or innaccurate values values to keep last known heading on the screen
     if (!self.isUpdating || !newHeading || newHeading.headingAccuracy <= 0) {
         return;
@@ -249,32 +249,33 @@ NS_ASSUME_NONNULL_BEGIN
     [self.delegate nearbyController:self didUpdateHeading:self.lastHeading];
 }
 
-- (void)locationManager:(CLLocationManager*)manager didFailWithError:(NSError*)error {
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     if (!self.isUpdating) {
         DDLogVerbose(@"Suppressing error received after call to stop monitoring location: %@", error);
         return;
     }
-    #if TARGET_IPHONE_SIMULATOR
+#if TARGET_IPHONE_SIMULATOR
     else if (error.domain == kCLErrorDomain && error.code == kCLErrorLocationUnknown) {
         DDLogVerbose(@"Suppressing unknown location error.");
         return;
     }
-    #endif
+#endif
     DDLogError(@"%@ encountered error: %@", self, error);
     [self.delegate nearbyController:self didReceiveError:error];
 }
 
 #pragma mark - Geocoding
 
-- (AnyPromise*)reverseGeocodeLocation:(CLLocation*)location {
+- (AnyPromise *)reverseGeocodeLocation:(CLLocation *)location {
     return [AnyPromise promiseWithResolverBlock:^(PMKResolver _Nonnull resolve) {
-        [[[CLGeocoder alloc] init] reverseGeocodeLocation:location completionHandler:^(NSArray <CLPlacemark*>* _Nullable placemarks, NSError* _Nullable error) {
-            if (error) {
-                resolve(error);
-            } else {
-                resolve(placemarks.firstObject);
-            }
-        }];
+      [[[CLGeocoder alloc] init] reverseGeocodeLocation:location
+                                      completionHandler:^(NSArray<CLPlacemark *> *_Nullable placemarks, NSError *_Nullable error) {
+                                        if (error) {
+                                            resolve(error);
+                                        } else {
+                                            resolve(placemarks.firstObject);
+                                        }
+                                      }];
     }];
 }
 

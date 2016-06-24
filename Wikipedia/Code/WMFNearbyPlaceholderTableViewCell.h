@@ -3,6 +3,6 @@
 
 @interface WMFNearbyPlaceholderTableViewCell : SSBaseTableCell
 
-@property (strong, nonatomic) IBOutlet UIImageView* placeholderImageView;
+@property (strong, nonatomic) IBOutlet UIImageView *placeholderImageView;
 
 @end

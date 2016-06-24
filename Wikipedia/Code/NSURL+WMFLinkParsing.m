@@ -17,15 +17,15 @@
 
 #pragma mark - Constructors
 
-+ (NSURL*)wmf_URLWithDomain:(NSString*)domain language:(nullable NSString*)language {
++ (NSURL *)wmf_URLWithDomain:(NSString *)domain language:(nullable NSString *)language {
     return [[NSURLComponents wmf_componentsWithDomain:domain language:language] URL];
 }
 
-+ (NSURL*)wmf_URLWithDomain:(NSString*)domain language:(nullable NSString*)language title:(NSString*)title fragment:(nullable NSString*)fragment {
++ (NSURL *)wmf_URLWithDomain:(NSString *)domain language:(nullable NSString *)language title:(NSString *)title fragment:(nullable NSString *)fragment {
     return [[NSURLComponents wmf_componentsWithDomain:domain language:language title:title fragment:fragment] URL];
 }
 
-+ (NSURL*)wmf_URLWithSiteURL:(NSURL*)siteURL title:(nullable NSString*)title fragment:(nullable NSString*)fragment {
++ (NSURL *)wmf_URLWithSiteURL:(NSURL *)siteURL title:(nullable NSString *)title fragment:(nullable NSString *)fragment {
     return [siteURL wmf_URLWithTitle:title fragment:fragment];
 }
 
@@ -33,12 +33,12 @@
     static dispatch_once_t onceToken;
     static NSRegularExpression *percentEscapesRegex;
     dispatch_once(&onceToken, ^{
-        percentEscapesRegex = [NSRegularExpression regularExpressionWithPattern:@"%[^0-9A-F]|%[0-9A-F][^0-9A-F]" options:NSRegularExpressionCaseInsensitive error:nil];
+      percentEscapesRegex = [NSRegularExpression regularExpressionWithPattern:@"%[^0-9A-F]|%[0-9A-F][^0-9A-F]" options:NSRegularExpressionCaseInsensitive error:nil];
     });
     return percentEscapesRegex;
 }
 
-+ (NSURL*)wmf_URLWithSiteURL:(NSURL*)siteURL unescapedDenormalizedTitleAndFragment:(NSString*)path {
++ (NSURL *)wmf_URLWithSiteURL:(NSURL *)siteURL unescapedDenormalizedTitleAndFragment:(NSString *)path {
     NSAssert(![path wmf_isInternalLink],
              @"Didn't expect %@ to be an internal link. Use initWithInternalLink:site: instead.",
              path);
@@ -46,12 +46,12 @@
         // recurse here after stripping internal link prefix
         return [NSURL wmf_URLWithSiteURL:siteURL unescapedDenormalizedInternalLink:path];
     } else {
-        NSArray* bits = [path componentsSeparatedByString:@"#"];
+        NSArray *bits = [path componentsSeparatedByString:@"#"];
         return [NSURL wmf_URLWithSiteURL:siteURL title:[[bits firstObject] wmf_normalizedPageTitle] fragment:[bits wmf_safeObjectAtIndex:1]];
     }
 }
 
-+ (NSURL*)wmf_URLWithSiteURL:(NSURL*)siteURL escapedDenormalizedTitleAndFragment:(NSString*)path {
++ (NSURL *)wmf_URLWithSiteURL:(NSURL *)siteURL escapedDenormalizedTitleAndFragment:(NSString *)path {
     NSAssert(![path wmf_isInternalLink],
              @"Didn't expect %@ to be an internal link. Use initWithInternalLink:site: instead.",
              path);
@@ -60,39 +60,38 @@
         // recurse here after stripping internal link prefix
         return [NSURL wmf_URLWithSiteURL:siteURL escapedDenormalizedInternalLink:path];
     } else {
-        NSArray* bits = [path componentsSeparatedByString:@"#"];
+        NSArray *bits = [path componentsSeparatedByString:@"#"];
         return [NSURL wmf_URLWithSiteURL:siteURL title:[[bits firstObject] wmf_unescapedNormalizedPageTitle] fragment:[bits wmf_safeObjectAtIndex:1]];
     }
 }
 
-+ (NSURL*)wmf_URLWithSiteURL:(NSURL*)siteURL unescapedDenormalizedInternalLink:(NSString*)internalLink {
++ (NSURL *)wmf_URLWithSiteURL:(NSURL *)siteURL unescapedDenormalizedInternalLink:(NSString *)internalLink {
     NSAssert(internalLink.length == 0 || [internalLink wmf_isInternalLink],
              @"Expected string with internal link prefix but got: %@", internalLink);
     return [self wmf_URLWithSiteURL:siteURL unescapedDenormalizedTitleAndFragment:[internalLink wmf_internalLinkPath]];
 }
 
-
-+ (NSURL*)wmf_URLWithSiteURL:(NSURL*)siteURL escapedDenormalizedInternalLink:(NSString*)internalLink {
++ (NSURL *)wmf_URLWithSiteURL:(NSURL *)siteURL escapedDenormalizedInternalLink:(NSString *)internalLink {
     NSAssert(internalLink.length == 0 || [internalLink wmf_isInternalLink],
              @"Expected string with internal link prefix but got: %@", internalLink);
     return [self wmf_URLWithSiteURL:siteURL escapedDenormalizedTitleAndFragment:[internalLink wmf_internalLinkPath]];
 }
 
-- (NSURL*)wmf_URLWithTitle:(NSString*)title {
-    NSURLComponents* components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
+- (NSURL *)wmf_URLWithTitle:(NSString *)title {
+    NSURLComponents *components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
     components.wmf_title = title;
     return components.URL;
 }
 
-- (NSURL*)wmf_URLWithTitle:(NSString*)title fragment:(NSString*)fragment {
-    NSURLComponents* components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
-    components.wmf_title    = title;
+- (NSURL *)wmf_URLWithTitle:(NSString *)title fragment:(NSString *)fragment {
+    NSURLComponents *components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
+    components.wmf_title = title;
     components.wmf_fragment = fragment;
     return components.URL;
 }
 
-- (NSURL*)wmf_URLWithPath:(NSString*)path isMobile:(BOOL)isMobile {
-    NSURLComponents* components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
+- (NSURL *)wmf_URLWithPath:(NSString *)path isMobile:(BOOL)isMobile {
+    NSURLComponents *components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
     components.path = path;
     if (isMobile != self.wmf_isMobile) {
         components.host = [NSURLComponents wmf_hostWithDomain:self.wmf_domain language:self.wmf_language isMobile:isMobile];
@@ -111,7 +110,7 @@
 }
 
 - (BOOL)wmf_isMobile {
-    NSArray* hostComponents = [self.host componentsSeparatedByString:@"."];
+    NSArray *hostComponents = [self.host componentsSeparatedByString:@"."];
     if (hostComponents.count < 3) {
         return NO;
     } else {
@@ -123,12 +122,12 @@
     }
 }
 
-- (NSString*)wmf_internalLinkPath {
+- (NSString *)wmf_internalLinkPath {
     return [self.path wmf_internalLinkPath];
 }
 
-- (NSString*)wmf_domain {
-    NSArray* hostComponents = [self.host componentsSeparatedByString:@"."];
+- (NSString *)wmf_domain {
+    NSArray *hostComponents = [self.host componentsSeparatedByString:@"."];
     if (hostComponents.count < 3) {
         return self.host;
     } else {
@@ -136,44 +135,44 @@
         if ([hostComponents[1] isEqualToString:@"m"]) {
             firstIndex = 2;
         }
-        NSArray* subarray = [hostComponents subarrayWithRange:NSMakeRange(firstIndex, hostComponents.count - firstIndex)];
+        NSArray *subarray = [hostComponents subarrayWithRange:NSMakeRange(firstIndex, hostComponents.count - firstIndex)];
         return [subarray componentsJoinedByString:@"."];
     }
 }
 
-- (NSString*)wmf_language {
-    NSArray* hostComponents = [self.host componentsSeparatedByString:@"."];
+- (NSString *)wmf_language {
+    NSArray *hostComponents = [self.host componentsSeparatedByString:@"."];
     if (hostComponents.count < 3) {
         return nil;
     } else {
-        NSString* potentialLanguage = hostComponents[0];
+        NSString *potentialLanguage = hostComponents[0];
         return [potentialLanguage isEqualToString:@"m"] ? nil : potentialLanguage;
     }
 }
 
-- (NSString*)wmf_title {
-    NSString* title = [[self.path wmf_internalLinkPath] wmf_normalizedPageTitle];
+- (NSString *)wmf_title {
+    NSString *title = [[self.path wmf_internalLinkPath] wmf_normalizedPageTitle];
     if (title == nil) {
         title = @"";
     }
     return title;
 }
 
-- (NSURL*)wmf_mobileURL {
+- (NSURL *)wmf_mobileURL {
     if (self.wmf_isMobile) {
         return self;
     } else {
-        NSURLComponents* components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
+        NSURLComponents *components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
         components.host = [NSURLComponents wmf_hostWithDomain:self.wmf_domain language:self.wmf_language isMobile:YES];
-        NSURL* mobileURL = components.URL ? : self;
+        NSURL *mobileURL = components.URL ?: self;
         return mobileURL;
     }
 }
 
-- (NSURL*)wmf_desktopURL {
-    NSURLComponents* components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
+- (NSURL *)wmf_desktopURL {
+    NSURLComponents *components = [NSURLComponents componentsWithURL:self resolvingAgainstBaseURL:NO];
     components.host = [NSURLComponents wmf_hostWithDomain:self.wmf_domain language:self.wmf_language isMobile:NO];
-    NSURL* desktopURL = components.URL ? : self;
+    NSURL *desktopURL = components.URL ?: self;
     return desktopURL;
 }
 
@@ -183,19 +182,19 @@
 
 - (UIUserInterfaceLayoutDirection)wmf_layoutDirection {
     switch (CFLocaleGetLanguageCharacterDirection((__bridge CFStringRef)self.wmf_language)) {
-        case kCFLocaleLanguageDirectionRightToLeft:
-            return UIUserInterfaceLayoutDirectionRightToLeft;
-        default:
-            return UIUserInterfaceLayoutDirectionLeftToRight;
+    case kCFLocaleLanguageDirectionRightToLeft:
+        return UIUserInterfaceLayoutDirectionRightToLeft;
+    default:
+        return UIUserInterfaceLayoutDirectionLeftToRight;
     }
 }
 
 - (NSTextAlignment)wmf_textAlignment {
     switch (self.wmf_layoutDirection) {
-        case UIUserInterfaceLayoutDirectionRightToLeft:
-            return NSTextAlignmentRight;
-        case UIUserInterfaceLayoutDirectionLeftToRight:
-            return NSTextAlignmentLeft;
+    case UIUserInterfaceLayoutDirectionRightToLeft:
+        return NSTextAlignmentRight;
+    case UIUserInterfaceLayoutDirectionLeftToRight:
+        return NSTextAlignmentLeft;
     }
 }
 

@@ -14,9 +14,8 @@
 #import "WMFAuthManagerInfo.h"
 #import "MWKSite.h"
 
-
 @interface WMFAuthManagerInfoFetcher ()
-@property (nonatomic, strong) AFHTTPSessionManager* operationManager;
+@property (nonatomic, strong) AFHTTPSessionManager *operationManager;
 @end
 
 @implementation WMFAuthManagerInfoFetcher
@@ -24,9 +23,9 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        AFHTTPSessionManager* manager = [AFHTTPSessionManager wmf_createDefaultManager];
+        AFHTTPSessionManager *manager = [AFHTTPSessionManager wmf_createDefaultManager];
         manager.responseSerializer = [WMFMantleJSONResponseSerializer serializerForInstancesOf:[WMFAuthManagerInfo class] fromKeypath:@"query"];
-        self.operationManager      = manager;
+        self.operationManager = manager;
     }
     return self;
 }
@@ -35,31 +34,32 @@
     return [[self.operationManager operationQueue] operationCount] > 0;
 }
 
-- (AnyPromise*)fetchAuthManagerLoginAvailableForSite:(MWKSite*)site {
+- (AnyPromise *)fetchAuthManagerLoginAvailableForSite:(MWKSite *)site {
     return [self fetchAuthManagerAvailableForSite:site type:@"login"];
 }
 
-- (AnyPromise*)fetchAuthManagerCreationAvailableForSite:(MWKSite*)site {
+- (AnyPromise *)fetchAuthManagerCreationAvailableForSite:(MWKSite *)site {
     return [self fetchAuthManagerAvailableForSite:site type:@"create"];
 }
 
-- (AnyPromise*)fetchAuthManagerAvailableForSite:(MWKSite*)site type:(NSString*)type {
+- (AnyPromise *)fetchAuthManagerAvailableForSite:(MWKSite *)site type:(NSString *)type {
     return [AnyPromise promiseWithResolverBlock:^(PMKResolver resolve) {
-        NSDictionary* params = @{
-            @"action": @"query",
-            @"meta": @"authmanagerinfo",
-            @"format": @"json",
-            @"amirequestsfor": type
-        };
+      NSDictionary *params = @{
+          @"action" : @"query",
+          @"meta" : @"authmanagerinfo",
+          @"format" : @"json",
+          @"amirequestsfor" : type
+      };
 
-        [self.operationManager wmf_GETWithSite:site parameters:params]
-        .then(^(id responseObject) {
+      [self.operationManager wmf_GETWithSite:site parameters:params]
+          .then(^(id responseObject) {
             [[MWNetworkActivityIndicatorManager sharedManager] pop];
             resolve(responseObject);
-        }).catch(^(NSError* error) {
+          })
+          .catch(^(NSError *error) {
             [[MWNetworkActivityIndicatorManager sharedManager] pop];
             resolve(error);
-        });
+          });
     }];
 }
 

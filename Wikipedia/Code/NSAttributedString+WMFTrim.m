@@ -6,7 +6,7 @@
 
 @implementation NSAttributedString (WMFTrim)
 
-- (NSAttributedString*)wmf_trim {
+- (NSAttributedString *)wmf_trim {
     if (self.length == 0) {
         return self;
     }

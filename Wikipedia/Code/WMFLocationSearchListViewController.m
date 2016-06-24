@@ -7,16 +7,16 @@
 #import "MWKSite.h"
 
 @interface WMFLocationSearchListViewController ()
-@property (nonatomic, strong) WMFNearbyTitleListDataSource* dataSource;
-@property (nonatomic, strong, readwrite) MWKSite* site;
-@property (nonatomic, strong) WMFCompassViewModel* compassViewModel;
+@property (nonatomic, strong) WMFNearbyTitleListDataSource *dataSource;
+@property (nonatomic, strong, readwrite) MWKSite *site;
+@property (nonatomic, strong) WMFCompassViewModel *compassViewModel;
 @end
 
 @implementation WMFLocationSearchListViewController
 
 @dynamic dataSource;
 
-- (instancetype)initWithLocation:(CLLocation*)location searchSite:(MWKSite*)site dataStore:(MWKDataStore*)dataStore {
+- (instancetype)initWithLocation:(CLLocation *)location searchSite:(MWKSite *)site dataStore:(MWKDataStore *)dataStore {
     NSParameterAssert(location);
     self = [self initWithSearchSite:site dataStore:dataStore];
     if (self) {
@@ -25,38 +25,38 @@
     return self;
 }
 
-- (instancetype)initWithSearchSite:(MWKSite*)site dataStore:(MWKDataStore*)dataStore {
+- (instancetype)initWithSearchSite:(MWKSite *)site dataStore:(MWKDataStore *)dataStore {
     NSParameterAssert(site);
     NSParameterAssert(dataStore);
     self = [super init];
     if (self) {
-        self.site                 = site;
-        self.dataStore            = dataStore;
-        self.compassViewModel     = [[WMFCompassViewModel alloc] init];
-        self.dataSource           = [[WMFNearbyTitleListDataSource alloc] initWithSite:self.site];
+        self.site = site;
+        self.dataStore = dataStore;
+        self.compassViewModel = [[WMFCompassViewModel alloc] init];
+        self.dataSource = [[WMFNearbyTitleListDataSource alloc] initWithSite:self.site];
         self.dataSource.cellClass = [WMFNearbyArticleTableViewCell class];
 
         @weakify(self);
-        self.dataSource.cellConfigureBlock = ^(WMFNearbyArticleTableViewCell* nearbyCell,
-                                               MWKLocationSearchResult* result,
-                                               UITableView* tableView,
-                                               NSIndexPath* indexPath) {
-            @strongify(self);
-            nearbyCell.titleText       = result.displayTitle;
-            nearbyCell.descriptionText = result.wikidataDescription;
-            [nearbyCell setImageURL:result.thumbnailURL];
-            [nearbyCell setDistanceProvider:[self.compassViewModel distanceProviderForResult:result]];
-            [nearbyCell setBearingProvider:[self.compassViewModel bearingProviderForResult:result]];
+        self.dataSource.cellConfigureBlock = ^(WMFNearbyArticleTableViewCell *nearbyCell,
+                                               MWKLocationSearchResult *result,
+                                               UITableView *tableView,
+                                               NSIndexPath *indexPath) {
+          @strongify(self);
+          nearbyCell.titleText = result.displayTitle;
+          nearbyCell.descriptionText = result.wikidataDescription;
+          [nearbyCell setImageURL:result.thumbnailURL];
+          [nearbyCell setDistanceProvider:[self.compassViewModel distanceProviderForResult:result]];
+          [nearbyCell setBearingProvider:[self.compassViewModel bearingProviderForResult:result]];
         };
     }
     return self;
 }
 
-- (void)setLocation:(CLLocation*)location {
+- (void)setLocation:(CLLocation *)location {
     self.dataSource.location = location;
 }
 
-- (CLLocation*)location {
+- (CLLocation *)location {
     return self.dataSource.location;
 }
 
@@ -77,7 +77,7 @@
     [self.compassViewModel stopUpdates];
 }
 
-- (NSString*)analyticsContext {
+- (NSString *)analyticsContext {
     return @"More Nearby";
 }
 

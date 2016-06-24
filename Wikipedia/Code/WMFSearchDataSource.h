@@ -6,12 +6,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WMFSearchDataSource : SSArrayDataSource<WMFTitleListDataSource>
+@interface WMFSearchDataSource : SSArrayDataSource <WMFTitleListDataSource>
 
-@property (nonatomic, strong, readonly) MWKSite* searchSite;
-@property (nonatomic, strong, readonly) WMFSearchResults* searchResults;
+@property (nonatomic, strong, readonly) MWKSite *searchSite;
+@property (nonatomic, strong, readonly) WMFSearchResults *searchResults;
 
-- (nonnull instancetype)initWithSearchSite:(MWKSite*)site searchResults:(WMFSearchResults*)searchResults;
+- (nonnull instancetype)initWithSearchSite:(MWKSite *)site searchResults:(WMFSearchResults *)searchResults;
 
 @end
 

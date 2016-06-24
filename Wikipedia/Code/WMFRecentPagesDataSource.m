@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WMFRecentPagesDataSource ()
 
-@property (nonatomic, strong, readwrite) MWKHistoryList* recentPages;
+@property (nonatomic, strong, readwrite) MWKHistoryList *recentPages;
 
 @end
 
@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (nonnull instancetype)initWithRecentPagesList:(MWKHistoryList*)recentPages {
+- (nonnull instancetype)initWithRecentPagesList:(MWKHistoryList *)recentPages {
     NSParameterAssert(recentPages);
     self = [super initWithSections:[WMFRecentPagesDataSource sectionsFromHistoryList:recentPages]];
     if (self) {
@@ -30,72 +30,75 @@ NS_ASSUME_NONNULL_BEGIN
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(rebuildSections) name:MWKHistoryListDidUpdateNotification object:recentPages];
 
-        self.tableDeletionBlock = ^(WMFRecentPagesDataSource* dataSource,
-                                    UITableView* parentView,
-                                    NSIndexPath* indexPath){
-            [[NSNotificationCenter defaultCenter] removeObserver:dataSource];
-            [dataSource deleteArticleAtIndexPath:indexPath];
-            [dataSource removeItemAtIndexPath:indexPath];
-            [[NSNotificationCenter defaultCenter] addObserver:dataSource selector:@selector(rebuildSections) name:MWKHistoryListDidUpdateNotification object:recentPages];
+        self.tableDeletionBlock = ^(WMFRecentPagesDataSource *dataSource,
+                                    UITableView *parentView,
+                                    NSIndexPath *indexPath) {
+          [[NSNotificationCenter defaultCenter] removeObserver:dataSource];
+          [dataSource deleteArticleAtIndexPath:indexPath];
+          [dataSource removeItemAtIndexPath:indexPath];
+          [[NSNotificationCenter defaultCenter] addObserver:dataSource selector:@selector(rebuildSections) name:MWKHistoryListDidUpdateNotification object:recentPages];
         };
 
-        [self.KVOController observe:self.recentPages keyPath:WMF_SAFE_KEYPATH(self.recentPages, entries) options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionPrior block:^(WMFRecentPagesDataSource* observer, MWKHistoryList* object, NSDictionary* change) {
-            BOOL isPrior = [change[NSKeyValueChangeNotificationIsPriorKey] boolValue];
-            NSKeyValueChange changeKind = [change[NSKeyValueChangeKindKey] unsignedIntegerValue];
-            NSIndexSet* indexes = change[NSKeyValueChangeIndexesKey];
+        [self.KVOController observe:self.recentPages
+                            keyPath:WMF_SAFE_KEYPATH(self.recentPages, entries)
+                            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionPrior
+                              block:^(WMFRecentPagesDataSource *observer, MWKHistoryList *object, NSDictionary *change) {
+                                BOOL isPrior = [change[NSKeyValueChangeNotificationIsPriorKey] boolValue];
+                                NSKeyValueChange changeKind = [change[NSKeyValueChangeKindKey] unsignedIntegerValue];
+                                NSIndexSet *indexes = change[NSKeyValueChangeIndexesKey];
 
-            if (isPrior) {
-                if (changeKind == NSKeyValueChangeSetting) {
-                    [observer willChangeValueForKey:WMF_SAFE_KEYPATH(observer, titles)];
-                } else {
-                    [observer willChange:changeKind valuesAtIndexes:indexes forKey:WMF_SAFE_KEYPATH(observer, titles)];
-                }
-            } else {
-                if (changeKind == NSKeyValueChangeSetting) {
-                    [observer didChangeValueForKey:WMF_SAFE_KEYPATH(observer, titles)];
-                } else {
-                    [observer didChange:changeKind valuesAtIndexes:indexes forKey:WMF_SAFE_KEYPATH(observer, titles)];
-                }
-            }
-        }];
+                                if (isPrior) {
+                                    if (changeKind == NSKeyValueChangeSetting) {
+                                        [observer willChangeValueForKey:WMF_SAFE_KEYPATH(observer, titles)];
+                                    } else {
+                                        [observer willChange:changeKind valuesAtIndexes:indexes forKey:WMF_SAFE_KEYPATH(observer, titles)];
+                                    }
+                                } else {
+                                    if (changeKind == NSKeyValueChangeSetting) {
+                                        [observer didChangeValueForKey:WMF_SAFE_KEYPATH(observer, titles)];
+                                    } else {
+                                        [observer didChange:changeKind valuesAtIndexes:indexes forKey:WMF_SAFE_KEYPATH(observer, titles)];
+                                    }
+                                }
+                              }];
     }
     return self;
 }
 
-+ (NSArray*)sectionsFromHistoryList:(MWKHistoryList*)list {
-    NSArray* sortedEntriesToIterate    = [list entries];
-    NSMutableDictionary* entriesBydate = [NSMutableDictionary dictionary];
++ (NSArray *)sectionsFromHistoryList:(MWKHistoryList *)list {
+    NSArray *sortedEntriesToIterate = [list entries];
+    NSMutableDictionary *entriesBydate = [NSMutableDictionary dictionary];
 
-    [sortedEntriesToIterate enumerateObjectsUsingBlock:^(MWKHistoryEntry* _Nonnull obj, NSUInteger idx, BOOL* _Nonnull stop) {
-        NSDate* date = [[obj date] dateAtStartOfDay];
-        NSMutableArray* entries = entriesBydate[date];
-        if (!entries) {
-            entries = [NSMutableArray array];
-            entriesBydate[date] = entries;
-        }
-        [entries addObject:obj];
+    [sortedEntriesToIterate enumerateObjectsUsingBlock:^(MWKHistoryEntry *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+      NSDate *date = [[obj date] dateAtStartOfDay];
+      NSMutableArray *entries = entriesBydate[date];
+      if (!entries) {
+          entries = [NSMutableArray array];
+          entriesBydate[date] = entries;
+      }
+      [entries addObject:obj];
     }];
 
-    NSMutableArray* sections = [NSMutableArray arrayWithCapacity:[entriesBydate count]];
-    [[[entriesBydate allKeys] sortedArrayUsingComparator:^NSComparisonResult (NSDate* _Nonnull obj1, NSDate* _Nonnull obj2) {
-        return -[obj1 compare:obj2]; //by date decending
-    }] enumerateObjectsUsingBlock:^(NSDate* _Nonnull date, NSUInteger idx, BOOL* _Nonnull stop) {
-        NSMutableArray* entries = entriesBydate[date];
-        SSSection* section = [SSSection sectionWithItems:entries];
+    NSMutableArray *sections = [NSMutableArray arrayWithCapacity:[entriesBydate count]];
+    [[[entriesBydate allKeys] sortedArrayUsingComparator:^NSComparisonResult(NSDate *_Nonnull obj1, NSDate *_Nonnull obj2) {
+      return -[obj1 compare:obj2]; //by date decending
+    }] enumerateObjectsUsingBlock:^(NSDate *_Nonnull date, NSUInteger idx, BOOL *_Nonnull stop) {
+      NSMutableArray *entries = entriesBydate[date];
+      SSSection *section = [SSSection sectionWithItems:entries];
 
-        //HACK: Table views for some reason aren't adding padding to the left of the default headers. Injecting some manually.
-        NSString* padding = @"    ";
+      //HACK: Table views for some reason aren't adding padding to the left of the default headers. Injecting some manually.
+      NSString *padding = @"    ";
 
-        if ([date isToday]) {
-            section.header = [padding stringByAppendingString:[MWLocalizedString(@"history-section-today", nil) uppercaseString]];
-        } else if ([date isYesterday]) {
-            section.header = [padding stringByAppendingString:[MWLocalizedString(@"history-section-yesterday", nil) uppercaseString]];
-        } else {
-            section.header = [padding stringByAppendingString:[[NSDateFormatter wmf_mediumDateFormatterWithoutTime] stringFromDate:date]];
-        }
+      if ([date isToday]) {
+          section.header = [padding stringByAppendingString:[MWLocalizedString(@"history-section-today", nil) uppercaseString]];
+      } else if ([date isYesterday]) {
+          section.header = [padding stringByAppendingString:[MWLocalizedString(@"history-section-yesterday", nil) uppercaseString]];
+      } else {
+          section.header = [padding stringByAppendingString:[[NSDateFormatter wmf_mediumDateFormatterWithoutTime] stringFromDate:date]];
+      }
 
-        section.sectionIdentifier = date;
-        [sections addObject:section];
+      section.sectionIdentifier = date;
+      [sections addObject:section];
     }];
 
     return sections;
@@ -103,19 +106,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)rebuildSections {
     [self removeAllSections];
-    NSArray* sections = [[self class] sectionsFromHistoryList:self.recentPages];
+    NSArray *sections = [[self class] sectionsFromHistoryList:self.recentPages];
     [self.tableView beginUpdates];
     [self insertSections:sections atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, sections.count)]];
     [self.tableView endUpdates];
 }
 
-- (NSArray*)titles {
-    return [[self.recentPages entries] bk_map:^id (MWKHistoryEntry* obj) {
-        return obj.title;
+- (NSArray *)titles {
+    return [[self.recentPages entries] bk_map:^id(MWKHistoryEntry *obj) {
+      return obj.title;
     }];
 }
 
-- (MWKDataStore*)dataStore {
+- (MWKDataStore *)dataStore {
     return self.recentPages.dataStore;
 }
 
@@ -123,20 +126,20 @@ NS_ASSUME_NONNULL_BEGIN
     return [self.recentPages countOfEntries];
 }
 
-- (MWKHistoryEntry*)recentPageForIndexPath:(NSIndexPath*)indexPath {
-    return (MWKHistoryEntry*)[self itemAtIndexPath:indexPath];
+- (MWKHistoryEntry *)recentPageForIndexPath:(NSIndexPath *)indexPath {
+    return (MWKHistoryEntry *)[self itemAtIndexPath:indexPath];
 }
 
-- (MWKTitle*)titleForIndexPath:(NSIndexPath*)indexPath {
+- (MWKTitle *)titleForIndexPath:(NSIndexPath *)indexPath {
     return [[self recentPageForIndexPath:indexPath] title];
 }
 
-- (BOOL)canDeleteItemAtIndexpath:(NSIndexPath*)indexPath {
+- (BOOL)canDeleteItemAtIndexpath:(NSIndexPath *)indexPath {
     return YES;
 }
 
-- (void)deleteArticleAtIndexPath:(NSIndexPath*)indexPath {
-    MWKHistoryEntry* entry = [self recentPageForIndexPath:indexPath];
+- (void)deleteArticleAtIndexPath:(NSIndexPath *)indexPath {
+    MWKHistoryEntry *entry = [self recentPageForIndexPath:indexPath];
     if (entry) {
         [self.recentPages removeEntryWithListIndex:entry.title];
         [self.recentPages save];
@@ -151,4 +154,3 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-

@@ -17,22 +17,22 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MWKSiteInfo : NSObject
 
 /// Site described by the receiver.
-@property (readonly, copy, nonatomic) MWKSite* site;
+@property (readonly, copy, nonatomic) MWKSite *site;
 
 /// Raw title for the receiver's main page.
-@property (readonly, copy, nonatomic) NSString* mainPageTitleText;
+@property (readonly, copy, nonatomic) NSString *mainPageTitleText;
 
-- (instancetype)initWithSite:(MWKSite*)site
-           mainPageTitleText:(NSString*)mainPage NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSite:(MWKSite *)site
+           mainPageTitleText:(NSString *)mainPage NS_DESIGNATED_INITIALIZER;
 
-- (BOOL)isEqualToSiteInfo:(MWKSiteInfo*)siteInfo;
+- (BOOL)isEqualToSiteInfo:(MWKSiteInfo *)siteInfo;
 
 ///
 /// @name Computed Properties
 ///
 
 /// @return Parsed @c MWKTitle from @c mainPage.
-- (MWKTitle*)mainPageTitle;
+- (MWKTitle *)mainPageTitle;
 
 @end
 

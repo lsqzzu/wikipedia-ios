@@ -15,18 +15,18 @@
 
 @interface SessionSingleton : NSObject
 
-- (instancetype)initWithDataStore:(MWKDataStore*)dataStore;
+- (instancetype)initWithDataStore:(MWKDataStore *)dataStore;
 
-+ (SessionSingleton*)sharedInstance;
++ (SessionSingleton *)sharedInstance;
 
 // Persistent settings and credentials
-@property (strong, nonatomic) KeychainCredentials* keychainCredentials;
-@property (strong, nonatomic) ZeroConfigState* zeroConfigState;
+@property (strong, nonatomic) KeychainCredentials *keychainCredentials;
+@property (strong, nonatomic) ZeroConfigState *zeroConfigState;
 @property (nonatomic) BOOL shouldSendUsageReports;
 
 // Data access objects
-@property (strong, nonatomic, readonly) MWKDataStore* dataStore;
-@property (strong, nonatomic, readonly) MWKUserDataStore* userDataStore;
+@property (strong, nonatomic, readonly) MWKDataStore *dataStore;
+@property (strong, nonatomic, readonly) MWKUserDataStore *userDataStore;
 
 /**
  *  The current article's site. This set automatically when setting the current article.
@@ -37,7 +37,7 @@
  *  This will never be nil.
  *
  */
-@property (strong, nonatomic, readonly) MWKSite* currentArticleSite;
+@property (strong, nonatomic, readonly) MWKSite *currentArticleSite;
 
 /**
  *  The current artcle. Set this when an article is loaded.
@@ -49,12 +49,11 @@
  *  //TODO: This tightly coupled to the webview controller
  *  article display logic. Refactor to a specific article service.
  */
-@property (nonatomic, strong) MWKArticle* currentArticle;
+@property (nonatomic, strong) MWKArticle *currentArticle;
 
 @property (nonatomic) BOOL fallback WMF_TECH_DEBT_DEPRECATED; //< Is this really necessary?
 
-- (NSURL*)urlForLanguage:(NSString*)language WMF_TECH_DEBT_DEPRECATED_MSG("Use -[MWKSite apiEndpoint] instead.");
-
+- (NSURL *)urlForLanguage:(NSString *)language WMF_TECH_DEBT_DEPRECATED_MSG("Use -[MWKSite apiEndpoint] instead.");
 
 /**
  *  Logs in the user using saved credentials

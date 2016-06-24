@@ -10,7 +10,7 @@
 
 @implementation XCTestCase (WMFBundleConvenience)
 
-- (NSBundle*)wmf_bundle {
+- (NSBundle *)wmf_bundle {
     return [NSBundle bundleForClass:[self class]];
 }
 

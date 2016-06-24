@@ -15,11 +15,11 @@
 @interface MWKUser : MWKSiteDataObject
 
 @property (readonly, assign, nonatomic) BOOL anonymous;
-@property (readonly, copy, nonatomic) NSString* name;
-@property (readonly, copy, nonatomic) NSString* gender;
+@property (readonly, copy, nonatomic) NSString *name;
+@property (readonly, copy, nonatomic) NSString *gender;
 
-- (instancetype)initWithSite:(MWKSite*)site data:(id)data;
+- (instancetype)initWithSite:(MWKSite *)site data:(id)data;
 
-- (BOOL)isEqualToUser:(MWKUser*)user;
+- (BOOL)isEqualToUser:(MWKUser *)user;
 
 @end

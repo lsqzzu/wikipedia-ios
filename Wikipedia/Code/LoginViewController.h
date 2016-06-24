@@ -10,11 +10,11 @@
 
 - (IBAction)createAccountButtonPushed:(id)sender;
 
-- (void)loginWithUserName:(NSString*)userName
-                 password:(NSString*)password
+- (void)loginWithUserName:(NSString *)userName
+                 password:(NSString *)password
                 onSuccess:(void (^)(void))successBlock
                    onFail:(void (^)(void))failBlock;
 
-@property (strong, nonatomic) LoginFunnel* funnel;
+@property (strong, nonatomic) LoginFunnel *funnel;
 
 @end

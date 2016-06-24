@@ -10,9 +10,9 @@
 #import "NSString+WMFExtras.h"
 #import "WMFRangeUtils.h"
 
-NSString* const WMFInternalLinkPathPrefix = @"/wiki/";
+NSString *const WMFInternalLinkPathPrefix = @"/wiki/";
 
-NSString* const WMFCitationFragmentSubstring = @"cite_note";
+NSString *const WMFCitationFragmentSubstring = @"cite_note";
 
 @implementation NSString (WMFPageUtilities)
 
@@ -24,22 +24,21 @@ NSString* const WMFCitationFragmentSubstring = @"cite_note";
     return [self containsString:WMFCitationFragmentSubstring];
 }
 
-- (NSString*)wmf_internalLinkPath {
+- (NSString *)wmf_internalLinkPath {
     NSRange internalLinkRange = [self rangeOfString:WMFInternalLinkPathPrefix];
-    return internalLinkRange.location == NSNotFound ?
-           self
-           : [self wmf_safeSubstringFromIndex:WMFRangeGetMaxIndex(internalLinkRange)];
+    return internalLinkRange.location == NSNotFound ? self
+                                                    : [self wmf_safeSubstringFromIndex:WMFRangeGetMaxIndex(internalLinkRange)];
 }
 
-- (NSString*)wmf_unescapedNormalizedPageTitle {
+- (NSString *)wmf_unescapedNormalizedPageTitle {
     return [[self stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] wmf_normalizedPageTitle];
 }
 
-- (NSString*)wmf_normalizedPageTitle {
+- (NSString *)wmf_normalizedPageTitle {
     return [self stringByReplacingOccurrencesOfString:@"_" withString:@" "];
 }
 
-- (NSString*)wmf_denormalizedPageTitle {
+- (NSString *)wmf_denormalizedPageTitle {
     return [self stringByReplacingOccurrencesOfString:@" " withString:@"_"];
 }
 

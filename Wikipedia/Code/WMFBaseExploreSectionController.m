@@ -20,23 +20,23 @@ static const DDLogLevel WMFBaseExploreSectionControllerLogLevel = DDLogLevelInfo
 #undef LOG_LEVEL_DEF
 #define LOG_LEVEL_DEF WMFBaseExploreSectionControllerLogLevel
 
-static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectionControllerException";
+static NSString *const WMFExploreSectionControllerException = @"WMFExploreSectionControllerException";
 
 @interface WMFBaseExploreSectionController ()
 
-@property (nonatomic, strong, readwrite) MWKDataStore* dataStore;
+@property (nonatomic, strong, readwrite) MWKDataStore *dataStore;
 
 /**
  *  The items visible to the WMFExploreViewController
  *  May contain placeholder items
  */
-@property (nonatomic, strong) NSMutableArray* mutableItems;
+@property (nonatomic, strong) NSMutableArray *mutableItems;
 
-@property (nonatomic, strong, nullable) NSArray* fetchedItems;
+@property (nonatomic, strong, nullable) NSArray *fetchedItems;
 
-@property (nonatomic, strong, nullable) AnyPromise* fetcherPromise;
+@property (nonatomic, strong, nullable) AnyPromise *fetcherPromise;
 
-@property (nonatomic, strong, readwrite, nullable) NSError* fetchError;
+@property (nonatomic, strong, readwrite, nullable) NSError *fetchError;
 
 @end
 
@@ -44,18 +44,18 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
 
 #pragma mark - Init
 
-- (instancetype)initWithDataStore:(MWKDataStore*)dataStore {
+- (instancetype)initWithDataStore:(MWKDataStore *)dataStore {
     NSParameterAssert(dataStore);
     self = [super init];
     if (self) {
-        self.dataStore    = dataStore;
+        self.dataStore = dataStore;
         self.mutableItems = [NSMutableArray array];
         [self setItemsToPlaceholdersIfSupported];
     }
     return self;
 }
 
-- (instancetype)initWithDataStore:(MWKDataStore*)dataStore items:(NSArray*)items {
+- (instancetype)initWithDataStore:(MWKDataStore *)dataStore items:(NSArray *)items {
     NSParameterAssert(items);
     self = [self initWithDataStore:dataStore];
     if (self) {
@@ -64,29 +64,29 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     return self;
 }
 
-- (NSString*)description {
+- (NSString *)description {
     NSAssert([self conformsToProtocol:@protocol(WMFExploreSectionController)],
              @"Expected subclass of %@ to conform to %@, but %@ does not.",
              [WMFBaseExploreSectionController class],
              NSStringFromProtocol(@protocol(WMFExploreSectionController)),
              [self class]);
     return [NSString stringWithFormat:@"%@ identifier = %@",
-            [super description], [(id < WMFExploreSectionController >)self sectionIdentifier]];
+                                      [super description], [(id<WMFExploreSectionController>)self sectionIdentifier]];
 }
 
 #pragma mark - WMFBaseExploreSectionController
 
 - (BOOL)containsPlaceholders {
-    return [self.items bk_all:^BOOL (id obj) {
-        return [obj isKindOfClass:[NSNumber class]];
+    return [self.items bk_all:^BOOL(id obj) {
+      return [obj isKindOfClass:[NSNumber class]];
     }];
 }
 
-- (MWKSavedPageList*)savedPageList {
+- (MWKSavedPageList *)savedPageList {
     return self.dataStore.userDataStore.savedPageList;
 }
 
-- (MWKHistoryList*)historyList {
+- (MWKHistoryList *)historyList {
     return self.dataStore.userDataStore.historyList;
 }
 
@@ -94,44 +94,44 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     return 3;
 }
 
-- (NSString*)cellIdentifier {
+- (NSString *)cellIdentifier {
     @throw [NSException exceptionWithName:WMFExploreSectionControllerException
                                    reason:@"Method must be implemented by subclass"
                                  userInfo:nil];
 }
 
-- (UINib*)cellNib {
+- (UINib *)cellNib {
     @throw [NSException exceptionWithName:WMFExploreSectionControllerException
                                    reason:@"Method must be implemented by subclass"
                                  userInfo:nil];
 }
 
-- (nullable NSString*)placeholderCellIdentifier {
+- (nullable NSString *)placeholderCellIdentifier {
     return nil;
 }
 
-- (nullable UINib*)placeholderCellNib {
+- (nullable UINib *)placeholderCellNib {
     return nil;
 }
 
-- (void)configureEmptyCell:(WMFEmptySectionTableViewCell*)cell {
+- (void)configureEmptyCell:(WMFEmptySectionTableViewCell *)cell {
     cell.emptyTextLabel.text = MWLocalizedString(@"home-empty-section", nil);
     [cell.reloadButton setTitle:MWLocalizedString(@"home-empty-section-check-again", nil) forState:UIControlStateNormal];
 }
 
-- (void)configureCell:(UITableViewCell*)cell withItem:(id)item atIndexPath:(nonnull NSIndexPath*)indexPath {
+- (void)configureCell:(UITableViewCell *)cell withItem:(id)item atIndexPath:(nonnull NSIndexPath *)indexPath {
     @throw [NSException exceptionWithName:WMFExploreSectionControllerException
                                    reason:@"Method must be implemented by subclass"
                                  userInfo:nil];
 }
 
-- (AnyPromise*)fetchData {
+- (AnyPromise *)fetchData {
     return [AnyPromise promiseWithValue:self.items];
 }
 
 #pragma mark - WMFExploreSectionController
 
-- (void)registerCellsInTableView:(UITableView*)tableView {
+- (void)registerCellsInTableView:(UITableView *)tableView {
     [tableView registerNib:[self cellNib] forCellReuseIdentifier:[self cellIdentifier]];
     if ([self placeholderCellIdentifier] && [self placeholderCellNib]) {
         [tableView registerNib:[self placeholderCellNib] forCellReuseIdentifier:[self placeholderCellIdentifier]];
@@ -139,7 +139,7 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     [tableView registerNib:[WMFEmptySectionTableViewCell wmf_classNib] forCellReuseIdentifier:[WMFEmptySectionTableViewCell identifier]];
 }
 
-- (NSString*)cellIdentifierForItemIndexPath:(NSIndexPath*)indexPath {
+- (NSString *)cellIdentifierForItemIndexPath:(NSIndexPath *)indexPath {
     if ([self shouldShowPlaceholderCell]) {
         return [self placeholderCellIdentifier];
     }
@@ -149,7 +149,7 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     return [self cellIdentifier];
 }
 
-- (void)configureCell:(UITableViewCell*)cell atIndexPath:(NSIndexPath*)indexPath {
+- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     NSParameterAssert(indexPath);
     NSParameterAssert(cell);
     if (!cell || !indexPath) {
@@ -158,15 +158,16 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     if ([self shouldShowPlaceholderCell]) {
         return;
     } else if ([self shouldShowEmptyCell]) {
-        WMFEmptySectionTableViewCell* emptyCell = (id)cell;
+        WMFEmptySectionTableViewCell *emptyCell = (id)cell;
         [emptyCell.reloadButton bk_removeEventHandlersForControlEvents:UIControlEventTouchUpInside];
 
         @weakify(self);
         [emptyCell.reloadButton bk_addEventHandler:^(id sender) {
-            @strongify(self);
-            [self resetData];
-            [self fetchDataUserInitiated];
-        } forControlEvents:UIControlEventTouchUpInside];
+          @strongify(self);
+          [self resetData];
+          [self fetchDataUserInitiated];
+        }
+                                  forControlEvents:UIControlEventTouchUpInside];
 
         [self configureEmptyCell:emptyCell];
     } else {
@@ -174,7 +175,7 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     }
 }
 
-- (BOOL)shouldSelectItemAtIndexPath:(NSIndexPath*)indexPath {
+- (BOOL)shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     if ([self shouldShowPlaceholderCell]) {
         return NO;
     }
@@ -184,19 +185,19 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     return YES;
 }
 
-- (AnyPromise*)fetchDataIfNeeded {
+- (AnyPromise *)fetchDataIfNeeded {
     return [self fetchDataIgnoreError:NO ignoreCurrentItems:NO];
 }
 
-- (AnyPromise*)fetchDataIfError {
+- (AnyPromise *)fetchDataIfError {
     return [self fetchDataIgnoreError:YES ignoreCurrentItems:NO];
 }
 
-- (AnyPromise*)fetchDataUserInitiated {
+- (AnyPromise *)fetchDataUserInitiated {
     return [self fetchDataIgnoreError:YES ignoreCurrentItems:YES];
 }
 
-- (AnyPromise*)fetchDataIgnoreError:(BOOL)ignoreError ignoreCurrentItems:(BOOL)ignoreCurrentItems {
+- (AnyPromise *)fetchDataIgnoreError:(BOOL)ignoreError ignoreCurrentItems:(BOOL)ignoreCurrentItems {
     if (!ignoreError && [self lastFetchFailed]) {
         return [AnyPromise promiseWithValue:self.fetchError];
     } else if (!ignoreCurrentItems && [self hasResults]) {
@@ -205,25 +206,26 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
         return [AnyPromise promiseWithValue:self.items];
     } else {
         @weakify(self);
-        self.fetcherPromise = [self fetchData].then(^(NSArray* items){
-            @strongify(self);
-            self.fetcherPromise = nil;
-            self.fetchedItems = items;
-            return self.items;
-        }).catch(^(NSError* error){
-            @strongify(self);
-            DDLogError(@"Failed to fetch items for section %@. %@", self, error);
-            self.fetcherPromise = nil;
-            self.fetchError = error;
-            return error;
-        });
+        self.fetcherPromise = [self fetchData].then(^(NSArray *items) {
+                                                @strongify(self);
+                                                self.fetcherPromise = nil;
+                                                self.fetchedItems = items;
+                                                return self.items;
+                                              })
+                                  .catch(^(NSError *error) {
+                                    @strongify(self);
+                                    DDLogError(@"Failed to fetch items for section %@. %@", self, error);
+                                    self.fetcherPromise = nil;
+                                    self.fetchError = error;
+                                    return error;
+                                  });
         return self.fetcherPromise;
     }
 }
 
 - (void)resetData {
     _fetchedItems = nil;
-    _fetchError   = nil;
+    _fetchError = nil;
     if ([self supportsPlaceholders]) {
         [self setItemsToPlaceholdersIfSupported];
     } else {
@@ -237,7 +239,7 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     if (![self supportsPlaceholders]) {
         return;
     }
-    NSMutableArray* placeholders = [NSMutableArray array];
+    NSMutableArray *placeholders = [NSMutableArray array];
     for (int i = 0; i < [self numberOfPlaceholderCells]; i++) {
         [placeholders addObject:@(i)];
     }
@@ -261,9 +263,7 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
  *  @return @c YES if placeholder cell should be displayed, otherwise @c NO.
  */
 - (BOOL)shouldShowPlaceholderCell {
-    return [self supportsPlaceholders]
-           && [self.fetchedItems count] == 0
-           && self.fetchError == nil;
+    return [self supportsPlaceholders] && [self.fetchedItems count] == 0 && self.fetchError == nil;
 }
 
 - (BOOL)shouldShowEmptyCell {
@@ -284,22 +284,22 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
 
 #pragma mark - Items Accessors
 
-- (void)setFetchedItems:(nullable NSArray*)fetchedItems {
+- (void)setFetchedItems:(nullable NSArray *)fetchedItems {
     if (WMF_EQUAL(self.fetchedItems, isEqualToArray:, fetchedItems)) {
         return;
     }
     _fetchedItems = fetchedItems;
-    _fetchError   = nil;
+    _fetchError = nil;
     if (fetchedItems) {
         self.items = fetchedItems;
     }
 }
 
-- (void)setFetchError:(nullable NSError*)fetchError {
-    _fetchError   = fetchError;
+- (void)setFetchError:(nullable NSError *)fetchError {
+    _fetchError = fetchError;
     _fetchedItems = nil;
     if (fetchError) {
-        self.items = @[fetchError];
+        self.items = @[ fetchError ];
     }
 }
 
@@ -311,7 +311,7 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     return NO;
 }
 
-- (void)setItems:(NSArray* _Nonnull)items {
+- (void)setItems:(NSArray *_Nonnull)items {
     if (WMF_EQUAL(self.items, isEqualToArray:, items)) {
         return;
     }
@@ -321,11 +321,11 @@ static NSString* const WMFExploreSectionControllerException = @"WMFExploreSectio
     [self didChangeValueForKey:WMF_SAFE_KEYPATH(self, items)];
 }
 
-- (NSArray*)items {
+- (NSArray *)items {
     return _mutableItems;
 }
 
-- (NSString*)analyticsContext {
+- (NSString *)analyticsContext {
     return @"Explore";
 }
 

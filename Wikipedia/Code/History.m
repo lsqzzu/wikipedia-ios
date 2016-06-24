@@ -5,7 +5,6 @@
 #import "Article.h"
 #import "DiscoveryContext.h"
 
-
 @implementation History
 
 @dynamic dateVisited;

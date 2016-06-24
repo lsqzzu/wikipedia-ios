@@ -20,8 +20,8 @@
 
 @interface WMFArticlePreviewCellVisualTests : FBSnapshotTestCase
 
-@property (nonatomic, strong) WMFArticlePreviewTableViewCell* cell;
-@property (nonatomic, strong) MWKDataStore* dataStore;
+@property (nonatomic, strong) WMFArticlePreviewTableViewCell *cell;
+@property (nonatomic, strong) MWKDataStore *dataStore;
 
 @end
 
@@ -31,12 +31,12 @@
     [super setUp];
 
     self.deviceAgnostic = YES;
-    self.recordMode     = [[NSUserDefaults standardUserDefaults] wmf_visualTestBatchRecordMode];
+    self.recordMode = [[NSUserDefaults standardUserDefaults] wmf_visualTestBatchRecordMode];
 
     self.cell = [WMFArticlePreviewTableViewCell wmf_viewFromClassNib];
 
     // Add border around save button to ensure adequate hit area
-    UIControl* saveButton = self.cell.saveButtonController.control;
+    UIControl *saveButton = self.cell.saveButtonController.control;
     saveButton.borderColor = [UIColor redColor];
     saveButton.borderWidth = 2.f;
 
@@ -92,11 +92,11 @@
 
 #pragma mark - Utils
 
-- (void)configureCellWithTitleText:(NSString*)titleText
-                       description:(NSString*)description
-                           extract:(NSString*)extract
-                          imageURL:(NSURL*)imageURL {
-    MWKTitle* title = [[MWKTitle alloc] initWithSite:[MWKSite siteWithCurrentLocale]
+- (void)configureCellWithTitleText:(NSString *)titleText
+                       description:(NSString *)description
+                           extract:(NSString *)extract
+                          imageURL:(NSURL *)imageURL {
+    MWKTitle *title = [[MWKTitle alloc] initWithSite:[MWKSite siteWithCurrentLocale]
                                      normalizedTitle:titleText
                                             fragment:nil];
 
@@ -108,11 +108,11 @@
 
     if (imageURL) {
         stubRequest(@"GET", imageURL.absoluteString)
-        .andReturn(200)
-        .withBody([[self wmf_bundle] wmf_dataFromContentsOfFile:@"golden-gate" ofType:@".jpg"]);
+            .andReturn(200)
+            .withBody([[self wmf_bundle] wmf_dataFromContentsOfFile:@"golden-gate" ofType:@".jpg"]);
 
         expectResolutionWithTimeout(10, ^{
-            return [self.cell setImageURL:imageURL];
+          return [self.cell setImageURL:imageURL];
         });
     } else {
         [self.cell setImageURL:nil];
@@ -121,20 +121,20 @@
     [self.cell wmf_sizeToFitWindowWidth];
 }
 
-- (NSString*)shortTitleText {
+- (NSString *)shortTitleText {
     return @"Short title";
 }
 
-- (NSString*)shortDescription {
+- (NSString *)shortDescription {
     return @"Short description.";
 }
 
-- (NSString*)shortExtract {
+- (NSString *)shortExtract {
     return @"Short extract.";
 }
 
-- (NSString*)longExtract {
-    NSMutableString* longExtract = [NSMutableString stringWithString:@"This extract is "];
+- (NSString *)longExtract {
+    NSMutableString *longExtract = [NSMutableString stringWithString:@"This extract is "];
     for (int i = 0; i < 20; i++) {
         [longExtract appendString:@"really "];
     }
@@ -142,7 +142,7 @@
     return longExtract;
 }
 
-- (NSURL*)imageURL {
+- (NSURL *)imageURL {
     return [NSURL URLWithString:@"https://upload.wikimedia.org/Foo.jpg"];
 }
 

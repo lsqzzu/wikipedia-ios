@@ -21,10 +21,10 @@
 #import <OCHamcrest/OCHamcrest.h>
 
 @interface MWKImageFaceDetectionTests : WMFAsyncTestCase
-@property (nonatomic, strong) MWKImage* image;
-@property (nonatomic, strong) MWKArticle* dummyArticle;
-@property (nonatomic, strong) MWKDataStore* mockDataStore;
-@property (nonatomic, strong) WMFFaceDetectionCache* faceDetectionCache;
+@property (nonatomic, strong) MWKImage *image;
+@property (nonatomic, strong) MWKArticle *dummyArticle;
+@property (nonatomic, strong) MWKDataStore *mockDataStore;
+@property (nonatomic, strong) WMFFaceDetectionCache *faceDetectionCache;
 @end
 
 @implementation MWKImageFaceDetectionTests
@@ -32,8 +32,8 @@
 - (void)setUp {
     [super setUp];
     self.mockDataStore = MKTMock([MWKDataStore class]);
-    self.dummyArticle  = [[MWKArticle alloc] initWithTitle:[[MWKSite siteWithCurrentLocale] titleWithString:@"foo"]
-                                                 dataStore:self.mockDataStore];
+    self.dummyArticle = [[MWKArticle alloc] initWithTitle:[[MWKSite siteWithCurrentLocale] titleWithString:@"foo"]
+                                                dataStore:self.mockDataStore];
     self.faceDetectionCache = [[WMFFaceDetectionCache alloc] init];
 }
 
@@ -47,8 +47,8 @@
 }
 
 - (void)testSerializationOfImageWithoutDetection {
-    NSString* sourceURL    = @"foo";
-    NSDictionary* testData = NSDictionaryOfVariableBindings(sourceURL);
+    NSString *sourceURL = @"foo";
+    NSDictionary *testData = NSDictionaryOfVariableBindings(sourceURL);
     self.image = [[MWKImage alloc] initWithArticle:self.dummyArticle dict:testData];
     assertThat(self.image.sourceURLString, is(sourceURL));
     XCTAssertFalse(self.image.didDetectFaces);
@@ -57,9 +57,9 @@
 }
 
 - (void)testDeserializedImageWithDetectionButNoFaces {
-    NSDictionary* testData = @{
-        @"focalRects": @[],
-        @"sourceURL": @"foo"
+    NSDictionary *testData = @{
+        @"focalRects" : @[],
+        @"sourceURL" : @"foo"
     };
     self.image = [[MWKImage alloc] initWithArticle:self.dummyArticle dict:testData];
     XCTAssertTrue(self.image.didDetectFaces);
@@ -69,15 +69,15 @@
 }
 
 - (void)testDeserializedImageWithDetectedFaces {
-    CGRect testRect        = CGRectMake(1, 1, 10, 10);
-    NSDictionary* testData = @{
-        @"focalRects": @[NSStringFromCGRect(testRect)],
-        @"sourceURL": @"foo"
+    CGRect testRect = CGRectMake(1, 1, 10, 10);
+    NSDictionary *testData = @{
+        @"focalRects" : @[ NSStringFromCGRect(testRect) ],
+        @"sourceURL" : @"foo"
     };
     self.image = [[MWKImage alloc] initWithArticle:self.dummyArticle dict:testData];
     XCTAssertTrue(self.image.didDetectFaces);
     XCTAssertTrue(self.image.hasFaces);
-    assertThat(self.image.allNormalizedFaceBounds, is(equalTo(@[[NSValue valueWithCGRect:testRect]])));
+    assertThat(self.image.allNormalizedFaceBounds, is(equalTo(@[ [NSValue valueWithCGRect:testRect] ])));
     XCTAssertTrue(CGRectEqualToRect(self.image.firstFaceBounds, testRect));
     assertThat([self.image dataExport], is(equalTo(testData)));
 }
@@ -85,7 +85,7 @@
 #pragma mark - Detection
 
 - (void)testShouldSetDidDetectFacesIfPassedNilFeatures {
-    self.image                         = [[MWKImage alloc] initWithArticle:self.dummyArticle sourceURL:[NSURL URLWithString:@"foo"]];
+    self.image = [[MWKImage alloc] initWithArticle:self.dummyArticle sourceURL:[NSURL URLWithString:@"foo"]];
     self.image.allNormalizedFaceBounds = nil;
     XCTAssertTrue(self.image.didDetectFaces, @"Need to be able to handle cases where CIDetector passes nil.");
 }

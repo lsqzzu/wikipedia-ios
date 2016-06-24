@@ -26,16 +26,16 @@
 #import "NSArray+WMFShuffle.h"
 #import "WMFRangeUtils.h"
 
-static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
+static NSValue *WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
     return [NSValue valueWithRange:NSMakeRange(loc, len)];
 }
 
 @interface WMFImageInfoControllerTests : WMFAsyncTestCase <WMFImageInfoControllerDelegate>
-@property WMFImageInfoController* controller;
-@property MWKArticle* testArticle;
-@property MWKImageInfoFetcher* mockInfoFetcher;
+@property WMFImageInfoController *controller;
+@property MWKArticle *testArticle;
+@property MWKImageInfoFetcher *mockInfoFetcher;
 @property id<WMFImageInfoControllerDelegate> mockDelegate;
-@property MWKDataStore* tmpDataStore;
+@property MWKDataStore *tmpDataStore;
 @end
 
 @implementation WMFImageInfoControllerTests
@@ -44,15 +44,15 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
     [super setUp];
 
     self.mockInfoFetcher = MKTMock([MWKImageInfoFetcher class]);
-    self.tmpDataStore    = [MWKDataStore temporaryDataStore];
-    self.mockDelegate    = MKTMockProtocol(@protocol(WMFImageInfoControllerDelegate));
+    self.tmpDataStore = [MWKDataStore temporaryDataStore];
+    self.mockDelegate = MKTMockProtocol(@protocol(WMFImageInfoControllerDelegate));
 
-    MWKTitle* testTitle = [MWKTitle titleWithString:@"foo"
+    MWKTitle *testTitle = [MWKTitle titleWithString:@"foo"
                                                site:[MWKSite siteWithDomain:@"wikipedia.org" language:@"en"]];
 
     self.testArticle = [[MWKArticle alloc] initWithTitle:testTitle dataStore:self.tmpDataStore];
 
-    for (NSString* imageURL in [self generateSourceURLs:10]) {
+    for (NSString *imageURL in [self generateSourceURLs:10]) {
         [self.testArticle importImageURL:imageURL sectionId:kMWKArticleSectionNone];
     }
 
@@ -71,25 +71,25 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
 #pragma mark - Tests
 
 - (void)testReadsFromDataStoreLazilyAndPopulatesFetchedIndices {
-    MWKImageList* mockImageList = MKTMock([MWKImageList class]);
-    MWKDataStore* mockDataStore = MKTMock([MWKDataStore class]);
+    MWKImageList *mockImageList = MKTMock([MWKImageList class]);
+    MWKDataStore *mockDataStore = MKTMock([MWKDataStore class]);
 
-    MWKTitle* title = [[MWKTitle alloc] initWithSite:[MWKSite siteWithCurrentLocale]
+    MWKTitle *title = [[MWKTitle alloc] initWithSite:[MWKSite siteWithCurrentLocale]
                                      normalizedTitle:@"foo"
                                             fragment:nil];
-    MWKArticle* dummyArticle = [[MWKArticle alloc] initWithTitle:title dataStore:mockDataStore];
+    MWKArticle *dummyArticle = [[MWKArticle alloc] initWithTitle:title dataStore:mockDataStore];
 
-    NSArray* testImages = [[self generateSourceURLs:5] bk_map:^MWKImage*(NSString* sourceURL) {
-        return [[MWKImage alloc] initWithArticle:dummyArticle sourceURLString:sourceURL];
+    NSArray *testImages = [[self generateSourceURLs:5] bk_map:^MWKImage *(NSString *sourceURL) {
+      return [[MWKImage alloc] initWithArticle:dummyArticle sourceURLString:sourceURL];
     }];
-    NSRange preFetchedRange    = NSMakeRange(0, 2);
-    NSArray* expectedImageInfo = [[MWKImageInfo mappedFromImages:testImages] subarrayWithRange:preFetchedRange];
+    NSRange preFetchedRange = NSMakeRange(0, 2);
+    NSArray *expectedImageInfo = [[MWKImageInfo mappedFromImages:testImages] subarrayWithRange:preFetchedRange];
 
     [MKTGiven([mockImageList uniqueLargestVariants]) willReturn:testImages];
     [MKTGiven([mockDataStore imageInfoForTitle:title]) willReturn:expectedImageInfo];
     [MKTGiven([mockDataStore imageListWithArticle:dummyArticle section:nil]) willReturn:mockImageList];
 
-    WMFImageInfoController* controller = [[WMFImageInfoController alloc] initWithDataStore:mockDataStore
+    WMFImageInfoController *controller = [[WMFImageInfoController alloc] initWithDataStore:mockDataStore
                                                                                  batchSize:2
                                                                                infoFetcher:self.mockInfoFetcher];
     [controller setUniqueArticleImages:dummyArticle.images.uniqueLargestVariants forTitle:dummyArticle.title];
@@ -109,17 +109,17 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
 }
 
 - (void)testFetchBatchRanges {
-    NSMutableIndexSet* indexesToFetch = [NSMutableIndexSet indexSetWithIndex:0];
+    NSMutableIndexSet *indexesToFetch = [NSMutableIndexSet indexSetWithIndex:0];
     [indexesToFetch addIndex:self.controller.uniqueArticleImages.count - 1];
     [self.controller fetchBatchesContainingIndexes:indexesToFetch];
-    [indexesToFetch enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL* stop) {
-        NSRange expectedRange = [self.controller batchRangeForTargetIndex:idx];
-        assertThat(@(WMFRangeIsNotFoundOrEmpty(expectedRange)), isFalse());
-        NSArray* expectedTitles = [self expectedTitlesForRange:expectedRange];
-        [MKTVerifyCount(self.mockInfoFetcher, MKTTimes(1)) fetchGalleryInfoForImageFiles:expectedTitles
-                                                                                fromSite:self.testArticle.site
-                                                                                 success:anything()
-                                                                                 failure:anything()];
+    [indexesToFetch enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+      NSRange expectedRange = [self.controller batchRangeForTargetIndex:idx];
+      assertThat(@(WMFRangeIsNotFoundOrEmpty(expectedRange)), isFalse());
+      NSArray *expectedTitles = [self expectedTitlesForRange:expectedRange];
+      [MKTVerifyCount(self.mockInfoFetcher, MKTTimes(1)) fetchGalleryInfoForImageFiles:expectedTitles
+                                                                              fromSite:self.testArticle.site
+                                                                               success:anything()
+                                                                               failure:anything()];
     }];
 }
 
@@ -130,19 +130,19 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
 
 - (void)testFetchBatchAlongWithNeighborReturnsOneRequestForEachFetch {
     [MKTGiven([self.mockInfoFetcher
-               fetchGalleryInfoForImageFiles:[self expectedTitlesForRange:[self.controller batchRangeForTargetIndex:0]]
-                                    fromSite:anything()
-                                     success:anything()
-                                     failure:anything()]) willReturn:@"dummy request"];
+        fetchGalleryInfoForImageFiles:[self expectedTitlesForRange:[self.controller batchRangeForTargetIndex:0]]
+                             fromSite:anything()
+                              success:anything()
+                              failure:anything()]) willReturn:@"dummy request"];
 
     [MKTGiven([self.mockInfoFetcher
-               fetchGalleryInfoForImageFiles:[self expectedTitlesForRange:[self.controller batchRangeForTargetIndex:self.controller.infoBatchSize]]
-                                    fromSite:anything()
-                                     success:anything()
-                                     failure:anything()]) willReturn:@"dummy request 2"];
+        fetchGalleryInfoForImageFiles:[self expectedTitlesForRange:[self.controller batchRangeForTargetIndex:self.controller.infoBatchSize]]
+                             fromSite:anything()
+                              success:anything()
+                              failure:anything()]) willReturn:@"dummy request 2"];
 
-    NSArray* requests = [self.controller fetchBatchContainingIndex:0 withNthNeighbor:self.controller.infoBatchSize];
-    assertThat(requests, is(@[@"dummy request", @"dummy request 2"]));
+    NSArray *requests = [self.controller fetchBatchContainingIndex:0 withNthNeighbor:self.controller.infoBatchSize];
+    assertThat(requests, is(@[ @"dummy request", @"dummy request 2" ]));
 }
 
 - (void)testFetchBatchAlongWithNeighborIndexesInTheSameBatchOnlyResultsInOneFetch {
@@ -162,13 +162,13 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
 }
 
 - (void)testFetchingItemsThatWereAlreadyFetchedHasNoEffect {
-    NSArray* fetchedBatches = [self createAllExpectedBatches];
+    NSArray *fetchedBatches = [self createAllExpectedBatches];
 
     // fetch them in order
     [self verifySuccessfulFetchesForRanges:fetchedBatches];
 
     // attempt to fetch them all again in any order, nothing should happen
-    for (NSValue* boxedRange in [fetchedBatches wmf_shuffledCopy]) {
+    for (NSValue *boxedRange in [fetchedBatches wmf_shuffledCopy]) {
         NSRange range = [boxedRange rangeValue];
         [self.controller fetchBatchContainingIndex:range.location];
     }
@@ -190,7 +190,7 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
 
     PushExpectation();
 
-    NSError* dummyError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
+    NSError *dummyError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:nil];
     [self mockInfoFetcherFailure:dummyError forTitlesInRange:attemptedBatch];
 
     WaitForExpectations();
@@ -206,33 +206,33 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
 
 #pragma mark - Verifications & Expectations
 
-- (void)verifyInfoFetcherCallForIndexes:(NSIndexSet*)indexes {
-    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL* stop) {
-        NSRange expectedRange = [self.controller batchRangeForTargetIndex:idx];
-        assertThat(@(WMFRangeIsNotFoundOrEmpty(expectedRange)), isFalse());
-        [self verifyInfoFetcherCallForRange:expectedRange withSuccess:nil failure:nil];
+- (void)verifyInfoFetcherCallForIndexes:(NSIndexSet *)indexes {
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+      NSRange expectedRange = [self.controller batchRangeForTargetIndex:idx];
+      assertThat(@(WMFRangeIsNotFoundOrEmpty(expectedRange)), isFalse());
+      [self verifyInfoFetcherCallForRange:expectedRange withSuccess:nil failure:nil];
     }];
 }
 
 - (void)verifyInfoFetcherCallForRange:(NSRange)range
                           withSuccess:(id)success
                               failure:(id)failure {
-    NSArray* expectedTitles = [self expectedTitlesForRange:range];
+    NSArray *expectedTitles = [self expectedTitlesForRange:range];
     [MKTVerifyCount(self.mockInfoFetcher, MKTTimes(1)) fetchGalleryInfoForImageFiles:expectedTitles
                                                                             fromSite:self.testArticle.site
-                                                                             success:success ? : anything()
-                                                                             failure:failure ? : anything()];
+                                                                             success:success ?: anything()
+                                                                             failure:failure ?: anything()];
 }
 
-- (NSArray*)expectedTitlesForRange:(NSRange)range {
+- (NSArray *)expectedTitlesForRange:(NSRange)range {
     return [self.controller.imageFilePageTitles subarrayWithRange:range];
 }
 
-- (void)verifySuccessfulFetchesForRanges:(NSArray*)ranges {
-    NSUInteger numImages                         = [ranges count] * self.controller.infoBatchSize;
-    NSMutableArray* accumulatedFetchedImageInfos = [NSMutableArray arrayWithCapacity:numImages];
+- (void)verifySuccessfulFetchesForRanges:(NSArray *)ranges {
+    NSUInteger numImages = [ranges count] * self.controller.infoBatchSize;
+    NSMutableArray *accumulatedFetchedImageInfos = [NSMutableArray arrayWithCapacity:numImages];
 
-    for (NSValue* boxedRange in ranges) {
+    for (NSValue *boxedRange in ranges) {
         PushExpectation();
         assertThat(@([self.controller hasFetchedAllItems]), isFalse());
         [self fetchRangeSuccessfully:boxedRange.rangeValue
@@ -250,7 +250,7 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
 
     assertThat(@([self.controller hasFetchedAllItems]), isTrue());
 
-    for (NSValue* boxedRange in ranges) {
+    for (NSValue *boxedRange in ranges) {
         [MKTVerify(self.mockDelegate) imageInfoController:self.controller didFetchBatch:boxedRange.rangeValue];
     }
 
@@ -258,14 +258,14 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
 }
 
 - (void)fetchRangeSuccessfully:(NSRange)range
-                    fromImages:(NSArray*)testImages
-               withAccumulator:(NSMutableArray*)accumulatedInfos {
+                    fromImages:(NSArray *)testImages
+               withAccumulator:(NSMutableArray *)accumulatedInfos {
     [self.controller fetchBatchContainingIndex:range.location];
 
     assertThat(@([self.controller.fetchedIndices containsIndexesInRange:range]),
                describedAs(@"Ranges should be marked as fetched the first time they're requested", isTrue(), nil));
 
-    NSArray* imageInfoForCurrentBatch = [MWKImageInfo mappedFromImages:[testImages subarrayWithRange:range]];
+    NSArray *imageInfoForCurrentBatch = [MWKImageInfo mappedFromImages:[testImages subarrayWithRange:range]];
     [accumulatedInfos addObjectsFromArray:imageInfoForCurrentBatch];
 
     [self mockInfoFetcherSuccess:range];
@@ -273,49 +273,49 @@ static NSValue* WMFBoxedRangeMake(NSUInteger loc, NSUInteger len) {
 
 #pragma mark - Delegate Call Forwarding
 
-- (void)imageInfoController:(WMFImageInfoController*)controller failedToFetchBatch:(NSRange)range error:(NSError*)error {
+- (void)imageInfoController:(WMFImageInfoController *)controller failedToFetchBatch:(NSRange)range error:(NSError *)error {
     [self popExpectationAfter:^{
-        [self.mockDelegate imageInfoController:controller failedToFetchBatch:range error:error];
+      [self.mockDelegate imageInfoController:controller failedToFetchBatch:range error:error];
     }];
 }
 
-- (void)imageInfoController:(WMFImageInfoController*)controller didFetchBatch:(NSRange)range {
+- (void)imageInfoController:(WMFImageInfoController *)controller didFetchBatch:(NSRange)range {
     [self popExpectationAfter:^{
-        [self.mockDelegate imageInfoController:controller didFetchBatch:range];
+      [self.mockDelegate imageInfoController:controller didFetchBatch:range];
     }];
 }
 
 #pragma mark - Mocking
 
 - (void)mockInfoFetcherSuccess:(NSRange)range {
-    MKTArgumentCaptor* successBlockCaptor = [MKTArgumentCaptor new];
+    MKTArgumentCaptor *successBlockCaptor = [MKTArgumentCaptor new];
     [self verifyInfoFetcherCallForRange:range withSuccess:[successBlockCaptor capture] failure:nil];
-    void (^ successBlock)(NSArray*) = [successBlockCaptor value];
+    void (^successBlock)(NSArray *) = [successBlockCaptor value];
     successBlock([MWKImageInfo mappedFromImages:[self.controller.uniqueArticleImages subarrayWithRange:range]]);
 }
 
-- (void)mockInfoFetcherFailure:(NSError*)error forTitlesInRange:(NSRange)range {
-    MKTArgumentCaptor* errorBlockCaptor = [MKTArgumentCaptor new];
+- (void)mockInfoFetcherFailure:(NSError *)error forTitlesInRange:(NSRange)range {
+    MKTArgumentCaptor *errorBlockCaptor = [MKTArgumentCaptor new];
     [self verifyInfoFetcherCallForRange:range withSuccess:nil failure:[errorBlockCaptor capture]];
-    void (^ errorBlock)(NSError*) = [errorBlockCaptor value];
+    void (^errorBlock)(NSError *) = [errorBlockCaptor value];
     errorBlock(error);
 }
 
 #pragma mark - Data Generation
 
-- (NSArray*)createAllExpectedBatches {
-    NSUInteger numBatches  = self.controller.uniqueArticleImages.count / self.controller.infoBatchSize;
-    NSMutableArray* ranges = [NSMutableArray arrayWithCapacity:numBatches];
+- (NSArray *)createAllExpectedBatches {
+    NSUInteger numBatches = self.controller.uniqueArticleImages.count / self.controller.infoBatchSize;
+    NSMutableArray *ranges = [NSMutableArray arrayWithCapacity:numBatches];
     for (int i = 0; i < numBatches; i++) {
         [ranges addObject:WMFBoxedRangeMake(i * self.controller.infoBatchSize, self.controller.infoBatchSize)];
     }
     return [ranges copy];
 }
 
-- (NSArray*)generateSourceURLs:(NSUInteger)count {
-    NSMutableArray* names = [NSMutableArray new];
+- (NSArray *)generateSourceURLs:(NSUInteger)count {
+    NSMutableArray *names = [NSMutableArray new];
     for (NSUInteger i = 0; i < count; i++) {
-        NSString* sourceURL =
+        NSString *sourceURL =
             MWKCreateImageURLWithPath([NSString stringWithFormat:@"/foobar/foo%lu.jpg/440px-foo%lu.jpg", i, i]);
         [names addObject:sourceURL];
     }

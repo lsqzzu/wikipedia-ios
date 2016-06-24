@@ -12,47 +12,47 @@
 #import "NSObjectUtilities.h"
 #import "NSMutableDictionary+WMFMaybeSet.h"
 
-typedef NS_ENUM (NSUInteger, MWKSavedPageEntrySchemaVersion) {
+typedef NS_ENUM(NSUInteger, MWKSavedPageEntrySchemaVersion) {
     MWKSavedPageEntrySchemaVersionUnknown = 0,
-    MWKSavedPageEntrySchemaVersion1       = 1,
-    MWKSavedPageEntrySchemaVersion2       = 2,
+    MWKSavedPageEntrySchemaVersion1 = 1,
+    MWKSavedPageEntrySchemaVersion2 = 2,
     MWKSavedPageEntrySchemaVersionCurrent = MWKSavedPageEntrySchemaVersion2
 };
 
-static NSString* const MWKSavedPageEntrySchemaVersionKey = @"schemaVerison";
+static NSString *const MWKSavedPageEntrySchemaVersionKey = @"schemaVerison";
 
-static NSString* const MWKSavedPageEntryDidMigrateImageDataKey = @"didMigrateImageData";
+static NSString *const MWKSavedPageEntryDidMigrateImageDataKey = @"didMigrateImageData";
 
 @interface MWKSavedPageEntry ()
 
-@property (readwrite, strong, nonatomic) MWKTitle* title;
-@property (readwrite, strong, nonatomic) NSDate* date;
+@property (readwrite, strong, nonatomic) MWKTitle *title;
+@property (readwrite, strong, nonatomic) NSDate *date;
 
 @end
 
 @implementation MWKSavedPageEntry
 
-- (instancetype)initWithTitle:(MWKTitle*)title {
+- (instancetype)initWithTitle:(MWKTitle *)title {
     NSParameterAssert(title);
     self = [self initWithSite:title.site];
     if (self) {
         self.title = title;
-        self.date  = [NSDate date];
+        self.date = [NSDate date];
         // defaults to true for instances since new image data will go to the correct location
         self.didMigrateImageData = YES;
     }
     return self;
 }
 
-- (id)initWithDict:(NSDictionary*)dict {
+- (id)initWithDict:(NSDictionary *)dict {
     // Is this safe to run things before init?
-    NSString* domain   = [self requiredString:@"domain" dict:dict];
-    NSString* language = [self requiredString:@"language" dict:dict];
+    NSString *domain = [self requiredString:@"domain" dict:dict];
+    NSString *language = [self requiredString:@"language" dict:dict];
 
     self = [self initWithSite:[MWKSite siteWithDomain:domain language:language]];
     if (self) {
         self.title = [self requiredTitle:@"title" dict:dict];
-        NSNumber* schemaVersion = dict[MWKSavedPageEntrySchemaVersionKey];
+        NSNumber *schemaVersion = dict[MWKSavedPageEntrySchemaVersionKey];
 
         if (schemaVersion.unsignedIntegerValue > MWKSavedPageEntrySchemaVersion1) {
             self.date = [self requiredDate:@"date" dict:dict];
@@ -81,7 +81,7 @@ static NSString* const MWKSavedPageEntryDidMigrateImageDataKey = @"didMigrateIma
     }
 }
 
-- (BOOL)isEqualToEntry:(MWKSavedPageEntry*)rhs {
+- (BOOL)isEqualToEntry:(MWKSavedPageEntry *)rhs {
     return WMF_RHS_PROP_EQUAL(title, isEqualToTitle:);
 }
 
@@ -89,19 +89,19 @@ static NSString* const MWKSavedPageEntryDidMigrateImageDataKey = @"didMigrateIma
     return self.title.hash;
 }
 
-- (NSString*)description {
+- (NSString *)description {
     return [NSString stringWithFormat:@"%@ %@, didMigrateImageData: %d",
-            [super description], self.title, self.didMigrateImageData];
+                                      [super description], self.title, self.didMigrateImageData];
 }
 
 #pragma mark - MWKListObject
 
-- (id <NSCopying>)listIndex {
+- (id<NSCopying>)listIndex {
     return self.title;
 }
 
 - (id)dataExport {
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
     [dict wmf_maybeSetObject:@(MWKSavedPageEntrySchemaVersionCurrent) forKey:MWKSavedPageEntrySchemaVersionKey];
     [dict wmf_maybeSetObject:@(self.didMigrateImageData) forKey:MWKSavedPageEntryDidMigrateImageDataKey];

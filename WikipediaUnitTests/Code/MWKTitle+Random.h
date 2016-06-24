@@ -9,9 +9,8 @@
 #import "MWKTitle.h"
 #import "MWKRandom.h"
 
-@interface MWKTitle (Random)
-<MWKRandom>
+@interface MWKTitle (Random) <MWKRandom>
 
-+ (instancetype)randomWithFragment:(NSString*)fragment;
++ (instancetype)randomWithFragment:(NSString *)fragment;
 
 @end

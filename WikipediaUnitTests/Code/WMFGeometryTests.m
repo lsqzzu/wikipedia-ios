@@ -19,7 +19,7 @@
 
 - (void)testCoordinateConversionOfRegularRect {
     CGRect testUIRect = CGRectMake(50, 10, 100, 100);
-    CGSize testSize   = CGSizeMake(200, 200);
+    CGSize testSize = CGSizeMake(200, 200);
 
     CGRect ui2cgConversion = WMFConvertUICoordinateRectToCGCoordinateRectUsingSize(testUIRect, testSize);
 
@@ -35,7 +35,7 @@
 
 - (void)testNormalization {
     CGRect testUIRect = CGRectMake(50, 10, 100, 100);
-    CGSize testSize   = CGSizeMake(200, 200);
+    CGSize testSize = CGSizeMake(200, 200);
 
     CGRect normalizedRect = WMFNormalizeRectUsingSize(testUIRect, testSize);
     XCTAssertEqualRectsWithAccuracy(normalizedRect,
@@ -50,9 +50,9 @@
 
 - (void)testConcatTransforms {
     CGRect testUIRect = CGRectMake(50, 10, 100, 100);
-    CGSize testSize   = CGSizeMake(200, 200);
+    CGSize testSize = CGSizeMake(200, 200);
 
-    CGRect convertedRect              = WMFConvertUICoordinateRectToCGCoordinateRectUsingSize(testUIRect, testSize);
+    CGRect convertedRect = WMFConvertUICoordinateRectToCGCoordinateRectUsingSize(testUIRect, testSize);
     CGRect convertedAndNormalizedRect = WMFNormalizeRectUsingSize(convertedRect, testSize);
 
     CGRect transformedRect = WMFConvertAndNormalizeCGRectUsingSize(testUIRect, testSize);

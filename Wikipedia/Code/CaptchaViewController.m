@@ -8,7 +8,7 @@
 
 @interface CaptchaViewController ()
 
-@property (weak, nonatomic) IBOutlet UIButton* reloadCaptchaButton;
+@property (weak, nonatomic) IBOutlet UIButton *reloadCaptchaButton;
 
 @end
 
@@ -31,10 +31,10 @@
 
     self.captchaTextBox.textAlignment = NSTextAlignmentNatural;
 
-    [self adjustConstraintsScaleForViews:@[self.captchaImageView, self.captchaTextBox, self.reloadCaptchaButton]];
+    [self adjustConstraintsScaleForViews:@[ self.captchaImageView, self.captchaTextBox, self.reloadCaptchaButton ]];
 
     self.reloadCaptchaButton.titleLabel.font = [UIFont systemFontOfSize:15.0 * MENUS_SCALE_MULTIPLIER];
-    self.captchaTextBox.font                 = [UIFont systemFontOfSize:15.0 * MENUS_SCALE_MULTIPLIER];
+    self.captchaTextBox.font = [UIFont systemFontOfSize:15.0 * MENUS_SCALE_MULTIPLIER];
 }
 
 - (void)reloadCaptchaPushed:(id)sender {
@@ -54,7 +54,7 @@
     // to monitor changes to captchaTextBox and also when its keyboard done/next
     // buttons are tapped.
     if ([self.parentViewController conformsToProtocol:@protocol(UITextFieldDelegate)]) {
-        self.captchaTextBox.delegate = (id <UITextFieldDelegate>)self.parentViewController;
+        self.captchaTextBox.delegate = (id<UITextFieldDelegate>)self.parentViewController;
     }
 }
 

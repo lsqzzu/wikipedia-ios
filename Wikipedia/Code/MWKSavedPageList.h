@@ -8,35 +8,34 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString* const MWKSavedPageListDidSaveNotification;
-extern NSString* const MWKSavedPageListDidUnsaveNotification;
+extern NSString *const MWKSavedPageListDidSaveNotification;
+extern NSString *const MWKSavedPageListDidUnsaveNotification;
 
-extern NSString* const MWKTitleKey;
+extern NSString *const MWKTitleKey;
 
+@interface MWKSavedPageList : MWKList <MWKSavedPageEntry *, MWKTitle *>
+<MWKDataStoreList>
 
-@interface MWKSavedPageList : MWKList<MWKSavedPageEntry*, MWKTitle*>
-    < MWKDataStoreList >
+    - (MWKSavedPageEntry * __nullable)entryForListIndex : (MWKTitle *)title;
+- (MWKSavedPageEntry *)mostRecentEntry;
 
-- (MWKSavedPageEntry* __nullable)entryForListIndex:(MWKTitle*)title;
-- (MWKSavedPageEntry*)           mostRecentEntry;
-
-- (BOOL)isSaved:(MWKTitle*)title;
+- (BOOL)isSaved:(MWKTitle *)title;
 
 /**
  * Toggle the save state for `title`.
  *
  * @param title Title to toggle state for, either saving or un-saving it.
  */
-- (void)toggleSavedPageForTitle:(MWKTitle*)title;
+- (void)toggleSavedPageForTitle:(MWKTitle *)title;
 
 /**
  *  Add a saved page
  *
  *  @param title The title of the page to add
  */
-- (void)addSavedPageWithTitle:(MWKTitle*)title;
+- (void)addSavedPageWithTitle:(MWKTitle *)title;
 
-- (NSDictionary*)dataExport;
+- (NSDictionary *)dataExport;
 
 @end
 

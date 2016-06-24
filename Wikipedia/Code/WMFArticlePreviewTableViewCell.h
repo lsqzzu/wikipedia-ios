@@ -7,7 +7,7 @@
 
 @interface WMFArticlePreviewTableViewCell : WMFArticleListTableViewCell
 
-@property (nonatomic, strong) NSString* snippetText;
+@property (nonatomic, strong) NSString *snippetText;
 
 + (CGFloat)estimatedRowHeight;
 
@@ -18,10 +18,9 @@
  *  @param title         The title to save/unsave
  *  @param savedPageList The saved page list to update
  */
-- (void)setSaveableTitle:(MWKTitle*)title savedPageList:(MWKSavedPageList*)savedPageList;
+- (void)setSaveableTitle:(MWKTitle *)title savedPageList:(MWKSavedPageList *)savedPageList;
 
 @end
-
 
 @interface WMFArticlePreviewTableViewCell (Outlets)
 
@@ -32,10 +31,9 @@
  */
 - (void)setLoading:(BOOL)loading;
 
-
 /**
  *  Exposed so the analytics source can be set.
  */
-@property (strong, nonatomic, readonly) WMFSaveButtonController* saveButtonController;
+@property (strong, nonatomic, readonly) WMFSaveButtonController *saveButtonController;
 
 @end

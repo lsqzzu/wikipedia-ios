@@ -6,27 +6,27 @@
 
 @interface WMFSearchDataSource ()
 
-@property (nonatomic, strong, readwrite) MWKSite* searchSite;
-@property (nonatomic, strong, readwrite) WMFSearchResults* searchResults;
+@property (nonatomic, strong, readwrite) MWKSite *searchSite;
+@property (nonatomic, strong, readwrite) WMFSearchResults *searchResults;
 
 @end
 
 @implementation WMFSearchDataSource
 
-- (nonnull instancetype)initWithSearchSite:(MWKSite*)site searchResults:(WMFSearchResults*)searchResults {
+- (nonnull instancetype)initWithSearchSite:(MWKSite *)site searchResults:(WMFSearchResults *)searchResults {
     NSParameterAssert(site);
     NSParameterAssert(searchResults);
     self = [super initWithTarget:searchResults keyPath:WMF_SAFE_KEYPATH(searchResults, results)];
     if (self) {
-        self.searchSite    = site;
+        self.searchSite = site;
         self.searchResults = searchResults;
     }
     return self;
 }
 
-- (NSArray*)titles {
-    return [[self.searchResults results] bk_map:^id (MWKSearchResult* obj) {
-        return [self.searchSite titleWithNormalizedTitle:obj.displayTitle];
+- (NSArray *)titles {
+    return [[self.searchResults results] bk_map:^id(MWKSearchResult *obj) {
+      return [self.searchSite titleWithNormalizedTitle:obj.displayTitle];
     }];
 }
 
@@ -34,17 +34,17 @@
     return [self.searchResults.results count];
 }
 
-- (MWKSearchResult*)searchResultForIndexPath:(NSIndexPath*)indexPath {
-    MWKSearchResult* result = self.searchResults.results[indexPath.row];
+- (MWKSearchResult *)searchResultForIndexPath:(NSIndexPath *)indexPath {
+    MWKSearchResult *result = self.searchResults.results[indexPath.row];
     return result;
 }
 
-- (MWKTitle*)titleForIndexPath:(NSIndexPath*)indexPath {
-    MWKSearchResult* result = [self searchResultForIndexPath:indexPath];
+- (MWKTitle *)titleForIndexPath:(NSIndexPath *)indexPath {
+    MWKSearchResult *result = [self searchResultForIndexPath:indexPath];
     return [self.searchSite titleWithNormalizedTitle:result.displayTitle];
 }
 
-- (BOOL)canDeleteItemAtIndexpath:(NSIndexPath*)indexPath {
+- (BOOL)canDeleteItemAtIndexpath:(NSIndexPath *)indexPath {
     return NO;
 }
 

@@ -27,23 +27,23 @@
 #import "NSManagedObject+WMFModelFactory.h"
 
 @interface LegacyCoreDataMigratorTests : XCTestCase
-@property (nonatomic) LegacyCoreDataMigrator* migrator;
-@property (nonatomic) LegacyDataMigrator* converter;
-@property (nonatomic) MWKDataStore* dataStore;
-@property (nonatomic) NSManagedObjectContext* tmpContext;
+@property (nonatomic) LegacyCoreDataMigrator *migrator;
+@property (nonatomic) LegacyDataMigrator *converter;
+@property (nonatomic) MWKDataStore *dataStore;
+@property (nonatomic) NSManagedObjectContext *tmpContext;
 @end
 
 @implementation LegacyCoreDataMigratorTests
 
 - (void)setUp {
     [super setUp];
-    self.migrator          = [[LegacyCoreDataMigrator alloc] init];
-    self.dataStore         = [MWKDataStore temporaryDataStore];
-    self.converter         = [[LegacyDataMigrator alloc] initWithDataStore:self.dataStore];
+    self.migrator = [[LegacyCoreDataMigrator alloc] init];
+    self.dataStore = [MWKDataStore temporaryDataStore];
+    self.converter = [[LegacyDataMigrator alloc] initWithDataStore:self.dataStore];
     self.migrator.delegate = self.converter;
 
     // objects must be inserted into a MOC in order for (inverse) relationships to be maintained automatically
-//    self.tmpContext = [NSManagedObjectContext wmf_tempContextInBundle:[NSBundle bundleForClass:[self class]]];
+    //    self.tmpContext = [NSManagedObjectContext wmf_tempContextInBundle:[NSBundle bundleForClass:[self class]]];
     self.tmpContext = [NSManagedObjectContext wmf_tempContext];
 }
 
@@ -57,42 +57,42 @@
 }
 
 - (void)testArticleWithoutThumbnail {
-    Article* oldArticle = [self createOldArticleWithSections:5 imagesPerSection:5];
+    Article *oldArticle = [self createOldArticleWithSections:5 imagesPerSection:5];
     oldArticle.thumbnailImage = nil;
     [self verifyMigrationOfArticle:oldArticle];
 }
 
 - (void)testArticleWithoutSections {
-    Article* oldArticle = [self createOldArticleWithSections:0 imagesPerSection:0];
+    Article *oldArticle = [self createOldArticleWithSections:0 imagesPerSection:0];
     NSParameterAssert(oldArticle.section == nil || oldArticle.section.count == 0);
     [self verifyMigrationOfArticle:oldArticle];
 }
 
 - (void)testArticleWithoutImages {
-    Article* oldArticle = [self createOldArticleWithSections:0 imagesPerSection:0];
+    Article *oldArticle = [self createOldArticleWithSections:0 imagesPerSection:0];
     oldArticle.thumbnailImage = nil;
     [self verifyMigrationOfArticle:oldArticle];
 }
 
 - (void)testArticleWithMissingRequiredFieldsIsGracefullySkipped {
-    Article* oldArticle = [self createOldArticleWithSections:10 imagesPerSection:5];
+    Article *oldArticle = [self createOldArticleWithSections:10 imagesPerSection:5];
     // lastModified is a required field
     oldArticle.lastmodified = nil;
     [self verifySkippedMigrationOfArticle:oldArticle];
 }
 
 - (void)testArticleWithInvalidSectionIsGracefullySkipped {
-    Article* oldArticle = [self createOldArticleWithSections:10 imagesPerSection:5];
-    Section* section    = oldArticle.sectionsBySectionId.lastObject;
+    Article *oldArticle = [self createOldArticleWithSections:10 imagesPerSection:5];
+    Section *section = oldArticle.sectionsBySectionId.lastObject;
     // sectionId is a required field
     section.sectionId = nil;
     [self verifySkippedMigrationOfArticle:oldArticle];
 }
 
 - (void)testArticleWithInvalidSectionImageIsGracefullySkipped {
-    Article* oldArticle = [self createOldArticleWithSections:10 imagesPerSection:5];
-    Section* section    = oldArticle.sectionsBySectionId.lastObject;
-    SectionImage* image = section.sectionImagesByIndex.lastObject;
+    Article *oldArticle = [self createOldArticleWithSections:10 imagesPerSection:5];
+    Section *section = oldArticle.sectionsBySectionId.lastObject;
+    SectionImage *image = section.sectionImagesByIndex.lastObject;
     // sourceUrl is a required field
     image.image.sourceUrl = nil;
     [self verifySkippedMigrationOfArticle:oldArticle];
@@ -100,27 +100,27 @@
 
 #pragma mark - Test Utils
 
-- (NSString*)databasePathForContext:(NSManagedObjectContext*)context {
+- (NSString *)databasePathForContext:(NSManagedObjectContext *)context {
     return [[[[[context persistentStoreCoordinator] persistentStores] firstObject] URL] absoluteString];
 }
 
-- (void)verifySkippedMigrationOfArticle:(Article*)oldArticle {
+- (void)verifySkippedMigrationOfArticle:(Article *)oldArticle {
     XCTAssertNoThrow([self.migrator migrateArticle:oldArticle],
                      @"Failed to catch an article migration exception.");
-    MWKTitle* migratedArticleTitle = [self.migrator migrateArticleTitle:oldArticle];
-    NSString* articleDataPath      = [self.dataStore pathForTitle:migratedArticleTitle];
+    MWKTitle *migratedArticleTitle = [self.migrator migrateArticleTitle:oldArticle];
+    NSString *articleDataPath = [self.dataStore pathForTitle:migratedArticleTitle];
     XCTAssertFalse([[NSFileManager defaultManager] fileExistsAtPath:articleDataPath],
                    @"Expected article to not be saved due to exception during migration.");
 }
 
-- (void)verifyMigrationOfArticle:(Article*)oldArticle {
+- (void)verifyMigrationOfArticle:(Article *)oldArticle {
     [self.migrator migrateArticle:oldArticle];
 
-    MWKTitle* migratedArticleTitle = [self.migrator migrateArticleTitle:oldArticle];
+    MWKTitle *migratedArticleTitle = [self.migrator migrateArticleTitle:oldArticle];
 
     [self verifySiteAndTitleForOldArticle:oldArticle];
 
-    MWKArticle* migratedArticle = [self.dataStore articleWithTitle:migratedArticleTitle];
+    MWKArticle *migratedArticle = [self.dataStore articleWithTitle:migratedArticleTitle];
 
     [self verifyArticleProperties:migratedArticle correspondsToOldArticle:oldArticle];
 
@@ -131,9 +131,9 @@
     [self verifyArticleSectionAndLeadImages:migratedArticle correspondsToOldArticle:oldArticle];
 }
 
-- (void)verifySiteAndTitleForOldArticle:(Article*)oldArticle {
-    MWKSite* migratedSite          = [self.migrator migrateArticleSite:oldArticle];
-    MWKTitle* migratedArticleTitle = [self.migrator migrateArticleTitle:oldArticle];
+- (void)verifySiteAndTitleForOldArticle:(Article *)oldArticle {
+    MWKSite *migratedSite = [self.migrator migrateArticleSite:oldArticle];
+    MWKTitle *migratedArticleTitle = [self.migrator migrateArticleTitle:oldArticle];
 
     assertThat(migratedSite, is(notNilValue()));
     assertThat(migratedSite.domain, is(@"wikipedia.org"));
@@ -144,9 +144,9 @@
     assertThat(migratedArticleTitle.site, is(migratedSite));
 }
 
-- (void)verifyArticleProperties:(MWKArticle*)migratedArticle correspondsToOldArticle:(Article*)oldArticle {
-    MWKSite* migratedSite          = [self.migrator migrateArticleSite:oldArticle];
-    MWKTitle* migratedArticleTitle = [self.migrator migrateArticleTitle:oldArticle];
+- (void)verifyArticleProperties:(MWKArticle *)migratedArticle correspondsToOldArticle:(Article *)oldArticle {
+    MWKSite *migratedSite = [self.migrator migrateArticleSite:oldArticle];
+    MWKTitle *migratedArticleTitle = [self.migrator migrateArticleTitle:oldArticle];
 
     assertThat(migratedArticle, is(notNilValue()));
 
@@ -165,38 +165,38 @@
     // article misc
     assertThat(migratedArticle.redirected, is([migratedSite titleWithString:oldArticle.redirected]));
     assertThat(@(migratedArticle.languagecount), is(oldArticle.languagecount));
-    assertThat([migratedArticle.protection allowedGroupsForAction:@"edit"], is(@[oldArticle.protectionStatus]));
+    assertThat([migratedArticle.protection allowedGroupsForAction:@"edit"], is(@[ oldArticle.protectionStatus ]));
     assertThat(@(migratedArticle.editable), is(oldArticle.editable));
 }
 
-- (void)verifyArticleSections:(MWKArticle*)migratedArticle correspondToOldArticle:(Article*)oldArticle {
-    MWKSite* migratedSite       = [self.migrator migrateArticleSite:oldArticle];
-    NSArray* oldArticleSections = [oldArticle sectionsBySectionId];
+- (void)verifyArticleSections:(MWKArticle *)migratedArticle correspondToOldArticle:(Article *)oldArticle {
+    MWKSite *migratedSite = [self.migrator migrateArticleSite:oldArticle];
+    NSArray *oldArticleSections = [oldArticle sectionsBySectionId];
 
     assertThat(@(migratedArticle.sections.count), is(equalToUnsignedInteger(oldArticleSections.count)));
-    [oldArticleSections enumerateObjectsUsingBlock:^(Section* oldSection, NSUInteger idx, BOOL* stop) {
-        MWKSection* migratedSection = migratedArticle.sections[idx];
-        assertThat(@(migratedSection.sectionId), is(oldSection.sectionId));
-        assertThat(migratedSection.toclevel, is(oldSection.tocLevel));
-        assertThat(migratedSection.level, is(equalToInt(oldSection.level.intValue)));
-        assertThat(migratedSection.anchor, is(oldSection.anchor));
-        assertThat(migratedSection.fromtitle,
-                   is([MWKTitle titleWithString:oldSection.fromTitle site:migratedSite]));
-        assertThat(migratedSection.line, is(oldSection.title));
-        assertThat(migratedSection.text, is(oldSection.html));
+    [oldArticleSections enumerateObjectsUsingBlock:^(Section *oldSection, NSUInteger idx, BOOL *stop) {
+      MWKSection *migratedSection = migratedArticle.sections[idx];
+      assertThat(@(migratedSection.sectionId), is(oldSection.sectionId));
+      assertThat(migratedSection.toclevel, is(oldSection.tocLevel));
+      assertThat(migratedSection.level, is(equalToInt(oldSection.level.intValue)));
+      assertThat(migratedSection.anchor, is(oldSection.anchor));
+      assertThat(migratedSection.fromtitle,
+                 is([MWKTitle titleWithString:oldSection.fromTitle site:migratedSite]));
+      assertThat(migratedSection.line, is(oldSection.title));
+      assertThat(migratedSection.text, is(oldSection.html));
 
-        assertThat(@(migratedSection.images.count), is(equalToUnsignedInteger(oldSection.sectionImage.count)));
-        for (SectionImage* sectionImage in oldSection.sectionImage) {
-            MWKImage* migratedSectionImage = [migratedSection.images imageWithURL:sectionImage.image.sourceUrl];
-            assertThat(migratedSectionImage, is(notNilValue()));
-            assertThat([migratedSectionImage asNSData], is(sectionImage.image.imageData.data));
-        }
+      assertThat(@(migratedSection.images.count), is(equalToUnsignedInteger(oldSection.sectionImage.count)));
+      for (SectionImage *sectionImage in oldSection.sectionImage) {
+          MWKImage *migratedSectionImage = [migratedSection.images imageWithURL:sectionImage.image.sourceUrl];
+          assertThat(migratedSectionImage, is(notNilValue()));
+          assertThat([migratedSectionImage asNSData], is(sectionImage.image.imageData.data));
+      }
     }];
 }
 
-- (void)verifyArticleThumbnail:(MWKArticle*)migratedArticle matchesOldArticle:(Article*)oldArticle {
+- (void)verifyArticleThumbnail:(MWKArticle *)migratedArticle matchesOldArticle:(Article *)oldArticle {
     if (oldArticle.thumbnailImage) {
-        NSString* firstImageURL = [migratedArticle.images imageURLAtIndex:0];
+        NSString *firstImageURL = [migratedArticle.images imageURLAtIndex:0];
         assertThat(migratedArticle.thumbnailURL, is(oldArticle.thumbnailImage.sourceUrl));
         assertThat(firstImageURL, is(oldArticle.thumbnailImage.sourceUrl));
         assertThat([[migratedArticle imageWithURL:firstImageURL] asNSData],
@@ -206,13 +206,13 @@
     }
 }
 
-- (void)verifyArticleSectionAndLeadImages:(MWKArticle*)migratedArticle correspondsToOldArticle:(Article*)oldArticle {
-    NSArray* oldArticleImages          = [oldArticle allImages];
+- (void)verifyArticleSectionAndLeadImages:(MWKArticle *)migratedArticle correspondsToOldArticle:(Article *)oldArticle {
+    NSArray *oldArticleImages = [oldArticle allImages];
     NSUInteger const thumbnailModifier = oldArticle.thumbnailImage ? 1 : 0;
     assertThat(@(migratedArticle.images.count), is(equalToUnsignedInteger(oldArticleImages.count + thumbnailModifier)));
     for (NSUInteger i = thumbnailModifier; i < oldArticleImages.count; i++) {
-        Image* oldImage         = oldArticleImages[i];
-        MWKImage* migratedImage = migratedArticle.images[i + thumbnailModifier];
+        Image *oldImage = oldArticleImages[i];
+        MWKImage *migratedImage = migratedArticle.images[i + thumbnailModifier];
         assertThat(migratedImage.sourceURLString, is(oldImage.sourceUrl));
         assertThat([migratedImage asNSData], is(oldImage.imageData.data));
     }
@@ -227,78 +227,84 @@
     }
 }
 
-- (Article*)createOldArticleWithSections:(NSUInteger)numSections imagesPerSection:(NSUInteger)numImages {
-    Article* oldArticle = [Article wmf_newWithContext:self.tmpContext];
+- (Article *)createOldArticleWithSections:(NSUInteger)numSections imagesPerSection:(NSUInteger)numImages {
+    Article *oldArticle = [Article wmf_newWithContext:self.tmpContext];
     oldArticle.redirected = @"redirected title";
-    oldArticle.domain     = @"en";
+    oldArticle.domain = @"en";
     // need to use date formatter when creating test dates, otherwise comparison will fail (!= miliseconds)
-    oldArticle.lastmodified     = [[NSDateFormatter wmf_iso8601Formatter] dateFromString:@"2015-01-01T12:00:00Z"];
-    oldArticle.lastmodifiedby   = @"lastmodifiedby.name";
-    oldArticle.articleId        = @1;
-    oldArticle.languagecount    = @2;
-    oldArticle.displayTitle     = @"Display title";
-    oldArticle.title            = @"Title";
+    oldArticle.lastmodified = [[NSDateFormatter wmf_iso8601Formatter] dateFromString:@"2015-01-01T12:00:00Z"];
+    oldArticle.lastmodifiedby = @"lastmodifiedby.name";
+    oldArticle.articleId = @1;
+    oldArticle.languagecount = @2;
+    oldArticle.displayTitle = @"Display title";
+    oldArticle.title = @"Title";
     oldArticle.protectionStatus = @"protected";
-    oldArticle.editable         = @NO;
-    oldArticle.thumbnailImage   = ^Image* {
-        Image* image = [Image wmf_newWithContext:self.tmpContext];
+    oldArticle.editable = @NO;
+    oldArticle.thumbnailImage = ^Image * {
+        Image *image = [Image wmf_newWithContext:self.tmpContext];
         image.sourceUrl = MWKCreateImageURLWithPath(@"Article_thumb.jpg");
-        image.imageData = ^ImageData* {
-            ImageData* imageData = [ImageData wmf_newWithContext:self.tmpContext];
+        image.imageData = ^ImageData * {
+            ImageData *imageData = [ImageData wmf_newWithContext:self.tmpContext];
             imageData.imageData = image;
-            imageData.data      = [image.sourceUrl dataUsingEncoding:NSUTF8StringEncoding];
+            imageData.data = [image.sourceUrl dataUsingEncoding:NSUTF8StringEncoding];
             return imageData;
-        } ();
+        }
+        ();
         [image addArticleObject:oldArticle];
         return image;
-    } ();
-    oldArticle.section = ^NSSet* {
-        NSMutableSet* sections = [NSMutableSet new];
-        __block int s          = 0;
-        NSString*(^ formatWithSectionNum)(NSString*) = ^(NSString* frmt) {
-            return [NSString stringWithFormat:frmt, s];
+    }
+    ();
+    oldArticle.section = ^NSSet * {
+        NSMutableSet *sections = [NSMutableSet new];
+        __block int s = 0;
+        NSString * (^formatWithSectionNum)(NSString *) = ^(NSString *frmt) {
+          return [NSString stringWithFormat:frmt, s];
         };
         for (; s < numSections; s++) {
             [sections addObject:^{
-                Section* section = [Section wmf_newWithContext:self.tmpContext];
-                section.tocLevel = @0;
-                section.level = @"0";
-                section.title = formatWithSectionNum(@"Section %d");
-                section.fromTitle = formatWithSectionNum(@"Section %d fromTitle");
-                section.anchor = formatWithSectionNum(@"anchor %d");
-                section.sectionId = @(s);
-                section.html = formatWithSectionNum(@"<p>Section %d source</p>");
-                section.sectionImage = ^NSSet* {
-                    NSMutableSet* images = [NSMutableSet new];
-                    __block int i = 0;
-                    NSString*(^ formatWithSectionAndImageNum)(NSString*) = ^NSString* (NSString* frmt) {
-                        return [NSString stringWithFormat:frmt, s, i];
-                    };
-                    for (; i < numImages; i++) {
-                        [images addObject:^SectionImage* {
-                            SectionImage* sectionImage = [SectionImage wmf_newWithContext:self.tmpContext];
-                            sectionImage.index = @(i);
-                            sectionImage.image = ^Image* {
-                                Image* image = [Image wmf_newWithContext:self.tmpContext];
-                                image.sourceUrl =
-                                    MWKCreateImageURLWithPath(formatWithSectionAndImageNum(@"Section_%d_%d.jpg"));
-                                image.imageData = ^ImageData* {
-                                    ImageData* imageData = [ImageData wmf_newWithContext:self.tmpContext];
-                                    imageData.data = [image.sourceUrl dataUsingEncoding:NSUTF8StringEncoding];
-                                    return imageData;
-                                } ();
-                                return image;
-                            } ();
-                            return sectionImage;
-                        } ()];
-                    }
-                    return images;
-                } ();
-                return section;
-            } ()];
+              Section *section = [Section wmf_newWithContext:self.tmpContext];
+              section.tocLevel = @0;
+              section.level = @"0";
+              section.title = formatWithSectionNum(@"Section %d");
+              section.fromTitle = formatWithSectionNum(@"Section %d fromTitle");
+              section.anchor = formatWithSectionNum(@"anchor %d");
+              section.sectionId = @(s);
+              section.html = formatWithSectionNum(@"<p>Section %d source</p>");
+              section.sectionImage = ^NSSet * {
+                  NSMutableSet *images = [NSMutableSet new];
+                  __block int i = 0;
+                  NSString * (^formatWithSectionAndImageNum)(NSString *) = ^NSString *(NSString *frmt) {
+                      return [NSString stringWithFormat:frmt, s, i];
+                  };
+                  for (; i < numImages; i++) {
+                      [images addObject:^SectionImage * {
+                        SectionImage *sectionImage = [SectionImage wmf_newWithContext:self.tmpContext];
+                        sectionImage.index = @(i);
+                        sectionImage.image = ^Image * {
+                            Image *image = [Image wmf_newWithContext:self.tmpContext];
+                            image.sourceUrl =
+                                MWKCreateImageURLWithPath(formatWithSectionAndImageNum(@"Section_%d_%d.jpg"));
+                            image.imageData = ^ImageData * {
+                                ImageData *imageData = [ImageData wmf_newWithContext:self.tmpContext];
+                                imageData.data = [image.sourceUrl dataUsingEncoding:NSUTF8StringEncoding];
+                                return imageData;
+                            }
+                            ();
+                            return image;
+                        }
+                        ();
+                        return sectionImage;
+                      }()];
+                  }
+                  return images;
+              }
+              ();
+              return section;
+            }()];
         }
         return sections;
-    } ();
+    }
+    ();
     return oldArticle;
 }
 

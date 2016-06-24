@@ -4,7 +4,6 @@
 #import "Saved.h"
 #import "Article.h"
 
-
 @implementation Saved
 
 @dynamic dateSaved;

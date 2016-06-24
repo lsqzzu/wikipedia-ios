@@ -46,7 +46,6 @@
  */
 + (instancetype)wmf_lightGrayColor;
 
-
 + (instancetype)wmf_999999Color;
 
 + (instancetype)wmf_777777Color;

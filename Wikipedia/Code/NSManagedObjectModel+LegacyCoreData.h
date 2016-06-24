@@ -10,6 +10,6 @@
 
 @interface NSManagedObjectModel (LegacyCoreData)
 
-+ (NSManagedObjectModel*)wmf_legacyCoreDataModel;
++ (NSManagedObjectModel *)wmf_legacyCoreDataModel;
 
 @end

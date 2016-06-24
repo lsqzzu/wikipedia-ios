@@ -26,7 +26,7 @@ NSUInteger const WMFMaxRelatedSearchResultLimit = 20;
 #pragma mark - Internal Class Declarations
 
 @interface WMFRelatedSearchRequestParameters : NSObject
-@property (nonatomic, strong) MWKTitle* title;
+@property (nonatomic, strong) MWKTitle *title;
 @property (nonatomic, assign) NSUInteger numberOfResults;
 
 @end
@@ -38,7 +38,7 @@ NSUInteger const WMFMaxRelatedSearchResultLimit = 20;
 
 @interface WMFRelatedSearchFetcher ()
 
-@property (nonatomic, strong) AFHTTPSessionManager* operationManager;
+@property (nonatomic, strong) AFHTTPSessionManager *operationManager;
 
 @end
 
@@ -47,8 +47,8 @@ NSUInteger const WMFMaxRelatedSearchResultLimit = 20;
 - (instancetype)init {
     self = [super init];
     if (self) {
-        AFHTTPSessionManager* manager = [AFHTTPSessionManager wmf_createDefaultManager];
-        manager.requestSerializer  = [WMFRelatedSearchRequestSerializer serializer];
+        AFHTTPSessionManager *manager = [AFHTTPSessionManager wmf_createDefaultManager];
+        manager.requestSerializer = [WMFRelatedSearchRequestSerializer serializer];
         manager.responseSerializer =
             [WMFMantleJSONResponseSerializer serializerForValuesInDictionaryOfType:[MWKSearchResult class]
                                                                        fromKeypath:@"query.pages"];
@@ -61,24 +61,24 @@ NSUInteger const WMFMaxRelatedSearchResultLimit = 20;
     return [[self.operationManager operationQueue] operationCount] > 0;
 }
 
-- (AnyPromise*)fetchArticlesRelatedToTitle:(MWKTitle*)title
-                               resultLimit:(NSUInteger)resultLimit {
+- (AnyPromise *)fetchArticlesRelatedToTitle:(MWKTitle *)title
+                                resultLimit:(NSUInteger)resultLimit {
     return [AnyPromise promiseWithResolverBlock:^(PMKResolver resolve) {
-        WMFRelatedSearchRequestParameters* params = [WMFRelatedSearchRequestParameters new];
-        params.title = title;
-        params.numberOfResults = resultLimit;
+      WMFRelatedSearchRequestParameters *params = [WMFRelatedSearchRequestParameters new];
+      params.title = title;
+      params.numberOfResults = resultLimit;
 
-        [self.operationManager wmf_GETWithSite:title.site
-                                    parameters:params
-                                         retry:NULL
-                                       success:^(NSURLSessionDataTask* operation, id responseObject) {
+      [self.operationManager wmf_GETWithSite:title.site
+          parameters:params
+          retry:NULL
+          success:^(NSURLSessionDataTask *operation, id responseObject) {
             [[MWNetworkActivityIndicatorManager sharedManager] pop];
             resolve([[WMFRelatedSearchResults alloc] initWithTitle:title results:responseObject]);
-        }
-                                       failure:^(NSURLSessionDataTask* operation, NSError* error) {
+          }
+          failure:^(NSURLSessionDataTask *operation, NSError *error) {
             [[MWNetworkActivityIndicatorManager sharedManager] pop];
             resolve(error);
-        }];
+          }];
     }];
 }
 
@@ -103,31 +103,31 @@ NSUInteger const WMFMaxRelatedSearchResultLimit = 20;
 
 @implementation WMFRelatedSearchRequestSerializer
 
-- (nullable NSURLRequest*)requestBySerializingRequest:(NSURLRequest*)request
-                                       withParameters:(nullable id)parameters
-                                                error:(NSError* __autoreleasing*)error {
-    NSDictionary* serializedParams = [self serializedParams:(WMFRelatedSearchRequestParameters*)parameters];
+- (nullable NSURLRequest *)requestBySerializingRequest:(NSURLRequest *)request
+                                        withParameters:(nullable id)parameters
+                                                 error:(NSError *__autoreleasing *)error {
+    NSDictionary *serializedParams = [self serializedParams:(WMFRelatedSearchRequestParameters *)parameters];
     return [super requestBySerializingRequest:request withParameters:serializedParams error:error];
 }
 
-- (NSDictionary*)serializedParams:(WMFRelatedSearchRequestParameters*)params {
-    NSNumber* numResults            = @(params.numberOfResults);
-    NSMutableDictionary* baseParams = [NSMutableDictionary wmf_titlePreviewRequestParameters];
+- (NSDictionary *)serializedParams:(WMFRelatedSearchRequestParameters *)params {
+    NSNumber *numResults = @(params.numberOfResults);
+    NSMutableDictionary *baseParams = [NSMutableDictionary wmf_titlePreviewRequestParameters];
     [baseParams setValuesForKeysWithDictionary:@{
-         @"generator": @"search",
-         // search
-         @"gsrsearch": [NSString stringWithFormat:@"morelike:%@", params.title.text],
-         @"gsrnamespace": @0,
-         @"gsrwhat": @"text",
-         @"gsrinfo": @"",
-         @"gsrprop": @"redirecttitle",
-         @"gsroffset": @0,
-         @"gsrlimit": numResults,
-         // extracts
-         @"exlimit": numResults,
-         // pageimage
-         @"pilimit": numResults,
-     }];
+        @"generator" : @"search",
+        // search
+        @"gsrsearch" : [NSString stringWithFormat:@"morelike:%@", params.title.text],
+        @"gsrnamespace" : @0,
+        @"gsrwhat" : @"text",
+        @"gsrinfo" : @"",
+        @"gsrprop" : @"redirecttitle",
+        @"gsroffset" : @0,
+        @"gsrlimit" : numResults,
+        // extracts
+        @"exlimit" : numResults,
+        // pageimage
+        @"pilimit" : numResults,
+    }];
     return baseParams;
 }
 

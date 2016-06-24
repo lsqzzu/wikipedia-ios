@@ -8,10 +8,10 @@
 
 #import "WMFRandomFileUtilities.h"
 
-NSString* WMFRandomTemporaryPath() {
+NSString *WMFRandomTemporaryPath() {
     return [NSTemporaryDirectory() stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
 }
 
-NSString* WMFRandomTemporaryFileOfType(NSString* extension) {
+NSString *WMFRandomTemporaryFileOfType(NSString *extension) {
     return [WMFRandomTemporaryPath() stringByAppendingPathExtension:extension];
 }

@@ -9,15 +9,15 @@
     return 16.f;
 }
 
-+ (UIFont*)titleLabelFont {
++ (UIFont *)titleLabelFont {
     return [UIFont systemFontOfSize:[self titleLabelFontSize]];
 }
 
-+ (UIFont*)boldTitleLabelFont {
++ (UIFont *)boldTitleLabelFont {
     return [UIFont boldSystemFontOfSize:[self titleLabelFontSize]];
 }
 
-- (void)wmf_setTitleText:(NSString*)text highlightingText:(NSString*)highlightText {
+- (void)wmf_setTitleText:(NSString *)text highlightingText:(NSString *)highlightText {
     if (highlightText.length == 0) {
         self.titleLabel.text = text;
         return;
@@ -29,8 +29,9 @@
         return;
     }
 
-    NSMutableAttributedString* attributedTitle =
-        [[NSMutableAttributedString alloc] initWithString:text attributes:nil];
+    NSMutableAttributedString *attributedTitle =
+        [[NSMutableAttributedString alloc] initWithString:text
+                                               attributes:nil];
 
     NSRange beforeHighlight = NSMakeRange(0, highlightRange.location);
     if (!WMFRangeIsNotFoundOrEmpty(beforeHighlight)) {
@@ -44,7 +45,7 @@
                             range:highlightRange];
 
     NSUInteger afterHighlightStart = WMFRangeGetMaxIndex(highlightRange) - 1;
-    NSRange afterHighlight         = NSMakeRange(afterHighlightStart, text.length - afterHighlightStart);
+    NSRange afterHighlight = NSMakeRange(afterHighlightStart, text.length - afterHighlightStart);
     if (!WMFRangeIsNotFoundOrEmpty(afterHighlight)) {
         [attributedTitle addAttribute:NSFontAttributeName
                                 value:[[self class] titleLabelFont]

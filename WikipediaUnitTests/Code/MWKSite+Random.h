@@ -9,7 +9,6 @@
 #import "MWKSite.h"
 #import "MWKRandom.h"
 
-@interface MWKSite (Random)
-<MWKRandom>
+@interface MWKSite (Random) <MWKRandom>
 
 @end

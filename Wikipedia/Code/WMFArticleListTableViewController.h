@@ -9,19 +9,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol WMFArticleListTableViewControllerDelegate <NSObject>
 
-- (void)listViewController:(WMFArticleListTableViewController*)listController didSelectTitle:(MWKTitle*)title;
+- (void)listViewController:(WMFArticleListTableViewController *)listController didSelectTitle:(MWKTitle *)title;
 
-- (UIViewController*)listViewController:(WMFArticleListTableViewController*)listController viewControllerForPreviewingTitle:(MWKTitle*)title;
+- (UIViewController *)listViewController:(WMFArticleListTableViewController *)listController viewControllerForPreviewingTitle:(MWKTitle *)title;
 
-- (void)listViewController:(WMFArticleListTableViewController*)listController didCommitToPreviewedViewController:(UIViewController*)viewController;
+- (void)listViewController:(WMFArticleListTableViewController *)listController didCommitToPreviewedViewController:(UIViewController *)viewController;
 
 @end
 
+@interface WMFArticleListTableViewController : UITableViewController <WMFAnalyticsContextProviding>
 
-@interface WMFArticleListTableViewController : UITableViewController<WMFAnalyticsContextProviding>
-
-@property (nonatomic, strong) MWKDataStore* dataStore;
-@property (nonatomic, strong, nullable) SSBaseDataSource<WMFTitleListDataSource>* dataSource;
+@property (nonatomic, strong) MWKDataStore *dataStore;
+@property (nonatomic, strong, nullable) SSBaseDataSource<WMFTitleListDataSource> *dataSource;
 
 /**
  *  Optional delegate which will is informed of selection.
@@ -32,18 +31,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-
 @interface WMFArticleListTableViewController (WMFSubclasses)
 
-- (NSString*)analyticsContext;
+- (NSString *)analyticsContext;
 
 - (WMFEmptyViewType)emptyViewType;
 
-- (BOOL)     showsDeleteAllButton;
-- (NSString*)deleteButtonText;
-- (NSString*)deleteAllConfirmationText;
-- (NSString*)deleteText;
-- (NSString*)deleteCancelText;
+- (BOOL)showsDeleteAllButton;
+- (NSString *)deleteButtonText;
+- (NSString *)deleteAllConfirmationText;
+- (NSString *)deleteText;
+- (NSString *)deleteCancelText;
 
 @end
 

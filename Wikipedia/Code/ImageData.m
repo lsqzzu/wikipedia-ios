@@ -4,7 +4,6 @@
 #import "ImageData.h"
 #import "Image.h"
 
-
 @implementation ImageData
 
 @dynamic data;

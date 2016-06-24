@@ -10,14 +10,14 @@
 
 @implementation NSManagedObject (WMFModelFactory)
 
-+ (NSString*)wmf_entityName {
++ (NSString *)wmf_entityName {
     return NSStringFromClass(self);
 }
 
-+ (instancetype)wmf_newWithContext:(NSManagedObjectContext*)context {
++ (instancetype)wmf_newWithContext:(NSManagedObjectContext *)context {
     return [[self alloc]
-            initWithEntity:[NSEntityDescription entityForName:[self wmf_entityName] inManagedObjectContext:context]
-            insertIntoManagedObjectContext:context];
+                        initWithEntity:[NSEntityDescription entityForName:[self wmf_entityName] inManagedObjectContext:context]
+        insertIntoManagedObjectContext:context];
 }
 
 @end

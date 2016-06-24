@@ -5,9 +5,9 @@
 
 // See docs/localizations.md for high-level documentation
 
-NSString* localizedStringForKeyFallingBackOnEnglish(NSString* key);
+NSString *localizedStringForKeyFallingBackOnEnglish(NSString *key);
 
-NSString* localizedStringForSiteWithKeyFallingBackOnEnglish(MWKSite* site, NSString* key);
+NSString *localizedStringForSiteWithKeyFallingBackOnEnglish(MWKSite *site, NSString *key);
 
 #define MWLocalizedString(key, throwaway) localizedStringForKeyFallingBackOnEnglish(key)
 

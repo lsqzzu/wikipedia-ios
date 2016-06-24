@@ -16,7 +16,7 @@
 @end
 
 @implementation MWKSiteTests {
-    MWKSite* site;
+    MWKSite *site;
 }
 
 - (void)setUp {
@@ -38,7 +38,7 @@
 }
 
 - (void)testEquals {
-    MWKSite* otherSite = [[MWKSite alloc] initWithDomain:@"wikipedia.org" language:@"en"];
+    MWKSite *otherSite = [[MWKSite alloc] initWithDomain:@"wikipedia.org" language:@"en"];
     XCTAssertEqualObjects(site, otherSite);
 
     otherSite = [[MWKSite alloc] initWithDomain:@"wikipedia.org" language:@"fr"];

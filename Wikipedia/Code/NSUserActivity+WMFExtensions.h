@@ -4,7 +4,7 @@
 @class MWKArticle;
 @class MWKSite;
 
-typedef NS_ENUM (NSUInteger, WMFUserActivityType){
+typedef NS_ENUM(NSUInteger, WMFUserActivityType) {
     WMFUserActivityTypeExplore,
     WMFUserActivityTypeSavedPages,
     WMFUserActivityTypeHistory,
@@ -16,22 +16,21 @@ typedef NS_ENUM (NSUInteger, WMFUserActivityType){
 
 @interface NSUserActivity (WMFExtensions)
 
-+ (void)wmf_makeActivityActive:(NSUserActivity*)activity;
++ (void)wmf_makeActivityActive:(NSUserActivity *)activity;
 
 + (instancetype)wmf_exploreViewActivity;
 + (instancetype)wmf_savedPagesViewActivity;
 + (instancetype)wmf_recentViewActivity;
 
 + (instancetype)wmf_searchViewActivity;
-+ (instancetype)wmf_searchResultsActivitySearchSite:(MWKSite*)site searchTerm:(NSString*)searchTerm;
++ (instancetype)wmf_searchResultsActivitySearchSite:(MWKSite *)site searchTerm:(NSString *)searchTerm;
 
-+ (instancetype)wmf_articleViewActivityWithArticle:(MWKArticle*)article;
++ (instancetype)wmf_articleViewActivityWithArticle:(MWKArticle *)article;
 
 + (instancetype)wmf_settingsViewActivity;
 
-
 - (WMFUserActivityType)wmf_type;
 
-- (NSString*)wmf_searchTerm;
+- (NSString *)wmf_searchTerm;
 
 @end

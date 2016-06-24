@@ -10,7 +10,7 @@
 
 @interface MWKProtectionStatus ()
 
-@property (nonatomic, strong) NSDictionary* protection;
+@property (nonatomic, strong) NSDictionary *protection;
 
 @end
 
@@ -19,17 +19,17 @@
 - (instancetype)initWithData:(id)data {
     self = [self init];
     if (self) {
-        NSDictionary* wrapper = @{@"protection": data};
+        NSDictionary *wrapper = @{ @"protection" : data };
         self.protection = [self requiredDictionary:@"protection" dict:wrapper];
     }
     return self;
 }
 
-- (NSArray*)protectedActions {
+- (NSArray *)protectedActions {
     return [self.protection allKeys];
 }
 
-- (NSArray*)allowedGroupsForAction:(NSString*)action {
+- (NSArray *)allowedGroupsForAction:(NSString *)action {
     return self.protection[action];
 }
 
@@ -39,14 +39,14 @@
     } else if (![object isKindOfClass:[MWKProtectionStatus class]]) {
         return NO;
     } else {
-        MWKProtectionStatus* other = (MWKProtectionStatus*)object;
+        MWKProtectionStatus *other = (MWKProtectionStatus *)object;
 
-        NSArray* myActions    = [self protectedActions];
-        NSArray* otherActions = [other protectedActions];
+        NSArray *myActions = [self protectedActions];
+        NSArray *otherActions = [other protectedActions];
         if ([myActions count] != [otherActions count]) {
             return NO;
         }
-        for (NSString* action in myActions) {
+        for (NSString *action in myActions) {
             if (![[self allowedGroupsForAction:action] isEqualToArray:[other allowedGroupsForAction:action]]) {
                 return NO;
             }
@@ -59,7 +59,7 @@
     return self.protection;
 }
 
-- (id)copyWithZone:(NSZone*)zone {
+- (id)copyWithZone:(NSZone *)zone {
     // immutable
     return self;
 }

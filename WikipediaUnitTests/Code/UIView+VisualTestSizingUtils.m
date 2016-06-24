@@ -15,13 +15,12 @@
                                    withHorizontalFittingPriority:UILayoutPriorityRequired
                                          verticalFittingPriority:UILayoutPriorityFittingSizeLevel];
     return (CGRect){
-               .origin = CGPointZero,
-               .size   = CGSizeMake(floor(sizeThatFitsWidth.width), floor(sizeThatFitsWidth.height))
-    };
+        .origin = CGPointZero,
+        .size = CGSizeMake(floor(sizeThatFitsWidth.width), floor(sizeThatFitsWidth.height))};
 }
 
 - (void)wmf_sizeToFitWindowWidth {
-    UIWindow* window = self.window ? : [[UIApplication sharedApplication] keyWindow];
+    UIWindow *window = self.window ?: [[UIApplication sharedApplication] keyWindow];
     [self wmf_sizeToFitWidth:window.bounds.size.width];
 }
 

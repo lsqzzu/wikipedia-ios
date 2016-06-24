@@ -13,17 +13,17 @@
 
 #import <BlocksKit/BlocksKit+UIKit.h>
 
-typedef NS_ENUM (NSInteger, MigrationButtonIndexIds) {
+typedef NS_ENUM(NSInteger, MigrationButtonIndexIds) {
     BUTTON_INDEX_DISCARD = 0,
-    BUTTON_INDEX_SUBMIT  = 1
+    BUTTON_INDEX_SUBMIT = 1
 };
 
-@interface DataMigrationProgressViewController ()<LegacyCoreDataMigratorProgressDelegate, MFMailComposeViewControllerDelegate>
+@interface DataMigrationProgressViewController () <LegacyCoreDataMigratorProgressDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) WMFDataMigrationCompletionBlock completionBlock;
 
-@property (nonatomic, strong) LegacyDataMigrator* schemaConvertor;
-@property (nonatomic, strong) LegacyCoreDataMigrator* oldDataSchema;
+@property (nonatomic, strong) LegacyDataMigrator *schemaConvertor;
+@property (nonatomic, strong) LegacyCoreDataMigrator *oldDataSchema;
 
 @end
 
@@ -39,15 +39,17 @@ typedef NS_ENUM (NSInteger, MigrationButtonIndexIds) {
 - (void)runMigrationWithCompletion:(WMFDataMigrationCompletionBlock)completion {
     self.completionBlock = completion;
 
-    UIAlertView* dialog = [UIAlertView bk_alertViewWithTitle:MWLocalizedString(@"migration-prompt-title", nil) message:MWLocalizedString(@"migration-prompt-message", nil)];
+    UIAlertView *dialog = [UIAlertView bk_alertViewWithTitle:MWLocalizedString(@"migration-prompt-title", nil) message:MWLocalizedString(@"migration-prompt-message", nil)];
 
-    [dialog bk_setCancelButtonWithTitle:MWLocalizedString(@"migration-skip-button-title", nil) handler:^{
-        [self moveOldDataToBackupLocation];
-        [self dispatchCOmpletionBlockWithStatus:NO];
-    }];
-    [dialog bk_addButtonWithTitle:MWLocalizedString(@"migration-confirm-button-title", nil) handler:^{
-        [self performMigration];
-    }];
+    [dialog bk_setCancelButtonWithTitle:MWLocalizedString(@"migration-skip-button-title", nil)
+                                handler:^{
+                                  [self moveOldDataToBackupLocation];
+                                  [self dispatchCOmpletionBlockWithStatus:NO];
+                                }];
+    [dialog bk_addButtonWithTitle:MWLocalizedString(@"migration-confirm-button-title", nil)
+                          handler:^{
+                            [self performMigration];
+                          }];
 
     [dialog show];
 }
@@ -62,15 +64,15 @@ typedef NS_ENUM (NSInteger, MigrationButtonIndexIds) {
     // }
 }
 
-- (LegacyCoreDataMigrator*)oldDataSchema {
+- (LegacyCoreDataMigrator *)oldDataSchema {
     if (_oldDataSchema == nil) {
-        ArticleDataContextSingleton* context = [ArticleDataContextSingleton sharedInstance];
+        ArticleDataContextSingleton *context = [ArticleDataContextSingleton sharedInstance];
         _oldDataSchema = [[LegacyCoreDataMigrator alloc] initWithDatabasePath:context.databasePath];
     }
     return _oldDataSchema;
 }
 
-- (LegacyDataMigrator*)schemaConvertor {
+- (LegacyDataMigrator *)schemaConvertor {
     if (!_schemaConvertor) {
         _schemaConvertor = [[LegacyDataMigrator alloc] initWithDataStore:[SessionSingleton sharedInstance].dataStore];
     }
@@ -94,34 +96,34 @@ typedef NS_ENUM (NSInteger, MigrationButtonIndexIds) {
     // From the native app's initial CoreData-based implementation,
     // which now lives in LegacyCoreData subproject.
 
-    self.progressIndicator.progress       = 0.0;
+    self.progressIndicator.progress = 0.0;
     self.progressIndicator.trackTintColor = [UIColor clearColor];
-    self.progressIndicator.tintColor      = [UIColor wmf_blueTintColor];
+    self.progressIndicator.tintColor = [UIColor wmf_blueTintColor];
 
-    self.oldDataSchema.delegate         = self.schemaConvertor;
+    self.oldDataSchema.delegate = self.schemaConvertor;
     self.oldDataSchema.progressDelegate = self;
-    self.oldDataSchema.context          = [[ArticleDataContextSingleton sharedInstance] backgroundContext];
+    self.oldDataSchema.context = [[ArticleDataContextSingleton sharedInstance] backgroundContext];
     NSLog(@"begin migration");
     [self.oldDataSchema migrateData];
 }
 
-- (void)oldDataSchema:(LegacyCoreDataMigrator*)schema didUpdateProgressWithArticlesCompleted:(NSUInteger)completed total:(NSUInteger)total {
-    NSString* lineOne = MWLocalizedString(@"migration-update-progress-label", nil);
+- (void)oldDataSchema:(LegacyCoreDataMigrator *)schema didUpdateProgressWithArticlesCompleted:(NSUInteger)completed total:(NSUInteger)total {
+    NSString *lineOne = MWLocalizedString(@"migration-update-progress-label", nil);
 
-    NSString* lineTwo = MWLocalizedString(@"migration-update-progress-count-label", nil);
+    NSString *lineTwo = MWLocalizedString(@"migration-update-progress-count-label", nil);
 
     lineTwo = [lineTwo stringByReplacingOccurrencesOfString:@"$1" withString:[NSString stringWithFormat:@"%lu", (unsigned long)completed]];
 
     lineTwo = [lineTwo stringByReplacingOccurrencesOfString:@"$2" withString:[NSString stringWithFormat:@"%lu", (unsigned long)total]];
 
-    NSString* progressString = [NSString stringWithFormat:@"%@\n%@", lineOne, lineTwo];
+    NSString *progressString = [NSString stringWithFormat:@"%@\n%@", lineOne, lineTwo];
 
     self.progressLabel.text = progressString;
 
     [self.progressIndicator setProgress:((float)completed / (float)total) animated:YES];
 }
 
-- (void)oldDataSchemaDidFinishMigration:(LegacyCoreDataMigrator*)schema {
+- (void)oldDataSchemaDidFinishMigration:(LegacyCoreDataMigrator *)schema {
     [[SessionSingleton sharedInstance].userDataStore reset];
     NSLog(@"end migration");
 
@@ -129,7 +131,7 @@ typedef NS_ENUM (NSInteger, MigrationButtonIndexIds) {
     [self dispatchCOmpletionBlockWithStatus:YES];
 }
 
-- (void)oldDataSchema:(LegacyCoreDataMigrator*)schema didFinishWithError:(NSError*)error {
+- (void)oldDataSchema:(LegacyCoreDataMigrator *)schema didFinishWithError:(NSError *)error {
     [self displayErrorCondition];
     NSLog(@"end migration");
 
@@ -138,30 +140,32 @@ typedef NS_ENUM (NSInteger, MigrationButtonIndexIds) {
 }
 
 - (void)displayErrorCondition {
-    UIActionSheet* actionSheet = [UIActionSheet bk_actionSheetWithTitle:@"Migration failure: submit old data to developers to help diagnose?"];
-    [actionSheet bk_setDestructiveButtonWithTitle:@"Discard old data" handler:^{
-        [self dispatchCOmpletionBlockWithStatus:NO];
-    }];
-    [actionSheet bk_addButtonWithTitle:@"Submit to developers" handler:^{
-        [self submitDataToDevs];
-    }];
+    UIActionSheet *actionSheet = [UIActionSheet bk_actionSheetWithTitle:@"Migration failure: submit old data to developers to help diagnose?"];
+    [actionSheet bk_setDestructiveButtonWithTitle:@"Discard old data"
+                                          handler:^{
+                                            [self dispatchCOmpletionBlockWithStatus:NO];
+                                          }];
+    [actionSheet bk_addButtonWithTitle:@"Submit to developers"
+                               handler:^{
+                                 [self submitDataToDevs];
+                               }];
 
     [actionSheet showInView:self.view];
 }
 
 - (void)submitDataToDevs {
-    MFMailComposeViewController* picker = [[MFMailComposeViewController alloc] init];
+    MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
     picker.mailComposeDelegate = self;
 
-    picker.subject      = [NSString stringWithFormat:@"Feedback:%@", [WikipediaAppUtils versionedUserAgent]];
-    picker.toRecipients = @[@"mobile-ios-wikipedia@wikimedia.org"];
+    picker.subject = [NSString stringWithFormat:@"Feedback:%@", [WikipediaAppUtils versionedUserAgent]];
+    picker.toRecipients = @[ @"mobile-ios-wikipedia@wikimedia.org" ];
 
-    NSString* filename         = @"articleData6.sqlite";
-    NSArray* documentPaths     = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* documentRootPath = documentPaths[0];
-    NSString* filePath         = [documentRootPath stringByAppendingPathComponent:filename];
+    NSString *filename = @"articleData6.sqlite";
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentRootPath = documentPaths[0];
+    NSString *filePath = [documentRootPath stringByAppendingPathComponent:filename];
 
-    NSData* data = [NSData dataWithContentsOfFile:filePath];
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
     [picker addAttachmentData:data mimeType:@"application/octet-stream" fileName:filename];
 
     [picker setMessageBody:@"Attached data file is for internal development testing only." isHTML:NO];
@@ -176,7 +180,7 @@ typedef NS_ENUM (NSInteger, MigrationButtonIndexIds) {
     self.completionBlock = NULL;
 }
 
-- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
     [self dispatchCOmpletionBlockWithStatus:NO];
 }
 

@@ -39,21 +39,21 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param sectionOrController
  */
-#define WMFVerifyCacheConsistency(sectionOrController) [self verifyCacheConsistency : (sectionOrController)]
+#define WMFVerifyCacheConsistency(sectionOrController) [self verifyCacheConsistency:(sectionOrController)]
 #else
 #define WMFVerifyCacheConsistency(sectionOrController)
 #endif
 
 @implementation WMFExploreSectionControllerCache
 
-- (instancetype)initWithDataStore:(MWKDataStore*)dataStore {
+- (instancetype)initWithDataStore:(MWKDataStore *)dataStore {
     NSParameterAssert(dataStore);
     self = [super init];
     if (self) {
-        self.dataStore                              = dataStore;
-        self.sectionControllersBySection            = [[NSCache alloc] init];
+        self.dataStore = dataStore;
+        self.sectionControllersBySection = [[NSCache alloc] init];
         self.sectionControllersBySection.countLimit = [WMFExploreSection totalMaxNumberOfSections];
-        self.reverseLookup                          =
+        self.reverseLookup =
             [NSMapTable mapTableWithKeyOptions:NSMapTableWeakMemory | NSMapTableObjectPointerPersonality
                                   valueOptions:NSMapTableWeakMemory];
     }
@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)verifyCacheConsistencyForController:(id<WMFExploreSectionController>)controller {
-    WMFExploreSection* section = [self.reverseLookup objectForKey:controller];
+    WMFExploreSection *section = [self.reverseLookup objectForKey:controller];
     if (!section) {
         // can't check controller consistency w/o a key since NSCache doesn't tell you all the objects it contains
         return;
@@ -80,11 +80,11 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (void)verifyCacheConsistencyForSection:(WMFExploreSection*)section {
+- (void)verifyCacheConsistencyForSection:(WMFExploreSection *)section {
     id<WMFExploreSectionController> reverseMapController =
-        [[[self.reverseLookup keyEnumerator] allObjects] bk_match:^BOOL (id obj) {
-        return [[self.reverseLookup objectForKey:obj] isEqual:section];
-    }];
+        [[[self.reverseLookup keyEnumerator] allObjects] bk_match:^BOOL(id obj) {
+          return [[self.reverseLookup objectForKey:obj] isEqual:section];
+        }];
     id<WMFExploreSectionController> cacheController = [self.sectionControllersBySection objectForKey:section];
     if (reverseMapController != cacheController) {
         DDLogWarn(@"Mismatch between cached controllers & reverse map! Reverse map: %@ cache: %@",
@@ -92,17 +92,17 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (nullable id<WMFExploreSectionController>)controllerForSection:(WMFExploreSection*)section {
+- (nullable id<WMFExploreSectionController>)controllerForSection:(WMFExploreSection *)section {
     WMFVerifyCacheConsistency(section);
     return [self.sectionControllersBySection objectForKey:section];
 }
 
-- (nullable WMFExploreSection*)sectionForController:(id<WMFExploreSectionController>)controller {
+- (nullable WMFExploreSection *)sectionForController:(id<WMFExploreSectionController>)controller {
     WMFVerifyCacheConsistency(controller);
     return [self.reverseLookup objectForKey:controller];
 }
 
-- (id<WMFExploreSectionController>)getOrCreateControllerForSection:(WMFExploreSection*)section
+- (id<WMFExploreSectionController>)getOrCreateControllerForSection:(WMFExploreSection *)section
                                                      creationBlock:(nullable void (^)(id<WMFExploreSectionController> _Nonnull))creationBlock {
     id<WMFExploreSectionController> controller = [self controllerForSection:section];
     if (controller) {
@@ -115,38 +115,38 @@ NS_ASSUME_NONNULL_BEGIN
     return controller;
 }
 
-- (id<WMFExploreSectionController>)newControllerForSection:(WMFExploreSection*)section {
+- (id<WMFExploreSectionController>)newControllerForSection:(WMFExploreSection *)section {
     NSAssert(![self.sectionControllersBySection objectForKey:section],
              @"Invalid request to create a new section controller for section %@ when one already exists: %@",
              section, [self.sectionControllersBySection objectForKey:section]);
 
     id<WMFExploreSectionController> controller;
     switch (section.type) {
-        case WMFExploreSectionTypeHistory:
-        case WMFExploreSectionTypeSaved:
-            controller = [self relatedSectionControllerForSectionSchemaItem:section];
-            break;
-        case WMFExploreSectionTypeNearby:
-            controller = [self nearbySectionControllerForSchemaItem:section];
-            break;
-        case WMFExploreSectionTypeContinueReading:
-            controller = [self continueReadingSectionControllerForSchemaItem:section];
-            break;
-        case WMFExploreSectionTypeRandom:
-            controller = [self randomSectionControllerForSchemaItem:section];
-            break;
-        case WMFExploreSectionTypeMainPage:
-            controller = [self mainPageSectionControllerForSchemaItem:section];
-            break;
-        case WMFExploreSectionTypeFeaturedArticle:
-            controller = [self featuredArticleSectionControllerForSchemaItem:section];
-            break;
-        case WMFExploreSectionTypePictureOfTheDay:
-            controller = [self picOfTheDaySectionControllerForSchemaItem:section];
-            break;
-        case WMFExploreSectionTypeMostRead:
-            controller = [self mostReadSectionControllerForSection:section];
-            /*
+    case WMFExploreSectionTypeHistory:
+    case WMFExploreSectionTypeSaved:
+        controller = [self relatedSectionControllerForSectionSchemaItem:section];
+        break;
+    case WMFExploreSectionTypeNearby:
+        controller = [self nearbySectionControllerForSchemaItem:section];
+        break;
+    case WMFExploreSectionTypeContinueReading:
+        controller = [self continueReadingSectionControllerForSchemaItem:section];
+        break;
+    case WMFExploreSectionTypeRandom:
+        controller = [self randomSectionControllerForSchemaItem:section];
+        break;
+    case WMFExploreSectionTypeMainPage:
+        controller = [self mainPageSectionControllerForSchemaItem:section];
+        break;
+    case WMFExploreSectionTypeFeaturedArticle:
+        controller = [self featuredArticleSectionControllerForSchemaItem:section];
+        break;
+    case WMFExploreSectionTypePictureOfTheDay:
+        controller = [self picOfTheDaySectionControllerForSchemaItem:section];
+        break;
+    case WMFExploreSectionTypeMostRead:
+        controller = [self mostReadSectionControllerForSection:section];
+        /*
                !!!: do not add a default case, it is intentionally omitted so an error/warning is triggered when
                a new case is added to the enum, enforcing that all sections are handled here.
              */
@@ -160,40 +160,40 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Section Controller Creation
 
-- (WMFMostReadSectionController*)mostReadSectionControllerForSection:(WMFExploreSection*)section {
+- (WMFMostReadSectionController *)mostReadSectionControllerForSection:(WMFExploreSection *)section {
     return [[WMFMostReadSectionController alloc] initWithDate:section.mostReadFetchDate
                                                          site:section.site
                                                     dataStore:self.dataStore];
 }
 
-- (WMFRelatedSectionController*)relatedSectionControllerForSectionSchemaItem:(WMFExploreSection*)item {
+- (WMFRelatedSectionController *)relatedSectionControllerForSectionSchemaItem:(WMFExploreSection *)item {
     return [[WMFRelatedSectionController alloc] initWithArticleTitle:item.title blackList:[WMFRelatedSectionBlackList sharedBlackList] dataStore:self.dataStore];
 }
 
-- (WMFContinueReadingSectionController*)continueReadingSectionControllerForSchemaItem:(WMFExploreSection*)item {
+- (WMFContinueReadingSectionController *)continueReadingSectionControllerForSchemaItem:(WMFExploreSection *)item {
     return [[WMFContinueReadingSectionController alloc] initWithArticleTitle:item.title dataStore:self.dataStore];
 }
 
-- (WMFNearbySectionController*)nearbySectionControllerForSchemaItem:(WMFExploreSection*)item {
+- (WMFNearbySectionController *)nearbySectionControllerForSchemaItem:(WMFExploreSection *)item {
     return [[WMFNearbySectionController alloc] initWithLocation:item.location
                                                       placemark:item.placemark
                                                            site:item.site
                                                       dataStore:self.dataStore];
 }
 
-- (WMFRandomSectionController*)randomSectionControllerForSchemaItem:(WMFExploreSection*)item {
+- (WMFRandomSectionController *)randomSectionControllerForSchemaItem:(WMFExploreSection *)item {
     return [[WMFRandomSectionController alloc] initWithSite:item.site dataStore:self.dataStore];
 }
 
-- (WMFMainPageSectionController*)mainPageSectionControllerForSchemaItem:(WMFExploreSection*)item {
+- (WMFMainPageSectionController *)mainPageSectionControllerForSchemaItem:(WMFExploreSection *)item {
     return [[WMFMainPageSectionController alloc] initWithSite:item.site dataStore:self.dataStore];
 }
 
-- (WMFPictureOfTheDaySectionController*)picOfTheDaySectionControllerForSchemaItem:(WMFExploreSection*)item  {
+- (WMFPictureOfTheDaySectionController *)picOfTheDaySectionControllerForSchemaItem:(WMFExploreSection *)item {
     return [[WMFPictureOfTheDaySectionController alloc] initWithDataStore:self.dataStore date:item.dateCreated];
 }
 
-- (WMFFeaturedArticleSectionController*)featuredArticleSectionControllerForSchemaItem:(WMFExploreSection*)item {
+- (WMFFeaturedArticleSectionController *)featuredArticleSectionControllerForSchemaItem:(WMFExploreSection *)item {
     return [[WMFFeaturedArticleSectionController alloc] initWithSite:item.site date:item.dateCreated dataStore:self.dataStore];
 }
 
@@ -206,4 +206,3 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-

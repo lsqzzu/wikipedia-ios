@@ -15,23 +15,22 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString* const MWKSectionShareSnippetXPath;
+extern NSString *const MWKSectionShareSnippetXPath;
 
-@interface MWKSection : MWKSiteDataObject
-    <WMFSharing>
+@interface MWKSection : MWKSiteDataObject <WMFSharing>
 
-@property (readonly, strong, nonatomic) MWKTitle* title;
-@property (readonly, weak, nonatomic) MWKArticle* article;
+@property (readonly, strong, nonatomic) MWKTitle *title;
+@property (readonly, weak, nonatomic) MWKArticle *article;
 
-@property (readonly, copy, nonatomic, nullable) NSNumber* toclevel;      // optional
-@property (readonly, copy, nonatomic, nullable) NSNumber* level;         // optional; string in JSON, but seems to be number-safe?
-@property (readonly, copy, nonatomic, nullable) NSString* line;          // optional; HTML
-@property (readonly, copy, nonatomic, nullable) NSString* number;        // optional; can be "1.2.3"
-@property (readonly, copy, nonatomic, nullable) NSString* index;         // optional; can be "T-3" for transcluded sections
-@property (readonly, strong, nonatomic, nullable) MWKTitle* fromtitle; // optional
-@property (readonly, copy, nonatomic, nullable) NSString* anchor;        // optional
-@property (readonly, assign, nonatomic) int sectionId;           // required; -> id
-@property (readonly, assign, nonatomic) BOOL references;         // optional; marked by presence of key with empty string in JSON
+@property (readonly, copy, nonatomic, nullable) NSNumber *toclevel;    // optional
+@property (readonly, copy, nonatomic, nullable) NSNumber *level;       // optional; string in JSON, but seems to be number-safe?
+@property (readonly, copy, nonatomic, nullable) NSString *line;        // optional; HTML
+@property (readonly, copy, nonatomic, nullable) NSString *number;      // optional; can be "1.2.3"
+@property (readonly, copy, nonatomic, nullable) NSString *index;       // optional; can be "T-3" for transcluded sections
+@property (readonly, strong, nonatomic, nullable) MWKTitle *fromtitle; // optional
+@property (readonly, copy, nonatomic, nullable) NSString *anchor;      // optional
+@property (readonly, assign, nonatomic) int sectionId;                 // required; -> id
+@property (readonly, assign, nonatomic) BOOL references;               // optional; marked by presence of key with empty string in JSON
 
 /**
  * Lazily-initialized HTML content of this section.
@@ -41,15 +40,15 @@ extern NSString* const MWKSectionShareSnippetXPath;
  *
  * @return The HTML for this section of the receiver's `article` or `nil` if it doesn't exist on disk.
  */
-@property (readonly, copy, nonatomic, nullable) NSString* text;
-@property (readonly, strong, nonatomic, nullable) MWKImageList* images;
+@property (readonly, copy, nonatomic, nullable) NSString *text;
+@property (readonly, strong, nonatomic, nullable) MWKImageList *images;
 
-- (instancetype)initWithArticle:(MWKArticle*)article dict:(NSDictionary*)dict;
+- (instancetype)initWithArticle:(MWKArticle *)article dict:(NSDictionary *)dict;
 
-- (BOOL)              isLeadSection;
-- (nullable MWKTitle*)sourceTitle;
+- (BOOL)isLeadSection;
+- (nullable MWKTitle *)sourceTitle;
 
-- (BOOL)isEqualToSection:(MWKSection*)section;
+- (BOOL)isEqualToSection:(MWKSection *)section;
 
 - (void)save;
 
@@ -66,7 +65,7 @@ extern NSString* const MWKSectionShareSnippetXPath;
  *
  * @see elementsInTextMatchingXPath:
  */
-- (NSString*)textForXPath:(NSString*)xpath;
+- (NSString *)textForXPath:(NSString *)xpath;
 
 /**
  * Query the receiver's `text` with the given `xpath`.
@@ -78,7 +77,7 @@ extern NSString* const MWKSectionShareSnippetXPath;
  *
  * @return An array of `TFHppleElement` objects which match the given XPath query, or `nil` if there were no results.
  */
-- (nullable NSArray*)elementsInTextMatchingXPath:(NSString*)xpath;
+- (nullable NSArray *)elementsInTextMatchingXPath:(NSString *)xpath;
 
 ///
 /// @name Section Hierarchy
@@ -89,7 +88,7 @@ extern NSString* const MWKSectionShareSnippetXPath;
  *
  *  @return An @c MWKSection, or @c nil if it does not have a parent
  */
-- (nullable MWKSection*)parentSection;
+- (nullable MWKSection *)parentSection;
 
 /**
  *  Section that is the furthest ancestor of the receiver.
@@ -97,14 +96,14 @@ extern NSString* const MWKSectionShareSnippetXPath;
  *
  *  @return An @c MWKSection
  */
-- (MWKSection*)rootSection;
+- (MWKSection *)rootSection;
 
 /**
  *  Sections that are descendants of the receiver.
  *
  *  @return An array of @c MWKSection objects, or @c nil if the hierarchy has not been built yet.
  */
-- (nullable NSArray*)children;
+- (nullable NSArray *)children;
 
 /**
  *  Check if the receiver is the child of another section.
@@ -113,7 +112,7 @@ extern NSString* const MWKSectionShareSnippetXPath;
  *
  *  @return @c YES if self.parentSection == section, otherwise @c NO.
  */
-- (BOOL)isChildOfSection:(MWKSection*)section;
+- (BOOL)isChildOfSection:(MWKSection *)section;
 
 /**
  *  Check if the receiver is the decendent of another section.
@@ -122,7 +121,7 @@ extern NSString* const MWKSectionShareSnippetXPath;
  *
  *  @return @c YES if the section is found by recursively searching self.parent, otherwise @c NO.
  */
-- (BOOL)isDecendantOfSection:(MWKSection*)section;
+- (BOOL)isDecendantOfSection:(MWKSection *)section;
 
 /**
  *  Check if the receiver has the same root section as another section.
@@ -131,9 +130,7 @@ extern NSString* const MWKSectionShareSnippetXPath;
  *
  *  @return @c YES if self.rootSection == section.rootSection, otherwise @c NO.
  */
-- (BOOL)sectionHasSameRootSection:(MWKSection*)section;
-
-
+- (BOOL)sectionHasSameRootSection:(MWKSection *)section;
 
 #pragma mark - Internal
 
@@ -142,7 +139,7 @@ extern NSString* const MWKSectionShareSnippetXPath;
  *
  *  @param child The section to add as a child.
  */
-- (void)addChild:(MWKSection*)child;
+- (void)addChild:(MWKSection *)child;
 
 /**
  *  Remove all children from the receiver.
@@ -159,11 +156,11 @@ extern NSString* const MWKSectionShareSnippetXPath;
  */
 - (BOOL)hasTextData;
 
-- (NSString*)summary;
+- (NSString *)summary;
 
-- (nullable NSArray<MWKTitle*>*)disambiguationTitles;
+- (nullable NSArray<MWKTitle *> *)disambiguationTitles;
 
-- (nullable NSArray<NSString*>*)pageIssues;
+- (nullable NSArray<NSString *> *)pageIssues;
 
 @end
 

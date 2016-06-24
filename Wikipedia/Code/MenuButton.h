@@ -7,10 +7,10 @@
 
 @interface MenuButton : UIView
 
-- (instancetype)initWithText:(NSString*)text
+- (instancetype)initWithText:(NSString *)text
                     fontSize:(CGFloat)size
                         bold:(BOOL)bold
-                       color:(UIColor*)color
+                       color:(UIColor *)color
                      padding:(UIEdgeInsets)padding
                       margin:(UIEdgeInsets)margin;
 
@@ -21,8 +21,8 @@
 
 @property (nonatomic) BOOL enabled;
 
-@property (strong, nonatomic, readonly) NSString* text;
+@property (strong, nonatomic, readonly) NSString *text;
 
-@property (strong, nonatomic) UIColor* color;
+@property (strong, nonatomic) UIColor *color;
 
 @end

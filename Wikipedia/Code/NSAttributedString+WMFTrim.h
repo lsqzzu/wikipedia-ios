@@ -5,6 +5,6 @@
 
 @interface NSAttributedString (WMFTrim)
 
-- (NSAttributedString*)wmf_trim;
+- (NSAttributedString *)wmf_trim;
 
 @end

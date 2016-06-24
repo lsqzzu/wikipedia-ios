@@ -12,9 +12,9 @@
 
 @interface WMFMostReadListTableViewController : WMFArticleListTableViewController
 
-- (instancetype)initWithPreviews:(NSArray<MWKSearchResult*>*)previews
-                        fromSite:(MWKSite*)site
+- (instancetype)initWithPreviews:(NSArray<MWKSearchResult *> *)previews
+                        fromSite:(MWKSite *)site
                          forDate:date
-                       dataStore:(MWKDataStore*)dataStore;
+                       dataStore:(MWKDataStore *)dataStore;
 
 @end

@@ -14,10 +14,10 @@
 
 @interface LegacyDataMigrator : NSObject <LegacyCoreDataDelegate>
 
-@property (nonatomic, strong) LegacyCoreDataMigrator* schema;
-@property (nonatomic, strong) MWKDataStore* dataStore;
-@property (nonatomic, strong) MWKUserDataStore* userDataStore;
+@property (nonatomic, strong) LegacyCoreDataMigrator *schema;
+@property (nonatomic, strong) MWKDataStore *dataStore;
+@property (nonatomic, strong) MWKUserDataStore *userDataStore;
 
-- (instancetype)initWithDataStore:(MWKDataStore*)dataStore;
+- (instancetype)initWithDataStore:(MWKDataStore *)dataStore;
 
 @end

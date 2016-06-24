@@ -11,23 +11,22 @@ NS_ASSUME_NONNULL_BEGIN
 @class MWKDataStore;
 @class MWKTitle;
 
-@interface WMFRelatedTitleListDataSource : SSArrayDataSource
-    <WMFTitleListDataSource>
+@interface WMFRelatedTitleListDataSource : SSArrayDataSource <WMFTitleListDataSource>
 
-@property (nonatomic, strong, readonly, nullable) WMFRelatedSearchResults* relatedSearchResults;
-@property (nonatomic, copy, readonly) MWKTitle* title;
-@property (nonatomic, strong, readonly) MWKSavedPageList* savedPageList;
+@property (nonatomic, strong, readonly, nullable) WMFRelatedSearchResults *relatedSearchResults;
+@property (nonatomic, copy, readonly) MWKTitle *title;
+@property (nonatomic, strong, readonly) MWKSavedPageList *savedPageList;
 
-- (instancetype)initWithTitle:(MWKTitle*)title
-                    dataStore:(MWKDataStore*)dataStore
+- (instancetype)initWithTitle:(MWKTitle *)title
+                    dataStore:(MWKDataStore *)dataStore
                   resultLimit:(NSUInteger)resultLimit;
 
-- (instancetype)initWithTitle:(MWKTitle*)title
-                    dataStore:(MWKDataStore*)dataStore
+- (instancetype)initWithTitle:(MWKTitle *)title
+                    dataStore:(MWKDataStore *)dataStore
                   resultLimit:(NSUInteger)resultLimit
-                      fetcher:(WMFRelatedSearchFetcher*)fetcher NS_DESIGNATED_INITIALIZER;
+                      fetcher:(WMFRelatedSearchFetcher *)fetcher NS_DESIGNATED_INITIALIZER;
 
-- (AnyPromise*)fetch;
+- (AnyPromise *)fetch;
 
 @end
 

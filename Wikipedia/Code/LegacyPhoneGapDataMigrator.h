@@ -24,6 +24,6 @@
  *
  * @return (NSArray *) of (NSDictionary *)s.
  */
-- (NSArray*)extractSavedPages;
+- (NSArray *)extractSavedPages;
 
 @end

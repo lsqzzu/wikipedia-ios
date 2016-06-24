@@ -5,7 +5,6 @@
 #import "Image.h"
 #import "Section.h"
 
-
 @implementation SectionImage
 
 @dynamic index;

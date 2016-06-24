@@ -25,14 +25,14 @@
 + (id)uniqueListEntry {
     static BOOL migrated = NO;
     migrated ^= YES;
-    MWKSavedPageEntry* entry = [[MWKSavedPageEntry alloc] initWithTitle:[MWKTitle random]];
+    MWKSavedPageEntry *entry = [[MWKSavedPageEntry alloc] initWithTitle:[MWKTitle random]];
     entry.didMigrateImageData = migrated;
     return entry;
 }
 
-- (void)verifyList:(MWKList*)list isEqualToList:(MWKList*)otherList {
+- (void)verifyList:(MWKList *)list isEqualToList:(MWKList *)otherList {
     [super verifyList:list isEqualToList:otherList];
-    NSString* didMigrateImageData = WMF_SAFE_KEYPATH([MWKSavedPageEntry new], didMigrateImageData);
+    NSString *didMigrateImageData = WMF_SAFE_KEYPATH([MWKSavedPageEntry new], didMigrateImageData);
     assertThat([list.entries valueForKey:didMigrateImageData], is([otherList.entries valueForKey:didMigrateImageData]));
 }
 

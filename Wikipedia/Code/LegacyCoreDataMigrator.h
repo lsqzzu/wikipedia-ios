@@ -1,44 +1,41 @@
 
 #import <Foundation/Foundation.h>
 
-
 @class LegacyCoreDataMigrator, MWKArticle, MWKTitle, MWKImage;
 
 @protocol LegacyCoreDataDelegate
 
-- (MWKArticle*)oldDataSchema:(LegacyCoreDataMigrator*)schema migrateArticle:(NSDictionary*)articleDict;
+- (MWKArticle *)oldDataSchema:(LegacyCoreDataMigrator *)schema migrateArticle:(NSDictionary *)articleDict;
 
-- (void)oldDataSchema:(LegacyCoreDataMigrator*)schema
-         migrateImage:(NSDictionary*)imageDict
-           newArticle:(MWKArticle*)newArticle;
+- (void)oldDataSchema:(LegacyCoreDataMigrator *)schema
+         migrateImage:(NSDictionary *)imageDict
+           newArticle:(MWKArticle *)newArticle;
 
-- (void)oldDataSchema:(LegacyCoreDataMigrator*)schema migrateHistoryEntry:(NSDictionary*)historyDict;
+- (void)oldDataSchema:(LegacyCoreDataMigrator *)schema migrateHistoryEntry:(NSDictionary *)historyDict;
 
-- (void)oldDataSchema:(LegacyCoreDataMigrator*)schema migrateSavedEntry:(NSDictionary*)savedDict;
+- (void)oldDataSchema:(LegacyCoreDataMigrator *)schema migrateSavedEntry:(NSDictionary *)savedDict;
 
 @end
 
 @protocol LegacyCoreDataMigratorProgressDelegate <NSObject>
 
-- (void)oldDataSchema:(LegacyCoreDataMigrator*)schema didUpdateProgressWithArticlesCompleted:(NSUInteger)completed total:(NSUInteger)total;
+- (void)oldDataSchema:(LegacyCoreDataMigrator *)schema didUpdateProgressWithArticlesCompleted:(NSUInteger)completed total:(NSUInteger)total;
 
-- (void)oldDataSchemaDidFinishMigration:(LegacyCoreDataMigrator*)schema;
+- (void)oldDataSchemaDidFinishMigration:(LegacyCoreDataMigrator *)schema;
 
-- (void)oldDataSchema:(LegacyCoreDataMigrator*)schema didFinishWithError:(NSError*)error;
+- (void)oldDataSchema:(LegacyCoreDataMigrator *)schema didFinishWithError:(NSError *)error;
 
 @end
-
-
 
 @interface LegacyCoreDataMigrator : NSObject
 
 @property (weak) id<LegacyCoreDataDelegate> delegate;
 @property (weak) id<LegacyCoreDataMigratorProgressDelegate> progressDelegate;
 
-- (instancetype)initWithDatabasePath:(NSString*)databasePath;
+- (instancetype)initWithDatabasePath:(NSString *)databasePath;
 
-@property (nonatomic, strong, readonly) NSString* databasePath;
-@property (nonatomic, strong, readonly) NSString* backupDatabasePath;
+@property (nonatomic, strong, readonly) NSString *databasePath;
+@property (nonatomic, strong, readonly) NSString *backupDatabasePath;
 
 /**
  *  Does the database exist
@@ -76,13 +73,10 @@
  */
 - (BOOL)removebackupDataImmediately;
 
-
-
-
 /**
  *  Set the context to use for migration
  */
-@property (nonatomic, strong) NSManagedObjectContext* context;
+@property (nonatomic, strong) NSManagedObjectContext *context;
 
 /**
  *  This runs asynchronously.
@@ -91,8 +85,5 @@
  *  Use the progress delegate methods to get notifified when the migration completes.
  */
 - (void)migrateData;
-
-
-
 
 @end

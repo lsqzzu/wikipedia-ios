@@ -3,10 +3,10 @@
 
 @class MWKTitle;
 
-extern NSString* const WMFErrorDomain;
+extern NSString *const WMFErrorDomain;
 
-extern NSString* const WMFRedirectTitleKey;
-extern NSString* const WMFRedirectTitleKey;
+extern NSString *const WMFRedirectTitleKey;
+extern NSString *const WMFRedirectTitleKey;
 
 /**
  *  Key which can provide any failing request parameters for an error of type @c WMFErrorTypeInvalidRequestParameters.
@@ -14,9 +14,9 @@ extern NSString* const WMFRedirectTitleKey;
  *  The value set for this key varies depending on the kind of request, and is mosly provided for logging & diagnostic
  *  purposes.
  */
-extern NSString* const WMFFailingRequestParametersUserInfoKey;
+extern NSString *const WMFFailingRequestParametersUserInfoKey;
 
-typedef NS_ENUM (NSInteger, WMFErrorType) {
+typedef NS_ENUM(NSInteger, WMFErrorType) {
     WMFErrorTypeStringLength,
     WMFErrorTypeStringMissingParameter,
     WMFErrorTypeRedirected,
@@ -28,16 +28,15 @@ typedef NS_ENUM (NSInteger, WMFErrorType) {
 
 @interface NSError (WMFExtensions)
 
-+ (NSError*)wmf_errorWithType:(WMFErrorType)type userInfo:(NSDictionary*)userInfo;
++ (NSError *)wmf_errorWithType:(WMFErrorType)type userInfo:(NSDictionary *)userInfo;
 
-+ (NSError*)wmf_redirectedErrorWithTitle:(MWKTitle*)redirectedtitle;
-
-//reason is specfied as NSLocalizedDescriptionKey
-+ (NSError*)wmf_unableToSaveErrorWithReason:(NSString*)reason;
++ (NSError *)wmf_redirectedErrorWithTitle:(MWKTitle *)redirectedtitle;
 
 //reason is specfied as NSLocalizedDescriptionKey
-+ (NSError*)wmf_serializeArticleErrorWithReason:(NSString*)reason;
++ (NSError *)wmf_unableToSaveErrorWithReason:(NSString *)reason;
 
+//reason is specfied as NSLocalizedDescriptionKey
++ (NSError *)wmf_serializeArticleErrorWithReason:(NSString *)reason;
 
 - (BOOL)wmf_isWMFErrorDomain;
 - (BOOL)wmf_isWMFErrorOfType:(WMFErrorType)type;
@@ -62,7 +61,6 @@ typedef NS_ENUM (NSInteger, WMFErrorType) {
 
 @interface NSDictionary (WMFErrorExtensions)
 
-- (MWKTitle*)wmf_redirectTitle;
+- (MWKTitle *)wmf_redirectTitle;
 
 @end
-

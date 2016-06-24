@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class MWKTitle;
 @class MWKDataStore;
 
-
 @interface XCTestCase (MWKFixtures)
 
 /**
@@ -34,9 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @see completeArticleWithLegacyDataInFolder:withData:insertIntoDataStore
  */
-- (MWKArticle*)articleWithMobileViewJSONFixture:(NSString*)fixtureName
-                                      withTitle:(id)titleOrString
-                                      dataStore:(MWKDataStore*)dataStore;
+- (MWKArticle *)articleWithMobileViewJSONFixture:(NSString *)fixtureName
+                                       withTitle:(id)titleOrString
+                                       dataStore:(MWKDataStore *)dataStore;
 
 /**
  * Similar to `articleWithMobileViewJSONFixture`, but using an entire folder of data instead of a single mobileview
@@ -64,12 +63,11 @@ NS_ASSUME_NONNULL_BEGIN
  * @see -articleWithMobileViewJSONFixture:withTitle:insertIntoDataStore:
  * @see -[MWKDataStore(TemporaryDataStore) articleWithImportedDataFromFolderAtPath:title:]
  */
-- (MWKArticle*)completeArticleWithLegacyDataInFolder:(NSString*)folderName
-                                           withTitle:(id)titleOrString
-                                 insertIntoDataStore:(MWKDataStore*)dataStore;
+- (MWKArticle *)completeArticleWithLegacyDataInFolder:(NSString *)folderName
+                                            withTitle:(id)titleOrString
+                                  insertIntoDataStore:(MWKDataStore *)dataStore;
 
 @end
-
 
 @interface MWKDataStore (Fixtures)
 
@@ -85,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @see -[XCTestCase(MWKFixtures completeArticleWithLegacyDataInFolder:withTitle:insertIntoDataStore:]
  */
-- (MWKArticle*)articleWithImportedDataFromFolderAtPath:(NSString*)path title:(MWKTitle*)title;
+- (MWKArticle *)articleWithImportedDataFromFolderAtPath:(NSString *)path title:(MWKTitle *)title;
 
 @end
 

@@ -6,14 +6,14 @@
 
 @interface WMFLocationSearchResults : NSObject
 
-@property (nonatomic, strong, readonly) MWKSite* searchSite;
-@property (nonatomic, strong, readonly) CLLocation* location;
-@property (nonatomic, strong, readonly) NSArray<MWKLocationSearchResult*>* results;
+@property (nonatomic, strong, readonly) MWKSite *searchSite;
+@property (nonatomic, strong, readonly) CLLocation *location;
+@property (nonatomic, strong, readonly) NSArray<MWKLocationSearchResult *> *results;
 
-- (instancetype)initWithSite:(MWKSite*)site location:(CLLocation*)location results:(NSArray<MWKLocationSearchResult*>*)results;
+- (instancetype)initWithSite:(MWKSite *)site location:(CLLocation *)location results:(NSArray<MWKLocationSearchResult *> *)results;
 
-- (MWKTitle*)titleForResult:(MWKLocationSearchResult*)result;
+- (MWKTitle *)titleForResult:(MWKLocationSearchResult *)result;
 
-- (MWKTitle*)titleForResultAtIndex:(NSUInteger)index;
+- (MWKTitle *)titleForResultAtIndex:(NSUInteger)index;
 
 @end

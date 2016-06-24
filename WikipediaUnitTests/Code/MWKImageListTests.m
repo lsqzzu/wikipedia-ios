@@ -24,7 +24,7 @@
 #import "MWKImageList.h"
 
 @interface MWKImageListTests : XCTestCase
-@property (nonatomic, strong) NSString* tempDataStoreDir;
+@property (nonatomic, strong) NSString *tempDataStoreDir;
 @end
 
 @implementation MWKImageListTests
@@ -40,21 +40,21 @@
 }
 
 - (void)testUniqueLargestVariants {
-    MWKDataStore* tmpDataStore = [[MWKDataStore alloc] initWithBasePath:self.tempDataStoreDir];
+    MWKDataStore *tmpDataStore = [[MWKDataStore alloc] initWithBasePath:self.tempDataStoreDir];
 
-    MWKTitle* title     = [[MWKSite siteWithCurrentLocale] titleWithString:@"foo"];
-    MWKArticle* article = [[MWKArticle alloc] initWithTitle:title dataStore:tmpDataStore];
+    MWKTitle *title = [[MWKSite siteWithCurrentLocale] titleWithString:@"foo"];
+    MWKArticle *article = [[MWKArticle alloc] initWithTitle:title dataStore:tmpDataStore];
 
-    NSArray* dummySourceURLs = [@[@"10px-a.jpg", @"10px-b.jpg", @"100px-a.jpg", @"10px-c.jpg"] bk_map :^id (id obj) {
-        return MWKCreateImageURLWithPath(obj);
+    NSArray *dummySourceURLs = [@[ @"10px-a.jpg", @"10px-b.jpg", @"100px-a.jpg", @"10px-c.jpg" ] bk_map:^id(id obj) {
+      return MWKCreateImageURLWithPath(obj);
     }];
 
-    [dummySourceURLs bk_each:^(NSString* sourceURL) {
-        [article importImageURL:sourceURL sectionId:kMWKArticleSectionNone];
+    [dummySourceURLs bk_each:^(NSString *sourceURL) {
+      [article importImageURL:sourceURL sectionId:kMWKArticleSectionNone];
     }];
 
     assertThat([[article.images uniqueLargestVariants] valueForKeyPath:@"sourceURL.lastPathComponent"],
-               is(equalTo(@[@"100px-a.jpg", @"10px-b.jpg", @"10px-c.jpg"])));
+               is(equalTo(@[ @"100px-a.jpg", @"10px-b.jpg", @"10px-c.jpg" ])));
 }
 
 @end

@@ -3,19 +3,19 @@
 
 @interface ArticleDataContextSingleton : NSObject
 
-+ (ArticleDataContextSingleton*)sharedInstance;
++ (ArticleDataContextSingleton *)sharedInstance;
 
 /**
  *  The path to the DB
  *
  *  @return The path
  */
-- (NSString*)databasePath;
+- (NSString *)databasePath;
 
 /**
  *  Created lazily
  */
-@property (nonatomic, retain) NSManagedObjectContext* mainContext;
+@property (nonatomic, retain) NSManagedObjectContext *mainContext;
 
 /**
  *  Create a new background context. You are responsible for its lifecycle
@@ -23,7 +23,7 @@
  *
  *  @return A new background context
  */
-- (NSManagedObjectContext*)backgroundContext;
+- (NSManagedObjectContext *)backgroundContext;
 
 /**
  *  Automatically propagates changes to the store.
@@ -32,6 +32,6 @@
  *  @param context         The context to save
  *  @param completionBlock a completion block fired after the save operation
  */
-- (void)saveContextAndPropagateChangesToStore:(NSManagedObjectContext*)context completionBlock:(void (^)(NSError* error))completionBlock;
+- (void)saveContextAndPropagateChangesToStore:(NSManagedObjectContext *)context completionBlock:(void (^)(NSError *error))completionBlock;
 
 @end

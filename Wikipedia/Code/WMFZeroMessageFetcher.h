@@ -11,7 +11,7 @@
 
 @interface WMFZeroMessageFetcher : NSObject
 
-- (AnyPromise*)fetchZeroMessageForSite:(MWKSite*)site;
+- (AnyPromise *)fetchZeroMessageForSite:(MWKSite *)site;
 
 - (void)cancelAllFetches;
 

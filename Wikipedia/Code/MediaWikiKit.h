@@ -32,7 +32,6 @@
 #import "MWKRecentSearchEntry.h"
 #import "MWKRecentSearchList.h"
 
-
 #import "MWKDataStore.h"
 
 #import "MWKArticle.h"
@@ -41,4 +40,3 @@
 
 #import "MWKUserDataStore.h"
 #import "MWKImageInfo.h"
-

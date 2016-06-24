@@ -12,13 +12,13 @@
 @protocol WMFLanguagesViewControllerDelegate <NSObject>
 
 @optional
-- (void)languagesController:(WMFLanguagesViewController*)controller didSelectLanguage:(MWKLanguageLink*)language;
+- (void)languagesController:(WMFLanguagesViewController *)controller didSelectLanguage:(MWKLanguageLink *)language;
 
 @end
 
 @interface WMFLanguagesViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, WMFAnalyticsContentTypeProviding>
 
-@property (nonatomic, weak) id <WMFLanguagesViewControllerDelegate> delegate;
+@property (nonatomic, weak) id<WMFLanguagesViewControllerDelegate> delegate;
 
 + (instancetype)languagesViewController;
 
@@ -26,13 +26,12 @@
 
 @end
 
-
 @class WMFPreferredLanguagesViewController;
 
 @protocol WMFPreferredLanguagesViewControllerDelegate <WMFLanguagesViewControllerDelegate>
 
 @optional
-- (void)languagesController:(WMFPreferredLanguagesViewController*)controller didUpdatePreferredLanguages:(NSArray<MWKLanguageLink*>*)languages;
+- (void)languagesController:(WMFPreferredLanguagesViewController *)controller didUpdatePreferredLanguages:(NSArray<MWKLanguageLink *> *)languages;
 
 @end
 
@@ -40,19 +39,16 @@
 
 + (instancetype)preferredLanguagesViewController;
 
-@property (nonatomic, weak) id <WMFPreferredLanguagesViewControllerDelegate> delegate;
+@property (nonatomic, weak) id<WMFPreferredLanguagesViewControllerDelegate> delegate;
 
 @end
-
 
 @class MWKTitle, MWKLanguageLink;
 
 @interface WMFArticleLanguagesViewController : WMFLanguagesViewController
 
-+ (instancetype)articleLanguagesViewControllerWithTitle:(MWKTitle*)title;
++ (instancetype)articleLanguagesViewControllerWithTitle:(MWKTitle *)title;
 
-@property (nonatomic, strong, readonly) MWKTitle* articleTitle;
-
+@property (nonatomic, strong, readonly) MWKTitle *articleTitle;
 
 @end
-

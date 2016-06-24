@@ -11,6 +11,6 @@
 
 @interface NSPersistentStoreCoordinator (WMFTempCoordinator)
 
-+ (NSPersistentStoreCoordinator*)wmf_tempCoordinator;
++ (NSPersistentStoreCoordinator *)wmf_tempCoordinator;
 
 @end

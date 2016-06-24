@@ -10,12 +10,12 @@
 
 @implementation NSManagedObjectModel (LegacyCoreData)
 
-+ (NSManagedObjectModel*)wmf_legacyCoreDataModel {
-    static NSManagedObjectModel* legacyCoreDataModel;
++ (NSManagedObjectModel *)wmf_legacyCoreDataModel {
+    static NSManagedObjectModel *legacyCoreDataModel;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        legacyCoreDataModel = [NSManagedObjectModel mergedModelFromBundles:@[[NSBundle mainBundle]]];
-        NSAssert(legacyCoreDataModel.entities.count, @"Legacy CoreData DB model shouldn't be empty!");
+      legacyCoreDataModel = [NSManagedObjectModel mergedModelFromBundles:@[ [NSBundle mainBundle] ]];
+      NSAssert(legacyCoreDataModel.entities.count, @"Legacy CoreData DB model shouldn't be empty!");
     });
     return legacyCoreDataModel;
 }

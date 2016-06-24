@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return A new URL with the given domain and language.
  **/
-+ (NSURL*)wmf_URLWithDomain:(NSString*)domain language:(nullable NSString*)language;
++ (NSURL *)wmf_URLWithDomain:(NSString *)domain language:(nullable NSString *)language;
 
 /**
  * Initialize a new URL with a Wikimedia `domain`, `language`, `title` and `fragment`.
@@ -32,8 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return A new URL with the given domain, language, title and fragment.
  **/
-+ (NSURL*)wmf_URLWithDomain:(NSString*)domain language:(nullable NSString*)language title:(nullable NSString*)title fragment:(nullable NSString*)fragment;
-
++ (NSURL *)wmf_URLWithDomain:(NSString *)domain language:(nullable NSString *)language title:(nullable NSString *)title fragment:(nullable NSString *)fragment;
 
 /**
  * Return a new URL constructed from the `siteURL`, replacing the `title` and `fragment` with the given values.
@@ -44,8 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return A new URL constructed from the `siteURL`, replacing the `title` and `fragment` with the given values.
  **/
-+ (NSURL*)wmf_URLWithSiteURL:(NSURL*)siteURL title:(nullable NSString*)title fragment:(nullable NSString*)fragment;
-
++ (NSURL *)wmf_URLWithSiteURL:(NSURL *)siteURL title:(nullable NSString *)title fragment:(nullable NSString *)fragment;
 
 /**
  * Return a new URL constructed from the `siteURL`, replacing the `path` with the `internalLink`.
@@ -55,8 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return A new URL constructed from the `siteURL`, replacing the `path` with the `internalLink`.
  **/
-+ (NSURL*)wmf_URLWithSiteURL:(NSURL*)siteURL escapedDenormalizedInternalLink:(NSString*)internalLink;
-
++ (NSURL *)wmf_URLWithSiteURL:(NSURL *)siteURL escapedDenormalizedInternalLink:(NSString *)internalLink;
 
 /**
  * Return a new URL constructed from the `siteURL`, replacing the `path` with the internal link prefix and the `path`.
@@ -66,8 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return A new URL constructed from the `siteURL`, replacing the `path` with the internal link prefix and the `path`.
  **/
-+ (NSURL*)wmf_URLWithSiteURL:(NSURL*)siteURL escapedDenormalizedTitleAndFragment:(NSString*)escapedDenormalizedTitleAndFragment;
-
++ (NSURL *)wmf_URLWithSiteURL:(NSURL *)siteURL escapedDenormalizedTitleAndFragment:(NSString *)escapedDenormalizedTitleAndFragment;
 
 /**
  * Return a new URL constructed from the `siteURL`, replacing the `path` with the internal link prefix and the `path`.
@@ -77,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return A new URL constructed from the `siteURL`, replacing the `path` with the internal link prefix and the `path`.
  **/
-+ (NSURL*)wmf_URLWithSiteURL:(NSURL*)siteURL unescapedDenormalizedTitleAndFragment:(NSString*)escapedDenormalizedTitleAndFragment;
++ (NSURL *)wmf_URLWithSiteURL:(NSURL *)siteURL unescapedDenormalizedTitleAndFragment:(NSString *)escapedDenormalizedTitleAndFragment;
 
 /**
  * Return a new URL similar to the URL you call this method on but replace the title.
@@ -86,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return A new URL based on the URL you call this method on with the given title.
  **/
-- (NSURL*)wmf_URLWithTitle:(NSString*)title;
+- (NSURL *)wmf_URLWithTitle:(NSString *)title;
 
 /**
  * Return a new URL similar to the URL you call this method on but replace the title and fragemnt.
@@ -96,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return A new URL based on the URL you call this method on with the given title and fragment.
  **/
-- (NSURL*)wmf_URLWithTitle:(NSString*)title fragment:(nullable NSString*)fragment;
+- (NSURL *)wmf_URLWithTitle:(NSString *)title fragment:(nullable NSString *)fragment;
 
 /**
  * Return a new URL similar to the URL you call this method on but replace the path.
@@ -105,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return A new URL based on the URL you call this method on with the given path.
  **/
-- (NSURL*)wmf_URLWithPath:(NSString*)path isMobile:(BOOL)isMobile;
+- (NSURL *)wmf_URLWithPath:(NSString *)path isMobile:(BOOL)isMobile;
 
 @property (nonatomic, readonly) BOOL wmf_isInternalLink;
 
@@ -113,17 +109,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL wmf_isMobile;
 
-@property (nonatomic, copy, readonly, nullable) NSString* wmf_internalLinkPath;
+@property (nonatomic, copy, readonly, nullable) NSString *wmf_internalLinkPath;
 
-@property (nonatomic, copy, readonly, nullable) NSString* wmf_domain;
+@property (nonatomic, copy, readonly, nullable) NSString *wmf_domain;
 
-@property (nonatomic, copy, readonly, nullable) NSString* wmf_language;
+@property (nonatomic, copy, readonly, nullable) NSString *wmf_language;
 
-@property (nonatomic, copy, readonly) NSString* wmf_title;
+@property (nonatomic, copy, readonly) NSString *wmf_title;
 
-@property (nonatomic, copy, readonly) NSURL* wmf_mobileURL;
+@property (nonatomic, copy, readonly) NSURL *wmf_mobileURL;
 
-@property (nonatomic, copy, readonly) NSURL* wmf_desktopURL;
+@property (nonatomic, copy, readonly) NSURL *wmf_desktopURL;
 
 @property (nonatomic, readonly) BOOL wmf_isNonStandardURL;
 

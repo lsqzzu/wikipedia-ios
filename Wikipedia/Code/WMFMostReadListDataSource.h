@@ -11,11 +11,10 @@
 
 @class MWKSearchResult;
 
-@interface WMFMostReadListDataSource : SSArrayDataSource
-    <WMFTitleListDataSource>
+@interface WMFMostReadListDataSource : SSArrayDataSource <WMFTitleListDataSource>
 
-- (instancetype)initWithItems:(NSArray*)items NS_UNAVAILABLE;
+- (instancetype)initWithItems:(NSArray *)items NS_UNAVAILABLE;
 
-- (instancetype)initWithPreviews:(NSArray<MWKSearchResult*>*)previews fromSite:(MWKSite*)site;
+- (instancetype)initWithPreviews:(NSArray<MWKSearchResult *> *)previews fromSite:(MWKSite *)site;
 
 @end

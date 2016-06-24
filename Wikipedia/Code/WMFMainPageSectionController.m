@@ -17,28 +17,27 @@
 #import "WMFArticleBrowserViewController.h"
 #import "NSDateFormatter+WMFExtensions.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
-static NSString* const WMFMainPageSectionIdentifier = @"WMFMainPageSectionIdentifier";
+static NSString *const WMFMainPageSectionIdentifier = @"WMFMainPageSectionIdentifier";
 
 @interface WMFMainPageSectionController ()
 
-@property (nonatomic, strong, readwrite) MWKSite* site;
+@property (nonatomic, strong, readwrite) MWKSite *site;
 
-@property (nonatomic, strong) MWKSiteInfoFetcher* siteInfoFetcher;
+@property (nonatomic, strong) MWKSiteInfoFetcher *siteInfoFetcher;
 
-@property (nonatomic, strong) WMFArticlePreviewFetcher* titleSearchFetcher;
+@property (nonatomic, strong) WMFArticlePreviewFetcher *titleSearchFetcher;
 
-@property (nonatomic, strong, nullable) MWKSiteInfo* siteInfo;
+@property (nonatomic, strong, nullable) MWKSiteInfo *siteInfo;
 
-@property (nonatomic, strong, nullable) MWKSearchResult* mainPageSearchResult;
+@property (nonatomic, strong, nullable) MWKSearchResult *mainPageSearchResult;
 
 @end
 
 @implementation WMFMainPageSectionController
 
-- (instancetype)initWithSite:(MWKSite*)site dataStore:(MWKDataStore*)dataStore {
+- (instancetype)initWithSite:(MWKSite *)site dataStore:(MWKDataStore *)dataStore {
     NSParameterAssert(site);
     self = [super initWithDataStore:dataStore];
     if (self) {
@@ -49,14 +48,14 @@ static NSString* const WMFMainPageSectionIdentifier = @"WMFMainPageSectionIdenti
 
 #pragma mark - Accessors
 
-- (MWKSiteInfoFetcher*)siteInfoFetcher {
+- (MWKSiteInfoFetcher *)siteInfoFetcher {
     if (_siteInfoFetcher == nil) {
         _siteInfoFetcher = [[MWKSiteInfoFetcher alloc] init];
     }
     return _siteInfoFetcher;
 }
 
-- (WMFArticlePreviewFetcher*)titleSearchFetcher {
+- (WMFArticlePreviewFetcher *)titleSearchFetcher {
     if (_titleSearchFetcher == nil) {
         _titleSearchFetcher = [[WMFArticlePreviewFetcher alloc] init];
     }
@@ -69,31 +68,31 @@ static NSString* const WMFMainPageSectionIdentifier = @"WMFMainPageSectionIdenti
     return WMFMainPageSectionIdentifier;
 }
 
-- (UIImage*)headerIcon {
+- (UIImage *)headerIcon {
     return [UIImage imageNamed:@"news-mini"];
 }
 
-- (UIColor*)headerIconTintColor {
+- (UIColor *)headerIconTintColor {
     return [UIColor wmf_exploreSectionHeaderIconTintColor];
 }
 
-- (UIColor*)headerIconBackgroundColor {
+- (UIColor *)headerIconBackgroundColor {
     return [UIColor wmf_exploreSectionHeaderIconBackgroundColor];
 }
 
-- (NSAttributedString*)headerTitle {
-    return [[NSAttributedString alloc] initWithString:MWLocalizedString(@"explore-main-page-heading", nil) attributes:@{NSForegroundColorAttributeName: [UIColor wmf_exploreSectionHeaderTitleColor]}];
+- (NSAttributedString *)headerTitle {
+    return [[NSAttributedString alloc] initWithString:MWLocalizedString(@"explore-main-page-heading", nil) attributes:@{NSForegroundColorAttributeName : [UIColor wmf_exploreSectionHeaderTitleColor]}];
 }
 
-- (NSAttributedString*)headerSubTitle {
-    return [[NSAttributedString alloc] initWithString:[[NSDateFormatter wmf_dayNameMonthNameDayOfMonthNumberDateFormatter] stringFromDate:[NSDate date]] attributes:@{NSForegroundColorAttributeName: [UIColor wmf_exploreSectionHeaderSubTitleColor]}];
+- (NSAttributedString *)headerSubTitle {
+    return [[NSAttributedString alloc] initWithString:[[NSDateFormatter wmf_dayNameMonthNameDayOfMonthNumberDateFormatter] stringFromDate:[NSDate date]] attributes:@{NSForegroundColorAttributeName : [UIColor wmf_exploreSectionHeaderSubTitleColor]}];
 }
 
-- (NSString*)cellIdentifier {
+- (NSString *)cellIdentifier {
     return [WMFArticleListTableViewCell identifier];
 }
 
-- (UINib*)cellNib {
+- (UINib *)cellNib {
     return [WMFArticleListTableViewCell wmf_classNib];
 }
 
@@ -101,23 +100,23 @@ static NSString* const WMFMainPageSectionIdentifier = @"WMFMainPageSectionIdenti
     return 1;
 }
 
-- (nullable NSString*)placeholderCellIdentifier {
+- (nullable NSString *)placeholderCellIdentifier {
     return [WMFMainPagePlaceholderTableViewCell identifier];
 }
 
-- (nullable UINib*)placeholderCellNib {
+- (nullable UINib *)placeholderCellNib {
     return [WMFMainPagePlaceholderTableViewCell wmf_classNib];
 }
 
-- (void)configureCell:(WMFArticleListTableViewCell*)cell withItem:(MWKSearchResult*)item atIndexPath:(NSIndexPath*)indexPath {
-    cell.titleText                        = item.displayTitle;
+- (void)configureCell:(WMFArticleListTableViewCell *)cell withItem:(MWKSearchResult *)item atIndexPath:(NSIndexPath *)indexPath {
+    cell.titleText = item.displayTitle;
     cell.titleLabel.accessibilityLanguage = self.site.language;
-    cell.descriptionText                  = item.wikidataDescription;
+    cell.descriptionText = item.wikidataDescription;
     [cell setImageURL:item.thumbnailURL];
     [cell wmf_layoutIfNeededIfOperatingSystemVersionLessThan9_0_0];
 }
 
-- (NSString*)analyticsContentType {
+- (NSString *)analyticsContentType {
     return @"Main Page";
 }
 
@@ -125,38 +124,40 @@ static NSString* const WMFMainPageSectionIdentifier = @"WMFMainPageSectionIdenti
     return [WMFArticleListTableViewCell estimatedRowHeight];
 }
 
-- (AnyPromise*)fetchData {
+- (AnyPromise *)fetchData {
     @weakify(self);
-    return [self.siteInfoFetcher fetchSiteInfoForSite:self.site].then(^(MWKSiteInfo* data) {
-        @strongify(self);
-        if (!self || !data.mainPageTitle) {
-            return (id)[AnyPromise promiseWithValue:[NSError cancelledError]];
-        }
-        self.siteInfo = data;
-        return (id)[self.titleSearchFetcher fetchArticlePreviewResultsForTitles:@[self.siteInfo.mainPageTitle] site:self.site];
-    }).then(^(NSArray<MWKSearchResult*>* searchResults) {
-        @strongify(self);
-        if (!self) {
-            return (id)[AnyPromise promiseWithValue:[NSError cancelledError]];
-        }
-        self.mainPageSearchResult = [searchResults firstObject];
-        return (id) @[[searchResults firstObject]];
-    }).catch(^(NSError* error){
-        @strongify(self);
-        self.siteInfo = nil;
-        self.mainPageSearchResult = nil;
-        return error;
-    });
+    return [self.siteInfoFetcher fetchSiteInfoForSite:self.site].then(^(MWKSiteInfo *data) {
+                                                                  @strongify(self);
+                                                                  if (!self || !data.mainPageTitle) {
+                                                                      return (id)[AnyPromise promiseWithValue:[NSError cancelledError]];
+                                                                  }
+                                                                  self.siteInfo = data;
+                                                                  return (id)[self.titleSearchFetcher fetchArticlePreviewResultsForTitles:@[ self.siteInfo.mainPageTitle ] site:self.site];
+                                                                })
+        .then(^(NSArray<MWKSearchResult *> *searchResults) {
+          @strongify(self);
+          if (!self) {
+              return (id)[AnyPromise promiseWithValue:[NSError cancelledError]];
+          }
+          self.mainPageSearchResult = [searchResults firstObject];
+          return (id) @[ [searchResults firstObject] ];
+        })
+        .catch(^(NSError *error) {
+          @strongify(self);
+          self.siteInfo = nil;
+          self.mainPageSearchResult = nil;
+          return error;
+        });
 }
 
-- (UIViewController*)detailViewControllerForItemAtIndexPath:(NSIndexPath*)indexPath {
-    MWKTitle* title = [self titleForItemAtIndexPath:indexPath];
+- (UIViewController *)detailViewControllerForItemAtIndexPath:(NSIndexPath *)indexPath {
+    MWKTitle *title = [self titleForItemAtIndexPath:indexPath];
     return [[WMFArticleViewController alloc] initWithArticleTitle:title dataStore:self.dataStore];
 }
 
 #pragma mark - WMFTitleProviding
 
-- (nullable MWKTitle*)titleForItemAtIndexPath:(NSIndexPath*)indexPath {
+- (nullable MWKTitle *)titleForItemAtIndexPath:(NSIndexPath *)indexPath {
     return [self.siteInfo mainPageTitle];
 }
 

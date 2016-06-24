@@ -1,26 +1,26 @@
 
 #import "NSError+WMFExtensions.h"
 
-NSString* const WMFErrorDomain                         = @"WMFErrorDomain";
-NSString* const WMFRedirectTitleKey                    = @"WMFRedirectTitleKey";
-NSString* const WMFFailingRequestParametersUserInfoKey = @"WMFFailingRequestParametersUserInfoKey";
+NSString *const WMFErrorDomain = @"WMFErrorDomain";
+NSString *const WMFRedirectTitleKey = @"WMFRedirectTitleKey";
+NSString *const WMFFailingRequestParametersUserInfoKey = @"WMFFailingRequestParametersUserInfoKey";
 
 @implementation NSError (WMFExtensions)
 
-+ (NSError*)wmf_errorWithType:(WMFErrorType)type userInfo:(NSDictionary*)userInfo {
++ (NSError *)wmf_errorWithType:(WMFErrorType)type userInfo:(NSDictionary *)userInfo {
     return [NSError errorWithDomain:WMFErrorDomain code:type userInfo:userInfo];
 }
 
-+ (NSError*)wmf_redirectedErrorWithTitle:(MWKTitle*)redirectedTitle {
-    return [self wmf_errorWithType:WMFErrorTypeRedirected userInfo:redirectedTitle ? @{WMFRedirectTitleKey : redirectedTitle}:nil];
++ (NSError *)wmf_redirectedErrorWithTitle:(MWKTitle *)redirectedTitle {
+    return [self wmf_errorWithType:WMFErrorTypeRedirected userInfo:redirectedTitle ? @{WMFRedirectTitleKey : redirectedTitle} : nil];
 }
 
-+ (NSError*)wmf_unableToSaveErrorWithReason:(NSString*)reason {
-    return [self wmf_errorWithType:WMFErrorTypeUnableToSave userInfo:reason ? @{NSLocalizedDescriptionKey : reason}:nil];
++ (NSError *)wmf_unableToSaveErrorWithReason:(NSString *)reason {
+    return [self wmf_errorWithType:WMFErrorTypeUnableToSave userInfo:reason ? @{NSLocalizedDescriptionKey : reason} : nil];
 }
 
-+ (NSError*)wmf_serializeArticleErrorWithReason:(NSString*)reason {
-    return [self wmf_errorWithType:WMFErrorTypeArticleResponseSerialization userInfo:reason ? @{NSLocalizedDescriptionKey : reason}:nil];
++ (NSError *)wmf_serializeArticleErrorWithReason:(NSString *)reason {
+    return [self wmf_errorWithType:WMFErrorTypeArticleResponseSerialization userInfo:reason ? @{NSLocalizedDescriptionKey : reason} : nil];
 }
 
 - (BOOL)wmf_isWMFErrorDomain {
@@ -44,24 +44,23 @@ NSString* const WMFFailingRequestParametersUserInfoKey = @"WMFFailingRequestPara
 - (BOOL)wmf_isNetworkConnectionError {
     if ([self.domain isEqualToString:NSURLErrorDomain]) {
         switch (self.code) {
-            case NSURLErrorTimedOut:
-//            case NSURLErrorCannotFindHost:
-            case NSURLErrorCannotConnectToHost:
-            case NSURLErrorNetworkConnectionLost:
-            case NSURLErrorNotConnectedToInternet:
-                return YES;
-                break;
+        case NSURLErrorTimedOut:
+        //            case NSURLErrorCannotFindHost:
+        case NSURLErrorCannotConnectToHost:
+        case NSURLErrorNetworkConnectionLost:
+        case NSURLErrorNotConnectedToInternet:
+            return YES;
+            break;
 
-            default:
-                return NO;
-                break;
+        default:
+            return NO;
+            break;
         }
     }
     return NO;
 }
 
 @end
-
 
 @implementation NSError (WMFConnectionFallback)
 
@@ -74,8 +73,7 @@ NSString* const WMFFailingRequestParametersUserInfoKey = @"WMFFailingRequestPara
           self.code == NSURLErrorServerCertificateHasUnknownRoot ||
           self.code == NSURLErrorServerCertificateNotYetValid)
          //error.code == NSURLErrorCannotLoadFromNetwork) //TODO: check this out later?
-        )
-        ) {
+         )) {
         return YES;
     }
     return NO;
@@ -83,10 +81,9 @@ NSString* const WMFFailingRequestParametersUserInfoKey = @"WMFFailingRequestPara
 
 @end
 
-
 @implementation NSDictionary (WMFErrorExtensions)
 
-- (MWKTitle*)wmf_redirectTitle {
+- (MWKTitle *)wmf_redirectTitle {
     return self[WMFRedirectTitleKey];
 }
 

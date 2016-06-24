@@ -5,7 +5,6 @@
 #import "Article.h"
 #import "Image.h"
 
-
 @implementation GalleryImage
 
 @dynamic index;

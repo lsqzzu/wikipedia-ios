@@ -15,11 +15,11 @@
     return [self randomWithFragment:nil];
 }
 
-+ (instancetype)randomWithFragment:(NSString*)fragment {
++ (instancetype)randomWithFragment:(NSString *)fragment {
     return
         [[MWKTitle alloc] initWithSite:[MWKSite random]
                        normalizedTitle:[[NSUUID UUID] UUIDString]
-                              fragment:fragment ? : [@"#" stringByAppendingString:[[NSUUID UUID] UUIDString]]];
+                              fragment:fragment ?: [@"#" stringByAppendingString:[[NSUUID UUID] UUIDString]]];
 }
 
 @end

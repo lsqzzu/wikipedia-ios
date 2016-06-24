@@ -4,7 +4,6 @@
 #import "DiscoveryContext.h"
 #import "History.h"
 
-
 @implementation DiscoveryContext
 
 @dynamic isPrefix;

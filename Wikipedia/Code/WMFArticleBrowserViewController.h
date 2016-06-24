@@ -13,9 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface WMFArticleBrowserViewController : UIViewController
 
-@property (nonatomic, strong, readwrite) MWKDataStore* dataStore;
+@property (nonatomic, strong, readwrite) MWKDataStore *dataStore;
 
-- (MWKTitle*)titleOfCurrentArticle;
+- (MWKTitle *)titleOfCurrentArticle;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The WMFArticleBrowserViewController
  */
-- (instancetype)initWithDataStore:(MWKDataStore*)dataStore;
+- (instancetype)initWithDataStore:(MWKDataStore *)dataStore;
 
 /**
  *  Convienence, Creates a UINavigationController with a WMFArticleBrowserViewController as the rootViewController
@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The navigationController
  */
-+ (WMFArticleBrowserViewController*)browserViewControllerWithDataStore:(MWKDataStore*)dataStore;
++ (WMFArticleBrowserViewController *)browserViewControllerWithDataStore:(MWKDataStore *)dataStore;
 
 /**
  *  Convienence, The same as above, additionally set the first article with the given title
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The navigationController
  */
-+ (WMFArticleBrowserViewController*)browserViewControllerWithDataStore:(MWKDataStore*)dataStore articleTitle:(MWKTitle*)title restoreScrollPosition:(BOOL)restoreScrollPosition;
++ (WMFArticleBrowserViewController *)browserViewControllerWithDataStore:(MWKDataStore *)dataStore articleTitle:(MWKTitle *)title restoreScrollPosition:(BOOL)restoreScrollPosition;
 
 /**
  *  Convienence ,The same as above, instead setting the first article with the given article view controller
@@ -55,38 +55,31 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The navigationController
  */
-+ (WMFArticleBrowserViewController*)browserViewControllerWithArticleViewController:(WMFArticleViewController*)viewController;
++ (WMFArticleBrowserViewController *)browserViewControllerWithArticleViewController:(WMFArticleViewController *)viewController;
 
+- (void)pushArticleWithTitle:(MWKTitle *)title restoreScrollPosition:(BOOL)restoreScrollPosition animated:(BOOL)animated;
 
+- (void)pushArticleWithTitle:(MWKTitle *)title animated:(BOOL)animated;
 
-- (void)pushArticleWithTitle:(MWKTitle*)title restoreScrollPosition:(BOOL)restoreScrollPosition animated:(BOOL)animated;
-
-- (void)pushArticleWithTitle:(MWKTitle*)title animated:(BOOL)animated;
-
-- (void)pushArticleViewController:(WMFArticleViewController*)viewController animated:(BOOL)animated;
-
+- (void)pushArticleViewController:(WMFArticleViewController *)viewController animated:(BOOL)animated;
 
 @end
-
 
 @interface UIViewController (WMFArticlePresentation)
 
-- (void)wmf_pushArticleWithTitle:(MWKTitle*)title dataStore:(MWKDataStore*)dataStore restoreScrollPosition:(BOOL)restoreScrollPosition animated:(BOOL)animated;
+- (void)wmf_pushArticleWithTitle:(MWKTitle *)title dataStore:(MWKDataStore *)dataStore restoreScrollPosition:(BOOL)restoreScrollPosition animated:(BOOL)animated;
 
-- (void)wmf_pushArticleWithTitle:(MWKTitle*)title dataStore:(MWKDataStore*)dataStore animated:(BOOL)animated;
+- (void)wmf_pushArticleWithTitle:(MWKTitle *)title dataStore:(MWKDataStore *)dataStore animated:(BOOL)animated;
 
-- (void)wmf_pushArticleViewController:(WMFArticleViewController*)viewController animated:(BOOL)animated;
+- (void)wmf_pushArticleViewController:(WMFArticleViewController *)viewController animated:(BOOL)animated;
 
 @end
-
 
 @interface WMFArticleBrowserViewController ()
 
 // Data
-@property (nonatomic, strong, readonly, nullable) MWKArticle* currentArticle;
+@property (nonatomic, strong, readonly, nullable) MWKArticle *currentArticle;
 
 @end
-
-
 
 NS_ASSUME_NONNULL_END

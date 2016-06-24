@@ -11,8 +11,8 @@
 
 @class MWKArticle;
 
-typedef void (^ WMFArticleHandler)(MWKArticle* article);
-typedef void (^ WMFProgressHandler)(CGFloat progress);
-typedef void (^ WMFErrorHandler)(NSError* error);
+typedef void (^WMFArticleHandler)(MWKArticle *article);
+typedef void (^WMFProgressHandler)(CGFloat progress);
+typedef void (^WMFErrorHandler)(NSError *error);
 
 #endif

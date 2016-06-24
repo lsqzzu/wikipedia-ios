@@ -13,8 +13,8 @@
  *
  *  @return UILabel
  */
-- (UILabel*)wmf_getLabelSizedToFitWidth:(CGFloat)width
-                    configuredWithBlock:(void (^)(UILabel*))block;
+- (UILabel *)wmf_getLabelSizedToFitWidth:(CGFloat)width
+                     configuredWithBlock:(void (^)(UILabel *))block;
 
 /**
  *  Get UITableViewCell configured to 320 width and dynamic height based on autolayout properties of its subviews.
@@ -24,9 +24,9 @@
  *
  *  @return UITableViewCell
  */
-- (UITableViewCell*)wmf_getCellWithIdentifier:(NSString*)identifier
-                                fromTableView:(UITableView*)tableView
-                              sizedToFitWidth:(CGFloat)width
-                          configuredWithBlock:(void (^)(UITableViewCell*))block;
+- (UITableViewCell *)wmf_getCellWithIdentifier:(NSString *)identifier
+                                 fromTableView:(UITableView *)tableView
+                               sizedToFitWidth:(CGFloat)width
+                           configuredWithBlock:(void (^)(UITableViewCell *))block;
 
 @end

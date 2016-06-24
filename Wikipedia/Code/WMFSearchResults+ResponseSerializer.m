@@ -12,7 +12,7 @@
 
 @implementation WMFSearchResults (ResponseSerializer)
 
-+ (AFHTTPResponseSerializer*)responseSerializer {
++ (AFHTTPResponseSerializer *)responseSerializer {
     return [WMFMantleJSONResponseSerializer serializerForInstancesOf:self fromKeypath:@"query"];
 }
 

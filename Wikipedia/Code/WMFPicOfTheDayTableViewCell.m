@@ -13,9 +13,9 @@
 
 @interface WMFPicOfTheDayTableViewCell ()
 
-@property (weak, nonatomic) IBOutlet WMFGradientView* displayTitleBackgroundView;
+@property (weak, nonatomic) IBOutlet WMFGradientView *displayTitleBackgroundView;
 
-@property (nonatomic, strong) IBOutlet UILabel* displayTitleLabel;
+@property (nonatomic, strong) IBOutlet UILabel *displayTitleLabel;
 
 @end
 
@@ -30,11 +30,11 @@
     return 346.f;
 }
 
-- (void)setDisplayTitle:(NSString*)displayTitle {
+- (void)setDisplayTitle:(NSString *)displayTitle {
     self.displayTitleLabel.text = displayTitle;
 }
 
-- (void)setImageURL:(NSURL*)imageURL {
+- (void)setImageURL:(NSURL *)imageURL {
     [self.potdImageView wmf_setImageWithURL:imageURL detectFaces:YES];
 }
 
@@ -46,15 +46,15 @@
     [self.KVOControllerNonRetaining observe:self.potdImageView
                                     keyPath:WMF_SAFE_KEYPATH(self.potdImageView, image)
                                     options:NSKeyValueObservingOptionInitial
-                                      block:^(WMFPicOfTheDayTableViewCell* cell,
-                                              UIImageView* potdImageView,
-                                              NSDictionary* change) {
-        BOOL didSetDesiredImage = [potdImageView wmf_imageURLToFetch] != nil;
-        // whether or not these properties are animated will be determined based on whether or not
-        // there was an animation setup when image was set
-        cell.displayTitleLabel.alpha = didSetDesiredImage ? 1.0 : 0.0;
-        cell.displayTitleBackgroundView.alpha = cell.displayTitleLabel.alpha;
-    }];
+                                      block:^(WMFPicOfTheDayTableViewCell *cell,
+                                              UIImageView *potdImageView,
+                                              NSDictionary *change) {
+                                        BOOL didSetDesiredImage = [potdImageView wmf_imageURLToFetch] != nil;
+                                        // whether or not these properties are animated will be determined based on whether or not
+                                        // there was an animation setup when image was set
+                                        cell.displayTitleLabel.alpha = didSetDesiredImage ? 1.0 : 0.0;
+                                        cell.displayTitleBackgroundView.alpha = cell.displayTitleLabel.alpha;
+                                      }];
 }
 
 - (void)prepareForReuse {

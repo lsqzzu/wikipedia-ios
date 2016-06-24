@@ -9,8 +9,8 @@
 
 @interface NSArray_WMFExtensionsTests : XCTestCase
 
-@property (strong, nonatomic) NSArray* array;
-@property (strong, nonatomic) NSArray* otherArray;
+@property (strong, nonatomic) NSArray *array;
+@property (strong, nonatomic) NSArray *otherArray;
 
 @end
 
@@ -18,12 +18,12 @@
 
 - (void)setUp {
     [super setUp];
-    self.array      = @[@"one", @"two"];
-    self.otherArray = @[@1, @2, @3];
+    self.array = @[ @"one", @"two" ];
+    self.otherArray = @[ @1, @2, @3 ];
 }
 
 - (void)tearDown {
-    self.array      = nil;
+    self.array = nil;
     self.otherArray = nil;
     [super tearDown];
 }
@@ -37,11 +37,11 @@
 }
 
 - (void)test_wmf_safeObjectAtIndex_emptyOutOfRangeReturnsNil {
-    assertThat([@[] wmf_safeObjectAtIndex: 1], is(nilValue()));
+    assertThat([@[] wmf_safeObjectAtIndex:1], is(nilValue()));
 }
 
 - (void)test_wmf_arrayByTrimmingToLength_countZeroReturnsSelf {
-    NSArray* emptyArray = @[];
+    NSArray *emptyArray = @[];
     assertThat([emptyArray wmf_arrayByTrimmingToLength:5], is(emptyArray));
 }
 
@@ -58,7 +58,7 @@
 }
 
 - (void)test_wmf_arrayByTrimmingToLengthFromEnd_countZeroReturnsSelf {
-    NSArray* emptyArray = @[];
+    NSArray *emptyArray = @[];
     assertThat([emptyArray wmf_arrayByTrimmingToLengthFromEnd:5], is(emptyArray));
 }
 
@@ -75,36 +75,36 @@
 }
 
 - (void)test_wmf_reverseArray {
-    assertThat([self.array wmf_reverseArray], is(@[@"two", @"one"]));
+    assertThat([self.array wmf_reverseArray], is(@[ @"two", @"one" ]));
 }
 
 - (void)testSafeSubarrayShouldLimitToCount {
-    NSArray* original = @[@0, @1];
+    NSArray *original = @[ @0, @1 ];
     assertThat([original wmf_safeSubarrayWithRange:NSMakeRange(0, 5)], is(original));
 }
 
 - (void)testSafeSubarrayShouldReturnEmptyArrayIfRangeLocationOutOfBounds {
-    assertThat(([@[@0, @1] wmf_safeSubarrayWithRange: NSMakeRange(2, 1)]), isEmpty());
+    assertThat(([@[ @0, @1 ] wmf_safeSubarrayWithRange:NSMakeRange(2, 1)]), isEmpty());
 }
 
 - (void)testSafeSubarrayShouldReturnEmptyIfRangeIsNotFound {
-    assertThat(([@[@0, @1] wmf_safeSubarrayWithRange: NSMakeRange(NSNotFound, 1)]), isEmpty());
+    assertThat(([@[ @0, @1 ] wmf_safeSubarrayWithRange:NSMakeRange(NSNotFound, 1)]), isEmpty());
 }
 
 - (void)testSafeSubarrayShouldReturnEmptyIfRangeIsEmpty {
-    assertThat(([@[@0, @1] wmf_safeSubarrayWithRange: NSMakeRange(0, 0)]), isEmpty());
+    assertThat(([@[ @0, @1 ] wmf_safeSubarrayWithRange:NSMakeRange(0, 0)]), isEmpty());
 }
 
 - (void)testSafeSubarrayShouldReturnEmptyFromEmptyList {
-    assertThat(([@[] wmf_safeSubarrayWithRange: NSMakeRange(0, 1)]), isEmpty());
+    assertThat(([@[] wmf_safeSubarrayWithRange:NSMakeRange(0, 1)]), isEmpty());
 }
 
 - (void)testArrayByRemovingFirstElement_shouldReturnAllButTheFirstElement {
-    assertThat(([@[@0, @1] wmf_arrayByRemovingFirstElement]), is(equalTo(@[@1])));
+    assertThat(([@[ @0, @1 ] wmf_arrayByRemovingFirstElement]), is(equalTo(@[ @1 ])));
 }
 
 - (void)testArrayByRemovingFirstElement_shouldReturnEmptyArrayFromSingletonList {
-    assertThat(([@[@1] wmf_arrayByRemovingFirstElement]), isEmpty());
+    assertThat(([@[ @1 ] wmf_arrayByRemovingFirstElement]), isEmpty());
 }
 
 - (void)testArrayByRemovingFirstElement_shouldReturnEmptyArrayFromEmptyList {

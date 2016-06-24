@@ -13,15 +13,15 @@
 
 - (void)setUp {
     [super setUp];
-    self.site  = [[MWKSite alloc] initWithDomain:@"wikipedia.org" language:@"en"];
+    self.site = [[MWKSite alloc] initWithDomain:@"wikipedia.org" language:@"en"];
     self.title = [self.site titleWithString:@"San Francisco"];
 
-    self.json0    = [self loadJSON:@"section0"];
-    self.json1    = [self loadJSON:@"section1-end"];
+    self.json0 = [self loadJSON:@"section0"];
+    self.json1 = [self loadJSON:@"section1-end"];
     self.jsonAnon = [self loadJSON:@"organization-anon"];
 
     self.dataStore = [MWKDataStore temporaryDataStore];
-    self.article   = [self.dataStore articleWithTitle:self.title];
+    self.article = [self.dataStore articleWithTitle:self.title];
 }
 
 - (void)tearDown {

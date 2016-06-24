@@ -11,21 +11,21 @@
 
 @interface WMFArticlePreviewTableViewCell ()
 
-@property (strong, nonatomic) IBOutlet UILabel* snippetLabel;
-@property (strong, nonatomic) IBOutlet WMFLeadingImageTrailingTextButton* saveButton;
+@property (strong, nonatomic) IBOutlet UILabel *snippetLabel;
+@property (strong, nonatomic) IBOutlet WMFLeadingImageTrailingTextButton *saveButton;
 
-@property (strong, nonatomic, readwrite) WMFSaveButtonController* saveButtonController;
+@property (strong, nonatomic, readwrite) WMFSaveButtonController *saveButtonController;
 
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint* paddingConstraintLeading;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint* paddingConstraintTrailing;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *paddingConstraintLeading;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *paddingConstraintTrailing;
 
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint* paddingConstraintAboveDescription;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint* paddingConstraintBelowDescription;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *paddingConstraintAboveDescription;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *paddingConstraintBelowDescription;
 
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint* imageHeightConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *imageHeightConstraint;
 
-@property (strong, nonatomic) UIVisualEffectView* blurView;
-@property (strong, nonatomic) UIActivityIndicatorView* activityIndicator;
+@property (strong, nonatomic) UIVisualEffectView *blurView;
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 
 @property (nonatomic) CGFloat paddingAboveDescriptionFromIB;
 @property (nonatomic) CGFloat paddingBelowDescriptionFromIB;
@@ -47,10 +47,10 @@
 
 - (void)prepareForReuse {
     [super prepareForReuse];
-    self.snippetLabel.attributedText        = nil;
-    self.saveButtonController.title         = nil;
+    self.snippetLabel.attributedText = nil;
+    self.saveButtonController.title = nil;
     self.saveButtonController.savedPageList = nil;
-    self.loading                            = NO;
+    self.loading = NO;
 }
 
 - (void)awakeFromNib {
@@ -65,19 +65,19 @@
 }
 
 - (void)setupBlurViewAndLoadingIndicator {
-    UIBlurEffect* blurEffect = [[UIBlurEffect alloc] init];
+    UIBlurEffect *blurEffect = [[UIBlurEffect alloc] init];
     self.blurView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
     [self.contentView addSubview:self.blurView];
-    [self.blurView mas_makeConstraints:^(MASConstraintMaker* make) {
-        make.edges.equalTo(self.contentView);
+    [self.blurView mas_makeConstraints:^(MASConstraintMaker *make) {
+      make.edges.equalTo(self.contentView);
     }];
 
-    self.activityIndicator       = [[UIActivityIndicatorView alloc] init];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] init];
     self.activityIndicator.color = [UIColor blackColor];
     [self.blurView.contentView addSubview:self.activityIndicator];
-    [self.activityIndicator mas_makeConstraints:^(MASConstraintMaker* make) {
-        make.height.and.width.equalTo(@50);
-        make.center.equalTo(self.activityIndicator.superview);
+    [self.activityIndicator mas_makeConstraints:^(MASConstraintMaker *make) {
+      make.height.and.width.equalTo(@50);
+      make.center.equalTo(self.activityIndicator.superview);
     }];
 }
 
@@ -88,7 +88,7 @@
 
 #pragma mark - Description
 
-- (void)setDescriptionText:(NSString*)descriptionText {
+- (void)setDescriptionText:(NSString *)descriptionText {
     self.descriptionLabel.text = descriptionText;
     if (self.descriptionLabel.text.length == 0) {
         [self removeDescriptionVerticalPadding];
@@ -109,7 +109,7 @@
 
 #pragma mark - Snippet
 
-- (void)setSnippetText:(NSString*)snippetText {
+- (void)setSnippetText:(NSString *)snippetText {
     if (!snippetText.length) {
         self.snippetLabel.attributedText = nil;
         return;
@@ -117,29 +117,29 @@
     self.snippetLabel.attributedText = [[NSAttributedString alloc] initWithString:snippetText attributes:[[self class] snippetAttributes]];
 }
 
-- (NSString*)snippetText {
+- (NSString *)snippetText {
     return self.snippetLabel.attributedText.string;
 }
 
-+ (NSDictionary*)snippetAttributes {
-    static NSDictionary* attributes;
++ (NSDictionary *)snippetAttributes {
+    static NSDictionary *attributes;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSMutableParagraphStyle* pStyle = [[NSMutableParagraphStyle alloc] init];
-        pStyle.lineBreakMode = NSLineBreakByTruncatingTail;
-        pStyle.baseWritingDirection = NSWritingDirectionNatural;
-        pStyle.lineHeightMultiple = 1.35;
-        attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:14.0],
-                       NSForegroundColorAttributeName: [UIColor darkGrayColor],
-                       NSParagraphStyleAttributeName: pStyle};
+      NSMutableParagraphStyle *pStyle = [[NSMutableParagraphStyle alloc] init];
+      pStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+      pStyle.baseWritingDirection = NSWritingDirectionNatural;
+      pStyle.lineHeightMultiple = 1.35;
+      attributes = @{NSFontAttributeName : [UIFont systemFontOfSize:14.0],
+                     NSForegroundColorAttributeName : [UIColor darkGrayColor],
+                     NSParagraphStyleAttributeName : pStyle};
     });
     return attributes;
 }
 
 #pragma mark - Image
 
-- (AnyPromise*)setImageURL:(NSURL*)imageURL {
-    AnyPromise* promise = [super setImageURL:imageURL];
+- (AnyPromise *)setImageURL:(NSURL *)imageURL {
+    AnyPromise *promise = [super setImageURL:imageURL];
     if (imageURL) {
         [self restoreImageToFullHeight];
     } else {
@@ -148,8 +148,8 @@
     return promise;
 }
 
-- (AnyPromise*)setImage:(MWKImage*)image {
-    AnyPromise* promise = [super setImage:image];
+- (AnyPromise *)setImage:(MWKImage *)image {
+    AnyPromise *promise = [super setImage:image];
     if (image) {
         [self restoreImageToFullHeight];
     } else {
@@ -169,22 +169,22 @@
 - (CGFloat)sixteenByNineHeightForImageWithSameHeightForLandscape {
     // Design said landscape should use same height used for portrait.
     CGFloat horizontalPadding = self.paddingConstraintLeading.constant + self.paddingConstraintTrailing.constant;
-    CGFloat ratio             = (9.0 / 16.0);
+    CGFloat ratio = (9.0 / 16.0);
     return floor((MIN(CGRectGetWidth([UIScreen mainScreen].bounds), CGRectGetHeight([UIScreen mainScreen].bounds)) - horizontalPadding) * ratio);
 }
 
 #pragma mark - Saving
 
-- (WMFSaveButtonController*)saveButtonController {
+- (WMFSaveButtonController *)saveButtonController {
     if (!_saveButtonController) {
         self.saveButtonController = [[WMFSaveButtonController alloc] init];
     }
     return _saveButtonController;
 }
 
-- (void)setSaveableTitle:(MWKTitle*)title savedPageList:(MWKSavedPageList*)savedPageList {
+- (void)setSaveableTitle:(MWKTitle *)title savedPageList:(MWKSavedPageList *)savedPageList {
     self.saveButtonController.savedPageList = savedPageList;
-    self.saveButtonController.title         = title;
+    self.saveButtonController.title = title;
 }
 
 #pragma mark - Height Estimation

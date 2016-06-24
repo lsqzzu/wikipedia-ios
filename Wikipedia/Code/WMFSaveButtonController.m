@@ -8,34 +8,33 @@
 
 @interface WMFSaveButtonController ()
 
-@property (nonatomic, strong) SavedPagesFunnel* savedPagesFunnel;
+@property (nonatomic, strong) SavedPagesFunnel *savedPagesFunnel;
 
 @end
 
-
 @implementation WMFSaveButtonController
 
-- (instancetype)initWithControl:(UIControl*)button
-                  savedPageList:(MWKSavedPageList*)savedPageList
-                          title:(MWKTitle*)title {
+- (instancetype)initWithControl:(UIControl *)button
+                  savedPageList:(MWKSavedPageList *)savedPageList
+                          title:(MWKTitle *)title {
     NSParameterAssert(savedPageList);
     self = [super init];
     if (self) {
-        self.control       = button;
-        self.title         = title;
+        self.control = button;
+        self.title = title;
         self.savedPageList = savedPageList;
     }
     return self;
 }
 
-- (instancetype)initWithBarButtonItem:(UIBarButtonItem*)barButtonItem
-                        savedPageList:(MWKSavedPageList*)savedPageList
-                                title:(MWKTitle*)title {
+- (instancetype)initWithBarButtonItem:(UIBarButtonItem *)barButtonItem
+                        savedPageList:(MWKSavedPageList *)savedPageList
+                                title:(MWKTitle *)title {
     NSParameterAssert(savedPageList);
     self = [super init];
     if (self) {
         self.barButtonItem = barButtonItem;
-        self.title         = title;
+        self.title = title;
         self.savedPageList = savedPageList;
     }
     return self;
@@ -47,7 +46,7 @@
 
 #pragma mark - Accessors
 
-- (void)setSavedPageList:(MWKSavedPageList*)savedPageList {
+- (void)setSavedPageList:(MWKSavedPageList *)savedPageList {
     if (self.savedPageList == savedPageList) {
         return;
     }
@@ -56,7 +55,7 @@
     [self observeSavedPages];
 }
 
-- (void)setTitle:(MWKTitle*)title {
+- (void)setTitle:(MWKTitle *)title {
     if (WMF_EQUAL(self.title, isEqualToTitle:, title)) {
         return;
     }
@@ -64,20 +63,20 @@
     [self updateSavedButtonState];
 }
 
-- (void)setControl:(UIButton*)button {
+- (void)setControl:(UIButton *)button {
     [_control removeTarget:self
                     action:@selector(toggleSave:)
           forControlEvents:UIControlEventTouchUpInside];
 
     [button addTarget:self
-               action:@selector(toggleSave:)
-     forControlEvents:UIControlEventTouchUpInside];
+                  action:@selector(toggleSave:)
+        forControlEvents:UIControlEventTouchUpInside];
 
     _control = button;
     [self updateSavedButtonState];
 }
 
-- (void)setBarButtonItem:(UIBarButtonItem*)barButtonItem {
+- (void)setBarButtonItem:(UIBarButtonItem *)barButtonItem {
     [_barButtonItem setTarget:nil];
     [_barButtonItem setAction:nil];
     _barButtonItem = barButtonItem;
@@ -86,7 +85,7 @@
     [self updateSavedButtonState];
 }
 
-- (SavedPagesFunnel*)savedPagesFunnel {
+- (SavedPagesFunnel *)savedPagesFunnel {
     if (!_savedPagesFunnel) {
         _savedPagesFunnel = [[SavedPagesFunnel alloc] init];
     }
@@ -102,9 +101,9 @@
     [self.KVOControllerNonRetaining observe:self.savedPageList
                                     keyPath:WMF_SAFE_KEYPATH(self.savedPageList, entries)
                                     options:NSKeyValueObservingOptionInitial
-                                      block:^(WMFSaveButtonController* observer, id object, NSDictionary* change) {
-        [observer updateSavedButtonState];
-    }];
+                                      block:^(WMFSaveButtonController *observer, id object, NSDictionary *change) {
+                                        [observer updateSavedButtonState];
+                                      }];
 }
 
 - (void)unobserveSavedPages {

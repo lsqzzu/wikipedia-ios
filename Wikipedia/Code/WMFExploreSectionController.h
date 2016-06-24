@@ -10,22 +10,22 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  The items of the section. Must be KVO-able
  */
-@property (nonatomic, strong, readonly) NSArray* items;
+@property (nonatomic, strong, readonly) NSArray *items;
 
 /**
  *  Called to update data if no items or errors
  */
-- (AnyPromise*)fetchDataIfNeeded;
+- (AnyPromise *)fetchDataIfNeeded;
 
 /**
  *  Called to update data if no items and previously recieved an error
  */
-- (AnyPromise*)fetchDataIfError;
+- (AnyPromise *)fetchDataIfError;
 
 /**
  *  Called to update data no matter what state
  */
-- (AnyPromise*)fetchDataUserInitiated;
+- (AnyPromise *)fetchDataUserInitiated;
 
 /**
  *  Clear items and errors
@@ -37,28 +37,28 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The identifier
  */
-- (NSString*)sectionIdentifier;
+- (NSString *)sectionIdentifier;
 
 /**
  *  An icon to be displayed in the section's header
  *
  *  @return An image
  */
-- (UIImage*)headerIcon;
+- (UIImage *)headerIcon;
 
 /**
  *  Color used for icon tint
  *
  *  @return A color
  */
-- (UIColor*)headerIconTintColor;
+- (UIColor *)headerIconTintColor;
 
 /**
  *  Background color of section's header icon container view
  *
  *  @return A color
  */
-- (UIColor*)headerIconBackgroundColor;
+- (UIColor *)headerIconBackgroundColor;
 
 /**
  *  The text to be displayed on the first line of the header.
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The header title string
  */
-- (NSAttributedString*)headerTitle;
+- (NSAttributedString *)headerTitle;
 
 /**
  *  The text to be displayed on the second line of the header.
@@ -76,14 +76,14 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The header sub-title string
  */
-- (NSAttributedString*)headerSubTitle;
+- (NSAttributedString *)headerSubTitle;
 
 /**
  *  Called to allow the controller to register cells in the table view
  *
  *  @param tableView The tableView
  */
-- (void)registerCellsInTableView:(UITableView*)tableView;
+- (void)registerCellsInTableView:(UITableView *)tableView;
 
 /**
  *  Return the identifier for the cell at the specified index.
@@ -93,8 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The identifer for the cell to be dequeued
  */
-- (NSString*)cellIdentifierForItemIndexPath:(NSIndexPath*)indexPath;
-
+- (NSString *)cellIdentifierForItemIndexPath:(NSIndexPath *)indexPath;
 
 /**
  *  Description
@@ -102,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param cell      The cell to configure
  *  @param indexPath The indexPath of the cell
  */
-- (void)configureCell:(UITableViewCell*)cell atIndexPath:(NSIndexPath*)indexPath;
+- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 
 /**
  *  Estimated height of the cells in the section
@@ -121,8 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return Whether or not the item at the given index should be selected.
  */
-- (BOOL)shouldSelectItemAtIndexPath:(NSIndexPath*)indexPath;
-
+- (BOOL)shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
  *  Return a view controller to be presented when an item is tapped.
@@ -133,8 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return A view controller which displays more details of the content at @c index.
  */
-- (UIViewController*)detailViewControllerForItemAtIndexPath:(NSIndexPath*)indexPath;
-
+- (UIViewController *)detailViewControllerForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 @optional
 
@@ -164,12 +161,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol WMFHeaderMenuProviding <NSObject>
 
-
 /**
  * Provide an action sheet with menu options
  * NOTE: you cannot currently implement both WMFHeaderMenuProviding and WMFHeaderActionProviding - they are implemented using the same button
  */
-- (UIActionSheet*)menuActionSheet;
+- (UIActionSheet *)menuActionSheet;
 
 @end
 /**
@@ -183,7 +179,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The image
  */
-- (UIImage*)headerButtonIcon;
+- (UIImage *)headerButtonIcon;
 
 /**
  *  Perform the action associated with the button
@@ -204,12 +200,12 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The "More" footer text that prompts a user to get more items from a section.
  */
-- (NSString*)footerText;
+- (NSString *)footerText;
 
 /**
  *  @return A view controller with will provide a more data for this section.
  */
-- (UIViewController*)moreViewController;
+- (UIViewController *)moreViewController;
 
 @end
 
@@ -226,9 +222,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return The title of the item at @c indexPath.
  */
-- (nullable MWKTitle*)titleForItemAtIndexPath:(NSIndexPath*)indexPath;
+- (nullable MWKTitle *)titleForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
-
 
 NS_ASSUME_NONNULL_END

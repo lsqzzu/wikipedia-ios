@@ -11,10 +11,10 @@
 #import "UIView+WMFDefaultNib.h"
 #import "WMFSaveButtonController.h"
 
-@interface WMFReadMoreViewController ()<WMFAnalyticsContentTypeProviding>
+@interface WMFReadMoreViewController () <WMFAnalyticsContentTypeProviding>
 
-@property (nonatomic, strong, readwrite) MWKTitle* articleTitle;
-@property (nonatomic, strong) WMFRelatedTitleListDataSource* dataSource;
+@property (nonatomic, strong, readwrite) MWKTitle *articleTitle;
+@property (nonatomic, strong) WMFRelatedTitleListDataSource *dataSource;
 
 @end
 
@@ -22,41 +22,41 @@
 
 @dynamic dataSource;
 
-- (instancetype)initWithTitle:(MWKTitle*)title dataStore:(MWKDataStore*)dataStore {
+- (instancetype)initWithTitle:(MWKTitle *)title dataStore:(MWKDataStore *)dataStore {
     NSParameterAssert(title);
     NSParameterAssert(dataStore);
     self = [super init];
     if (self) {
-        self.articleTitle         = title;
-        self.dataStore            = dataStore;
-        self.dataSource           = [[WMFRelatedTitleListDataSource alloc] initWithTitle:self.articleTitle dataStore:self.dataStore resultLimit:3];
+        self.articleTitle = title;
+        self.dataStore = dataStore;
+        self.dataSource = [[WMFRelatedTitleListDataSource alloc] initWithTitle:self.articleTitle dataStore:self.dataStore resultLimit:3];
         self.dataSource.cellClass = [WMFArticlePreviewTableViewCell class];
 
         @weakify(self);
-        self.dataSource.cellConfigureBlock = ^(WMFArticlePreviewTableViewCell* cell,
-                                               MWKSearchResult* searchResult,
-                                               UITableView* tableView,
-                                               NSIndexPath* indexPath) {
-            @strongify(self);
-            MWKTitle* title = [self.articleTitle.site titleWithString:searchResult.displayTitle];
-            [cell setSaveableTitle:title savedPageList:self.savedPageList];
-            cell.titleText       = searchResult.displayTitle;
-            cell.descriptionText = searchResult.wikidataDescription;
-            cell.snippetText     = searchResult.extract;
-            [cell setImageURL:searchResult.thumbnailURL];
-            [cell wmf_layoutIfNeededIfOperatingSystemVersionLessThan9_0_0];
-            cell.saveButtonController.analyticsContext     = self;
-            cell.saveButtonController.analyticsContentType = self;
+        self.dataSource.cellConfigureBlock = ^(WMFArticlePreviewTableViewCell *cell,
+                                               MWKSearchResult *searchResult,
+                                               UITableView *tableView,
+                                               NSIndexPath *indexPath) {
+          @strongify(self);
+          MWKTitle *title = [self.articleTitle.site titleWithString:searchResult.displayTitle];
+          [cell setSaveableTitle:title savedPageList:self.savedPageList];
+          cell.titleText = searchResult.displayTitle;
+          cell.descriptionText = searchResult.wikidataDescription;
+          cell.snippetText = searchResult.extract;
+          [cell setImageURL:searchResult.thumbnailURL];
+          [cell wmf_layoutIfNeededIfOperatingSystemVersionLessThan9_0_0];
+          cell.saveButtonController.analyticsContext = self;
+          cell.saveButtonController.analyticsContentType = self;
         };
     }
     return self;
 }
 
-- (MWKSavedPageList*)savedPageList {
+- (MWKSavedPageList *)savedPageList {
     return self.dataStore.userDataStore.savedPageList;
 }
 
-- (AnyPromise*)fetchIfNeeded {
+- (AnyPromise *)fetchIfNeeded {
     if ([self hasResults]) {
         return [AnyPromise promiseWithValue:self.dataSource.relatedSearchResults];
     } else {
@@ -74,11 +74,11 @@
     [self.tableView reloadData];
 }
 
-- (NSString*)analyticsContext {
+- (NSString *)analyticsContext {
     return @"Reader";
 }
 
-- (NSString*)analyticsContentType {
+- (NSString *)analyticsContentType {
     return @"Read More";
 }
 

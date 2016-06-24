@@ -26,7 +26,7 @@
 #import <OCHamcrest/OCHamcrest.h>
 
 @interface MWKSiteInfoFetcherTests : WMFAsyncTestCase
-@property (strong, nonatomic) MWKSiteInfoFetcher* fetcher;
+@property (strong, nonatomic) MWKSiteInfoFetcher *fetcher;
 @end
 
 @implementation MWKSiteInfoFetcherTests
@@ -50,59 +50,64 @@
     [self runSuccessfulCallbackTestWithFixture:@"NOWikiSiteInfo" site:[MWKSite siteWithLanguage:@"no"]];
 }
 
-- (void)runSuccessfulCallbackTestWithFixture:(NSString*)fixture site:(MWKSite*)testSite {
-    NSString* json               = [[self wmf_bundle] wmf_stringFromContentsOfFile:fixture ofType:@"json"];
-    NSDictionary* jsonDictionary = [[self wmf_bundle] wmf_jsonFromContentsOfFile:fixture];
+- (void)runSuccessfulCallbackTestWithFixture:(NSString *)fixture site:(MWKSite *)testSite {
+    NSString *json = [[self wmf_bundle] wmf_stringFromContentsOfFile:fixture ofType:@"json"];
+    NSDictionary *jsonDictionary = [[self wmf_bundle] wmf_jsonFromContentsOfFile:fixture];
 
-    NSRegularExpression* anyRequestFromTestSite =
+    NSRegularExpression *anyRequestFromTestSite =
         [NSRegularExpression regularExpressionWithPattern:
-         [NSString stringWithFormat:@"%@.*", [[testSite apiEndpoint:NO] absoluteString]] options:0 error:nil];
+                                 [NSString stringWithFormat:@"%@.*", [[testSite apiEndpoint:NO] absoluteString]]
+                                                  options:0
+                                                    error:nil];
 
     stubRequest(@"GET", anyRequestFromTestSite)
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(json);
+        .andReturn(200)
+        .withHeaders(@{ @"Content-Type" : @"application/json" })
+        .withBody(json);
 
-    XCTestExpectation* expectation = [self expectationWithDescription:@"response"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"response"];
 
     [self.fetcher fetchSiteInfoForSite:testSite]
-    .then(^(MWKSiteInfo* result){
-        assertThat(result.site, is(equalTo(testSite)));
-        assertThat(result.mainPageTitleText, is(equalTo([jsonDictionary valueForKeyPath:@"query.general.mainpage"])));
-        [expectation fulfill];
-    });
+        .then(^(MWKSiteInfo *result) {
+          assertThat(result.site, is(equalTo(testSite)));
+          assertThat(result.mainPageTitleText, is(equalTo([jsonDictionary valueForKeyPath:@"query.general.mainpage"])));
+          [expectation fulfill];
+        });
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
 - (void)testDesktopFallback {
-    MWKSite* testSite            = [MWKSite siteWithLanguage:@"en"];
-    NSString* json               = [[self wmf_bundle] wmf_stringFromContentsOfFile:@"ENWikiSiteInfo" ofType:@"json"];
-    NSDictionary* jsonDictionary = [[self wmf_bundle] wmf_jsonFromContentsOfFile:@"ENWikiSiteInfo"];
+    MWKSite *testSite = [MWKSite siteWithLanguage:@"en"];
+    NSString *json = [[self wmf_bundle] wmf_stringFromContentsOfFile:@"ENWikiSiteInfo" ofType:@"json"];
+    NSDictionary *jsonDictionary = [[self wmf_bundle] wmf_jsonFromContentsOfFile:@"ENWikiSiteInfo"];
 
-    NSError* fallbackError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorSecureConnectionFailed userInfo:nil];
+    NSError *fallbackError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorSecureConnectionFailed userInfo:nil];
 
-    NSRegularExpression* anyRequestFromTestSiteDesktop =
+    NSRegularExpression *anyRequestFromTestSiteDesktop =
         [NSRegularExpression regularExpressionWithPattern:
-         [NSString stringWithFormat:@"%@.*", [[testSite URL] absoluteString]] options:0 error:nil];
+                                 [NSString stringWithFormat:@"%@.*", [[testSite URL] absoluteString]]
+                                                  options:0
+                                                    error:nil];
 
     stubRequest(@"GET", @"https://en.m.wikipedia.org/w/api.php?action=query&format=json&meta=siteinfo&siprop=general")
-    .andFailWithError(fallbackError);
+        .andFailWithError(fallbackError);
 
     stubRequest(@"GET", anyRequestFromTestSiteDesktop)
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(json);
+        .andReturn(200)
+        .withHeaders(@{ @"Content-Type" : @"application/json" })
+        .withBody(json);
 
-    XCTestExpectation* expectation = [self expectationWithDescription:@"response"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"response"];
 
     [self.fetcher fetchSiteInfoForSite:testSite]
-    .then(^(MWKSiteInfo* result){
-        assertThat(result.site, is(equalTo(testSite)));
-        assertThat(result.mainPageTitleText, is(equalTo([jsonDictionary valueForKeyPath:@"query.general.mainpage"])));
-        [expectation fulfill];
-    }).catch(^(NSError* error){
-        NSLog(@"%@", [error localizedDescription]);
-    });
+        .then(^(MWKSiteInfo *result) {
+          assertThat(result.site, is(equalTo(testSite)));
+          assertThat(result.mainPageTitleText, is(equalTo([jsonDictionary valueForKeyPath:@"query.general.mainpage"])));
+          [expectation fulfill];
+        })
+        .catch(^(NSError *error) {
+          NSLog(@"%@", [error localizedDescription]);
+        });
 
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }

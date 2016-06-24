@@ -8,8 +8,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WMFAuthManagerInfoFetcher : NSObject
 
-- (AnyPromise*)fetchAuthManagerCreationAvailableForSite:(MWKSite*)site;
-- (AnyPromise*)fetchAuthManagerLoginAvailableForSite:(MWKSite*)site;
+- (AnyPromise *)fetchAuthManagerCreationAvailableForSite:(MWKSite *)site;
+- (AnyPromise *)fetchAuthManagerLoginAvailableForSite:(MWKSite *)site;
 
 @property (nonatomic, assign, readonly) BOOL isFetching;
 

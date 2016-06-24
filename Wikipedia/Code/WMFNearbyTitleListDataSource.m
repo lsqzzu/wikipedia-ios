@@ -11,17 +11,16 @@
 #import "WMFLocationSearchResults.h"
 #import "MWKHistoryEntry.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 static NSUInteger const WMFNearbyDataSourceFetchCount = 20;
 
 @interface WMFNearbyTitleListDataSource ()
 
-@property (nonatomic, strong, readwrite) MWKSite* site;
-@property (nonatomic, strong) WMFLocationSearchFetcher* locationSearchFetcher;
-@property (nonatomic, strong, nullable) WMFLocationSearchResults* searchResults;
-@property (nonatomic, strong) MWKSavedPageList* savedPageList;
+@property (nonatomic, strong, readwrite) MWKSite *site;
+@property (nonatomic, strong) WMFLocationSearchFetcher *locationSearchFetcher;
+@property (nonatomic, strong, nullable) WMFLocationSearchResults *searchResults;
+@property (nonatomic, strong) MWKSavedPageList *savedPageList;
 
 @property (nonatomic, weak) id<Cancellable> lastFetch;
 
@@ -29,17 +28,17 @@ static NSUInteger const WMFNearbyDataSourceFetchCount = 20;
 
 @implementation WMFNearbyTitleListDataSource
 
-- (instancetype)initWithSite:(MWKSite*)site {
+- (instancetype)initWithSite:(MWKSite *)site {
     NSParameterAssert(site);
     self = [super initWithItems:nil];
     if (self) {
-        self.site                  = site;
+        self.site = site;
         self.locationSearchFetcher = [[WMFLocationSearchFetcher alloc] init];
     }
     return self;
 }
 
-- (void)setLocation:(CLLocation*)location {
+- (void)setLocation:(CLLocation *)location {
     if (WMF_IS_EQUAL(_location, location)) {
         return;
     }
@@ -49,13 +48,13 @@ static NSUInteger const WMFNearbyDataSourceFetchCount = 20;
 
 #pragma mark - WMFTitleListDataSource
 
-- (BOOL)canDeleteItemAtIndexpath:(NSIndexPath* __nonnull)indexPath {
+- (BOOL)canDeleteItemAtIndexpath:(NSIndexPath *__nonnull)indexPath {
     return NO;
 }
 
-- (NSArray*)titles {
-    return [self.searchResults.results bk_map:^id (MWKLocationSearchResult* obj) {
-        return [self.site titleWithString:obj.displayTitle];
+- (NSArray *)titles {
+    return [self.searchResults.results bk_map:^id(MWKLocationSearchResult *obj) {
+      return [self.site titleWithString:obj.displayTitle];
     }];
 }
 
@@ -63,21 +62,20 @@ static NSUInteger const WMFNearbyDataSourceFetchCount = 20;
     return self.searchResults.results.count;
 }
 
-- (MWKLocationSearchResult*)searchResultForIndexPath:(NSIndexPath*)indexPath {
-    MWKLocationSearchResult* result = self.searchResults.results[indexPath.row];
+- (MWKLocationSearchResult *)searchResultForIndexPath:(NSIndexPath *)indexPath {
+    MWKLocationSearchResult *result = self.searchResults.results[indexPath.row];
     return result;
 }
 
-- (MWKTitle*)titleForIndexPath:(NSIndexPath*)indexPath {
-    MWKLocationSearchResult* result = [self searchResultForIndexPath:indexPath];
+- (MWKTitle *)titleForIndexPath:(NSIndexPath *)indexPath {
+    MWKLocationSearchResult *result = [self searchResultForIndexPath:indexPath];
     return [self.site titleWithString:result.displayTitle];
 }
 
 #pragma mark - Fetch
 
-- (BOOL)fetchedResultsAreCloseToLocation:(CLLocation*)location {
-    if ([self.searchResults.location distanceFromLocation:location] < 500
-        && [self.searchResults.searchSite isEqualToSite:self.site] && [self.searchResults.results count] > 0) {
+- (BOOL)fetchedResultsAreCloseToLocation:(CLLocation *)location {
+    if ([self.searchResults.location distanceFromLocation:location]<500 && [self.searchResults.searchSite isEqualToSite:self.site] && [self.searchResults.results count]> 0) {
         return YES;
     }
 
@@ -98,7 +96,7 @@ static NSUInteger const WMFNearbyDataSourceFetchCount = 20;
     [self fetchTitlesForLocation:self.location];
 }
 
-- (void)fetchTitlesForLocation:(CLLocation* __nullable)location {
+- (void)fetchTitlesForLocation:(CLLocation *__nullable)location {
     [self.lastFetch cancel];
     id<Cancellable> fetch;
     @weakify(self);
@@ -106,18 +104,18 @@ static NSUInteger const WMFNearbyDataSourceFetchCount = 20;
                                              location:location
                                           resultLimit:WMFNearbyDataSourceFetchCount
                                           cancellable:&fetch]
-    .then(^(WMFLocationSearchResults* locationSearchResults) {
-        @strongify(self);
-        self.searchResults = locationSearchResults;
-        [self updateItems:locationSearchResults.results];
-    })
-    .catch(^(NSError* error) {
-        //This means there were 0 results - not neccesarily a "real" error.
-        //Only inform the delegate if we get a real error.
-        if (!([error.domain isEqualToString:MTLJSONAdapterErrorDomain] && error.code == MTLJSONAdapterErrorInvalidJSONDictionary)) {
-            // TODO: propagate error to view controller
-        }
-    });
+        .then(^(WMFLocationSearchResults *locationSearchResults) {
+          @strongify(self);
+          self.searchResults = locationSearchResults;
+          [self updateItems:locationSearchResults.results];
+        })
+        .catch(^(NSError *error) {
+          //This means there were 0 results - not neccesarily a "real" error.
+          //Only inform the delegate if we get a real error.
+          if (!([error.domain isEqualToString:MTLJSONAdapterErrorDomain] && error.code == MTLJSONAdapterErrorInvalidJSONDictionary)) {
+              // TODO: propagate error to view controller
+          }
+        });
     self.lastFetch = fetch;
 }
 

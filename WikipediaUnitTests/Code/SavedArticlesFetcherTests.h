@@ -29,7 +29,7 @@
 #define MOCKITO_SHORTHAND 1
 #import <OCMockito/OCMockito.h>
 
-typedef void (^ SavedArticlesFetcherDidFetchArticleBlock)(MWKArticle*, CGFloat, NSError*);
+typedef void (^SavedArticlesFetcherDidFetchArticleBlock)(MWKArticle *, CGFloat, NSError *);
 
 /**
  *  Verify the proper download & error handling of the SavedArticlesFetcher.
@@ -42,26 +42,24 @@ typedef void (^ SavedArticlesFetcherDidFetchArticleBlock)(MWKArticle*, CGFloat, 
  *  @warning This class is not intended to be subclassed or reused in other tests. The header was only created to
  *           reduce noise in the implementation while providing documentation for utilities needed to make tests readable.
  */
-@interface SavedArticlesFetcherTests : XCTestCase
-    <SavedArticlesFetcherDelegate>
+@interface SavedArticlesFetcherTests : XCTestCase <SavedArticlesFetcherDelegate>
 
 /// Test Subject
-@property (nonatomic, strong) SavedArticlesFetcher* savedArticlesFetcher;
+@property (nonatomic, strong) SavedArticlesFetcher *savedArticlesFetcher;
 
 /// Mock fetcher used feed certain responses to the test subject in order to validate specific behaviors.
-@property (nonatomic, strong) WMFArticleFetcher* mockArticleFetcher;
+@property (nonatomic, strong) WMFArticleFetcher *mockArticleFetcher;
 
 /// Mock image controller
-@property (nonatomic, strong) WMFImageController* mockImageController;
+@property (nonatomic, strong) WMFImageController *mockImageController;
 
-@property (nonatomic, strong) MWKImageInfoFetcher* mockImageInfoFetcher;
+@property (nonatomic, strong) MWKImageInfoFetcher *mockImageInfoFetcher;
 
 /// Temporary data store used to validate the test subject's behavior for articles which are or aren't cached.
-@property (nonatomic, strong) MWKDataStore* tempDataStore;
+@property (nonatomic, strong) MWKDataStore *tempDataStore;
 
 /// The saved page list given to the test subject. Mutated during tests to validate the subject's reactions.
-@property (nonatomic, strong) MWKSavedPageList* savedPageList;
-
+@property (nonatomic, strong) MWKSavedPageList *savedPageList;
 
 ///
 /// @name Test Utilities
@@ -71,12 +69,12 @@ typedef void (^ SavedArticlesFetcherDidFetchArticleBlock)(MWKArticle*, CGFloat, 
  *  Tracks the successful downloads in order to verify that the expected articles were downloaded correctly with the
  *  correct progress value.
  */
-@property (nonatomic, strong) NSMutableArray<MWKArticle*>* downloadedArticles;
+@property (nonatomic, strong) NSMutableArray<MWKArticle *> *downloadedArticles;
 
 /**
  *  Tracks all download errors retrieved by the delegate.
  */
-@property (nonatomic, strong) NSMutableDictionary<MWKTitle*, NSError*>* downloadErrors;
+@property (nonatomic, strong) NSMutableDictionary<MWKTitle *, NSError *> *downloadErrors;
 
 /**
  *  Create an expectation for a <code>-[SavedArticlesFetcherDelegate fetchFinished:fetchedData:status:error:]</code> callback.
@@ -84,11 +82,11 @@ typedef void (^ SavedArticlesFetcherDidFetchArticleBlock)(MWKArticle*, CGFloat, 
  *  @param error Optional. If @c nil, validates that the fetch was successful, otherwise checks to see if the expected
  *               error was passed to the delegate.
  */
-- (void)expectFetcherToFinishWithError:(NSError*)error;
+- (void)expectFetcherToFinishWithError:(NSError *)error;
 
 /**
  *  Block which checks the @c fetchFinished: callback for the value passed to @c expectFetcherToFinishWithError: method.
  */
-@property (nonatomic, strong) void (^ expectedFetchFinishedError)(NSError*);
+@property (nonatomic, strong) void (^expectedFetchFinishedError)(NSError *);
 
 @end

@@ -17,8 +17,8 @@
         return nil;
     }
     __block id result = acc;
-    [self enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL* stop) {
-        result = reducer(acc, idx);
+    [self enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+      result = reducer(acc, idx);
     }];
     return result;
 }

@@ -17,8 +17,7 @@
 }
 
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
-    return [super shouldInvalidateLayoutForBoundsChange:newBounds]
-           || !CGSizeEqualToSize(newBounds.size, self.itemSize);
+    return [super shouldInvalidateLayoutForBoundsChange:newBounds] || !CGSizeEqualToSize(newBounds.size, self.itemSize);
 }
 
 @end

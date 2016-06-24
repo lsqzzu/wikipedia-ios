@@ -16,6 +16,6 @@
  * @c aClass.
  * @return A possibly empty array of matching subviews.
  */
-- (NSArray*)wmf_subviewsOfClass:(Class)aClass;
+- (NSArray *)wmf_subviewsOfClass:(Class)aClass;
 
 @end

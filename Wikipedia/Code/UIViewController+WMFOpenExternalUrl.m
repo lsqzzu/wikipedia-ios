@@ -12,31 +12,33 @@
 
 @implementation UIViewController (WMFOpenExternalLinkDelegate)
 
-- (void)wmf_openExternalUrl:(NSURL*)url {
+- (void)wmf_openExternalUrl:(NSURL *)url {
     [self wmf_openExternalUrl:url useSafari:NO];
 }
 
-- (void)wmf_openExternalUrl:(NSURL*)url useSafari:(BOOL)useSafari {
+- (void)wmf_openExternalUrl:(NSURL *)url useSafari:(BOOL)useSafari {
     NSParameterAssert(url);
 
     //If zero rated, don't open any external (non-zero rated!) links until user consents!
     if ([SessionSingleton sharedInstance].zeroConfigState.disposition && [[NSUserDefaults standardUserDefaults] boolForKey:@"ZeroWarnWhenLeaving"]) {
-        WMFZeroMessage* zeroMessage = [SessionSingleton sharedInstance].zeroConfigState.zeroMessage;
-        NSString* exitDialogTitle   = zeroMessage.exitTitle ? : MWLocalizedString(@"zero-interstitial-title", nil);
-        NSString* messageWithHost   = [NSString stringWithFormat:@"%@\n\n%@", zeroMessage.exitWarning ? : MWLocalizedString(@"zero-interstitial-leave-app", nil), url.host];
+        WMFZeroMessage *zeroMessage = [SessionSingleton sharedInstance].zeroConfigState.zeroMessage;
+        NSString *exitDialogTitle = zeroMessage.exitTitle ?: MWLocalizedString(@"zero-interstitial-title", nil);
+        NSString *messageWithHost = [NSString stringWithFormat:@"%@\n\n%@", zeroMessage.exitWarning ?: MWLocalizedString(@"zero-interstitial-leave-app", nil), url.host];
 
-        UIAlertView* zeroAlert = [UIAlertView bk_alertViewWithTitle:exitDialogTitle
+        UIAlertView *zeroAlert = [UIAlertView bk_alertViewWithTitle:exitDialogTitle
                                                             message:messageWithHost];
         [zeroAlert bk_setCancelButtonWithTitle:MWLocalizedString(@"zero-interstitial-cancel", nil) handler:nil];
-        [zeroAlert bk_addButtonWithTitle:MWLocalizedString(@"zero-interstitial-continue", nil) handler:^{
-            [self wmf_openExternalUrlModallyIfNeeded:url forceSafari:useSafari];
-        }];
+        [zeroAlert bk_addButtonWithTitle:MWLocalizedString(@"zero-interstitial-continue", nil)
+                                 handler:^{
+                                   [self wmf_openExternalUrlModallyIfNeeded:url forceSafari:useSafari];
+                                 }];
         if ([self isPartnerInfoConfigValid:zeroMessage]) {
-            NSString* partnerInfoText = zeroMessage.partnerInfoText;
-            NSURL* partnerInfoUrl     = [NSURL URLWithString:zeroMessage.partnerInfoUrl];
-            [zeroAlert bk_addButtonWithTitle:partnerInfoText handler:^{
-                [self wmf_openExternalUrlModallyIfNeeded:partnerInfoUrl forceSafari:useSafari];
-            }];
+            NSString *partnerInfoText = zeroMessage.partnerInfoText;
+            NSURL *partnerInfoUrl = [NSURL URLWithString:zeroMessage.partnerInfoUrl];
+            [zeroAlert bk_addButtonWithTitle:partnerInfoText
+                                     handler:^{
+                                       [self wmf_openExternalUrlModallyIfNeeded:partnerInfoUrl forceSafari:useSafari];
+                                     }];
         }
 
         [zeroAlert show];
@@ -45,27 +47,28 @@
     }
 }
 
-- (void)wmf_openExternalUrlModallyIfNeeded:(NSURL*)url forceSafari:(BOOL)forceSafari {
+- (void)wmf_openExternalUrlModallyIfNeeded:(NSURL *)url forceSafari:(BOOL)forceSafari {
     // iOS 9 and later just use UIApplication's openURL.
     if (forceSafari || [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9, 0, 0}]) {
         [[UIApplication sharedApplication] openURL:url];
     } else {
         // pre iOS 9 use SVModalWebViewController.
         if (self.presentedViewController) {
-            [self dismissViewControllerAnimated:YES completion:^{
-                [self wmf_presentExternalUrlAsSVModal:url];
-            }];
+            [self dismissViewControllerAnimated:YES
+                                     completion:^{
+                                       [self wmf_presentExternalUrlAsSVModal:url];
+                                     }];
             return;
         }
         [self wmf_presentExternalUrlAsSVModal:url];
     }
 }
 
-- (void)wmf_presentExternalUrlAsSVModal:(NSURL*)url {
+- (void)wmf_presentExternalUrlAsSVModal:(NSURL *)url {
     [self presentViewController:[[SVModalWebViewController alloc] initWithURL:url] animated:YES completion:nil];
 }
 
-- (BOOL)isPartnerInfoConfigValid:(WMFZeroMessage*)msg {
+- (BOOL)isPartnerInfoConfigValid:(WMFZeroMessage *)msg {
     return msg.partnerInfoText != nil && msg.partnerInfoUrl != nil;
 }
 

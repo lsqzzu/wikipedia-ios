@@ -11,6 +11,6 @@
 
 @interface MWKSavedPageList (ImageMigration)
 
-- (void)markImageDataAsMigratedForEntryWithTitle:(MWKTitle*)title;
+- (void)markImageDataAsMigratedForEntryWithTitle:(MWKTitle *)title;
 
 @end

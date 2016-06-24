@@ -11,14 +11,14 @@
 
 @interface Article (DefaultSortedAccessors)
 
-- (NSArray*)sectionsBySectionId;
+- (NSArray *)sectionsBySectionId;
 
-- (NSArray*)allImages;
+- (NSArray *)allImages;
 
 @end
 
 @interface Section (DefaultSortedImages)
 
-- (NSArray*)sectionImagesByIndex;
+- (NSArray *)sectionImagesByIndex;
 
 @end

@@ -13,14 +13,14 @@
 #import <OCHamcrest/OCHamcrest.h>
 
 @interface WMFSaveButtonControllerTests : XCTestCase
-@property(nonatomic, strong) MWKSite* siteEn;
-@property(nonatomic, strong) MWKSite* siteFr;
-@property(nonatomic, strong) MWKTitle* titleSFEn;
-@property(nonatomic, strong) MWKTitle* titleSFFr;
-@property(nonatomic, strong) MWKDataStore* dataStore;
-@property(nonatomic, strong) MWKSavedPageList* savedPagesList;
-@property(nonatomic, strong) WMFSaveButtonController* saveButtonController;
-@property(nonatomic, strong) UIButton* button;
+@property (nonatomic, strong) MWKSite *siteEn;
+@property (nonatomic, strong) MWKSite *siteFr;
+@property (nonatomic, strong) MWKTitle *titleSFEn;
+@property (nonatomic, strong) MWKTitle *titleSFFr;
+@property (nonatomic, strong) MWKDataStore *dataStore;
+@property (nonatomic, strong) MWKSavedPageList *savedPagesList;
+@property (nonatomic, strong) WMFSaveButtonController *saveButtonController;
+@property (nonatomic, strong) UIButton *button;
 @end
 
 @implementation WMFSaveButtonControllerTests
@@ -36,10 +36,10 @@
     self.titleSFEn = [self.siteEn titleWithString:@"San Francisco"];
     self.titleSFFr = [self.siteFr titleWithString:@"San Francisco"];
 
-    self.dataStore      = [MWKDataStore temporaryDataStore];
+    self.dataStore = [MWKDataStore temporaryDataStore];
     self.savedPagesList = [[MWKSavedPageList alloc] initWithDataStore:self.dataStore];
 
-    self.button               = [[UIButton alloc] init];
+    self.button = [[UIButton alloc] init];
     self.saveButtonController = [[WMFSaveButtonController alloc] initWithControl:self.button
                                                                    savedPageList:self.savedPagesList
                                                                            title:nil];

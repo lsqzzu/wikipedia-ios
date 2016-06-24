@@ -12,18 +12,18 @@
 
 @implementation NSPersistentStoreCoordinator (WMFTempCoordinator)
 
-+ (NSPersistentStoreCoordinator*)wmf_tempCoordinator {
-    NSPersistentStoreCoordinator* persistentStoreCoordinator =
++ (NSPersistentStoreCoordinator *)wmf_tempCoordinator {
+    NSPersistentStoreCoordinator *persistentStoreCoordinator =
         [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[NSManagedObjectModel wmf_legacyCoreDataModel]];
 
-    NSError* error                     = nil;
-    NSPersistentStore* persistentStore =
+    NSError *error = nil;
+    NSPersistentStore *persistentStore =
         [persistentStoreCoordinator
-         addPersistentStoreWithType:NSSQLiteStoreType
-                      configuration:nil
-                                URL:[NSURL fileURLWithPath:WMFRandomTemporaryFileOfType(@"sqlite")]
-                            options:nil
-                              error:&error];
+            addPersistentStoreWithType:NSSQLiteStoreType
+                         configuration:nil
+                                   URL:[NSURL fileURLWithPath:WMFRandomTemporaryFileOfType(@"sqlite")]
+                               options:nil
+                                 error:&error];
     NSParameterAssert(!error && persistentStore);
     return persistentStoreCoordinator;
 }

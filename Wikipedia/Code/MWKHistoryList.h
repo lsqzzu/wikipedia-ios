@@ -8,14 +8,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString* const MWKHistoryListDidUpdateNotification;
+extern NSString *const MWKHistoryListDidUpdateNotification;
 
-@interface MWKHistoryList : MWKList<MWKHistoryEntry*, MWKTitle*>
-    < MWKDataStoreList >
+@interface MWKHistoryList : MWKList <MWKHistoryEntry *, MWKTitle *>
+<MWKDataStoreList>
 
-- (nullable MWKHistoryEntry*)mostRecentEntry;
+    - (nullable MWKHistoryEntry *)mostRecentEntry;
 
-- (nullable MWKHistoryEntry*)entryForTitle:(MWKTitle*)title;
+- (nullable MWKHistoryEntry *)entryForTitle:(MWKTitle *)title;
 
 /**
  *  Add a page to the user history.
@@ -24,7 +24,7 @@ extern NSString* const MWKHistoryListDidUpdateNotification;
  *
  *  @param title           The title of the page to add
  */
-- (MWKHistoryEntry*)addPageToHistoryWithTitle:(MWKTitle*)title;
+- (MWKHistoryEntry *)addPageToHistoryWithTitle:(MWKTitle *)title;
 
 /**
  *  Save the scroll position of a page.
@@ -34,7 +34,7 @@ extern NSString* const MWKHistoryListDidUpdateNotification;
  *
  *  @return The task. The result is the MWKHistoryEntry.
  */
-- (void)setPageScrollPosition:(CGFloat)scrollposition onPageInHistoryWithTitle:(MWKTitle*)title;
+- (void)setPageScrollPosition:(CGFloat)scrollposition onPageInHistoryWithTitle:(MWKTitle *)title;
 
 /**
  *  Sets the history entry to be "significantly viewed"
@@ -42,16 +42,16 @@ extern NSString* const MWKHistoryListDidUpdateNotification;
  *
  *  @param title The title to set to significantly viewed
  */
-- (void)setSignificantlyViewedOnPageInHistoryWithTitle:(MWKTitle*)title;
+- (void)setSignificantlyViewedOnPageInHistoryWithTitle:(MWKTitle *)title;
 
 /**
  *  Remove the given history entries from the history.
  *
  *  @param historyEntries An array of instances of MWKHistoryEntry
  */
-- (void)removeEntriesFromHistory:(NSArray*)historyEntries;
+- (void)removeEntriesFromHistory:(NSArray *)historyEntries;
 
-- (NSArray*)dataExport;
+- (NSArray *)dataExport;
 
 @end
 

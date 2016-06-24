@@ -19,13 +19,12 @@
  *
  *  @return The operation
  */
-- (NSURLSessionDataTask*)wmf_GETWithMobileURLString:(NSString*)mobileURLString
-                                   desktopURLString:(NSString*)desktopURLString
-                                         parameters:(id)parameters
-                                              retry:(void (^)(NSURLSessionDataTask* retryOperation, NSError* error))retry
-                                            success:(void (^)(NSURLSessionDataTask* operation, id responseObject))success
-                                            failure:(void (^)(NSURLSessionDataTask* operation, NSError* error))failure;
-
+- (NSURLSessionDataTask *)wmf_GETWithMobileURLString:(NSString *)mobileURLString
+                                    desktopURLString:(NSString *)desktopURLString
+                                          parameters:(id)parameters
+                                               retry:(void (^)(NSURLSessionDataTask *retryOperation, NSError *error))retry
+                                             success:(void (^)(NSURLSessionDataTask *operation, id responseObject))success
+                                             failure:(void (^)(NSURLSessionDataTask *operation, NSError *error))failure;
 
 /**
  *  Send a @c GET request to the given site, falling back to desktop URL if the mobile URL fails.
@@ -36,12 +35,11 @@
  *
  *  @return The operation which represents the state of the request.
  */
-- (NSURLSessionDataTask*)wmf_GETWithSite:(MWKSite*)site
-                              parameters:(id)parameters
-                                   retry:(void (^)(NSURLSessionDataTask* retryOperation, NSError* error))retry
-                                 success:(void (^)(NSURLSessionDataTask* operation, id responseObject))success
-                                 failure:(void (^)(NSURLSessionDataTask* operation, NSError* error))failure;
-
+- (NSURLSessionDataTask *)wmf_GETWithSite:(MWKSite *)site
+                               parameters:(id)parameters
+                                    retry:(void (^)(NSURLSessionDataTask *retryOperation, NSError *error))retry
+                                  success:(void (^)(NSURLSessionDataTask *operation, id responseObject))success
+                                  failure:(void (^)(NSURLSessionDataTask *operation, NSError *error))failure;
 
 /**
  *  Send a @c GET request to the given site, falling back to desktop URL if the mobile URL fails.
@@ -58,7 +56,7 @@
  *
  *  @see wmf_GETWithMobileURLString:desktopURLString:parameters:retry:success:failure:
  */
-- (AnyPromise*)wmf_GETWithSite:(MWKSite*)site parameters:(id)parameters;
+- (AnyPromise *)wmf_GETWithSite:(MWKSite *)site parameters:(id)parameters;
 
 /**
  *  Executes a POST using a mobile url.
@@ -74,12 +72,12 @@
  *
  *  @return The operation
  */
-- (NSURLSessionDataTask*)wmf_POSTWithMobileURLString:(NSString*)mobileURLString
-                                    desktopURLString:(NSString*)desktopURLString
-                                          parameters:(id)parameters
-                                               retry:(void (^)(NSURLSessionDataTask* retryOperation, NSError* error))retry
-                                             success:(void (^)(NSURLSessionDataTask* operation, id responseObject))success
-                                             failure:(void (^)(NSURLSessionDataTask* operation, NSError* error))failure;
+- (NSURLSessionDataTask *)wmf_POSTWithMobileURLString:(NSString *)mobileURLString
+                                     desktopURLString:(NSString *)desktopURLString
+                                           parameters:(id)parameters
+                                                retry:(void (^)(NSURLSessionDataTask *retryOperation, NSError *error))retry
+                                              success:(void (^)(NSURLSessionDataTask *operation, id responseObject))success
+                                              failure:(void (^)(NSURLSessionDataTask *operation, NSError *error))failure;
 
 /**
  *  Send a @c POST request to the given site, falling back to desktop URL if the mobile URL fails.
@@ -90,11 +88,11 @@
  *
  *  @return The operation which represents the state of the request.
  */
-- (NSURLSessionDataTask*)wmf_POSTWithSite:(MWKSite*)site
-                               parameters:(id)parameters
-                                    retry:(void (^)(NSURLSessionDataTask* retryOperation, NSError* error))retry
-                                  success:(void (^)(NSURLSessionDataTask* operation, id responseObject))success
-                                  failure:(void (^)(NSURLSessionDataTask* operation, NSError* error))failure;
+- (NSURLSessionDataTask *)wmf_POSTWithSite:(MWKSite *)site
+                                parameters:(id)parameters
+                                     retry:(void (^)(NSURLSessionDataTask *retryOperation, NSError *error))retry
+                                   success:(void (^)(NSURLSessionDataTask *operation, id responseObject))success
+                                   failure:(void (^)(NSURLSessionDataTask *operation, NSError *error))failure;
 
 /**
  *  Send a @c POST request to the given site, falling back to desktop URL if the mobile URL fails.
@@ -111,6 +109,6 @@
  *
  *  @see wmf_POSTWithMobileURLString:desktopURLString:parameters:retry:success:failure:
  */
-- (AnyPromise*)wmf_POSTWithSite:(MWKSite*)site parameters:(id)parameters;
+- (AnyPromise *)wmf_POSTWithSite:(MWKSite *)site parameters:(id)parameters;
 
 @end

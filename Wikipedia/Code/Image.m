@@ -8,7 +8,6 @@
 #import "Section.h"
 #import "SectionImage.h"
 
-
 @implementation Image
 
 @dynamic alt;
