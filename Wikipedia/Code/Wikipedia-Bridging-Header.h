@@ -18,6 +18,8 @@
 
 
 // Model
+#import "WMFDatabase+WMFDatabaseViews.h"
+#import "WMFDatabaseDataSource.h"
 #import "MediaWikiKit.h"
 #import "MWKLanguageLink.h"
 #import "MWKTitle.h"
@@ -47,7 +49,7 @@
 // View Controllers
 #import "WMFArticleViewController_Private.h"
 #import "WebViewController.h"
-#import "WMFArticleListTableViewController.h"
+#import "WMFArticleListDataSourceTableViewController.h"
 #import "WMFExploreViewController.h"
 
 // Diagnostics

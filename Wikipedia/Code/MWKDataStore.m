@@ -1,5 +1,7 @@
 
 #import "MediaWikiKit.h"
+#import "WMFDatabase+WMFDatabaseViews.h"
+#import "MWKHistoryEntry+WMFDatabaseStorable.h"
 
 #import <BlocksKit/BlocksKit.h>
 #import "NSString+WMFExtras.h"
@@ -17,7 +19,11 @@ NSString* MWKCreateImageURLWithPath(NSString* path) {
 
 static NSString* const MWKImageInfoFilename = @"ImageInfo.plist";
 
-@interface MWKDataStore ()
+@interface MWKDataStore ()<WMFDatabaseChangeHandler>
+
+@property (readwrite, strong, nonatomic) WMFDatabase* database;
+
+@property (readwrite, strong, nonatomic) YapDatabaseConnection* writeConnection;
 
 @property (readwrite, strong, nonatomic) MWKUserDataStore* userDataStore;
 @property (readwrite, copy, nonatomic) NSString* basePath;
@@ -31,46 +37,33 @@ static NSString* const MWKImageInfoFilename = @"ImageInfo.plist";
 @implementation MWKDataStore
 
 
-#pragma mark - Setup / Teardown
+#pragma mark - NSObject
 
 - (void)dealloc {
+    [self.database unregisterChangeHandler:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (instancetype)init {
-    return [self initWithBasePath:[[self class] mainDataStorePath]];
-}
-
-- (instancetype)initWithBasePath:(NSString*)basePath {
-    self = [super init];
+- (instancetype)init
+{
+    self = [self initWithDatabase:[[WMFDatabase alloc] init] legacyDataBasePath:[[MWKDataStore class] mainDataStorePath]];
     if (self) {
-        self.basePath = basePath;
-        NSString* pathToExclude         = [self pathForSites];
-        NSError* directoryCreationError = nil;
-        if (![[NSFileManager defaultManager] createDirectoryAtPath:pathToExclude withIntermediateDirectories:YES attributes:nil error:&directoryCreationError]) {
-            DDLogError(@"Error creating MWKDataStore path: %@", directoryCreationError);
-        }
-        NSURL* directoryURL         = [NSURL fileURLWithPath:pathToExclude isDirectory:YES];
-        NSError* excludeBackupError = nil;
-        if (![directoryURL setResourceValue:@(YES) forKey:NSURLIsExcludedFromBackupKey error:&excludeBackupError]) {
-            DDLogError(@"Error excluding MWKDataStore path from backup: %@", excludeBackupError);
-        }
-        self.articleCache            = [[NSCache alloc] init];
-        self.articleCache.countLimit = 50;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRecievememoryWarningWithNotifcation:) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
-        self.userDataStore     = [[MWKUserDataStore alloc] initWithDataStore:self];
-        self.cacheRemovalQueue = dispatch_queue_create("org.wikimedia.cache_removal", DISPATCH_QUEUE_SERIAL);
-        dispatch_async(self.cacheRemovalQueue, ^{ self.cacheRemovalActive = true; });
     }
     return self;
 }
 
-#pragma mark - Class methods
-
-+ (NSString*)mainDataStorePath {
-    NSString* documentsFolder =
-        [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-    return [documentsFolder stringByAppendingPathComponent:@"Data"];
+- (instancetype)initWithDatabase:(WMFDatabase*)database legacyDataBasePath:(NSString*)basePath{
+    self = [super init];
+    if (self) {
+        self.database = database;
+        [self.database registerViews];
+        [self.database registerChangeHandler:self];
+        self.basePath = basePath;
+        self.writeConnection = [self.database newWriteConnection];
+        [self setupLegacyDataStore];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRecievememoryWarningWithNotifcation:) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+    }
+    return self;
 }
 
 #pragma mark - Memory
@@ -78,6 +71,52 @@ static NSString* const MWKImageInfoFilename = @"ImageInfo.plist";
 - (void)didRecievememoryWarningWithNotifcation:(NSNotification*)note {
     [self.articleCache removeAllObjects];
 }
+
+#pragma mark - Database
+
+- (void)processChanges:(NSArray<YapDatabaseViewRowChange*>*)changes onConnection:(YapDatabaseConnection*)connection{
+    [self cleanup];
+}
+
+- (void)cleanup{
+    [self.writeConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        YapDatabaseViewTransaction* view = [transaction ext:WMFNotInHistorySavedOrBlackListSortedByURLUngroupedView];
+        if([view numberOfItemsInAllGroups] == 0){
+            return;
+        }
+        [view enumerateKeysInGroup:[[view allGroups] firstObject] usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
+            [transaction removeObjectForKey:key inCollection:[MWKHistoryEntry databaseCollectionName]];
+        }];
+    }];
+}
+
+#pragma mark - Legacy DataStore
+
++ (NSString*)mainDataStorePath {
+    NSString* documentsFolder =
+    [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    return [documentsFolder stringByAppendingPathComponent:@"Data"];
+}
+
+- (void)setupLegacyDataStore{
+    NSString* pathToExclude         = [self pathForSites];
+    NSError* directoryCreationError = nil;
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:pathToExclude withIntermediateDirectories:YES attributes:nil error:&directoryCreationError]) {
+        DDLogError(@"Error creating MWKDataStore path: %@", directoryCreationError);
+    }
+    NSURL* directoryURL         = [NSURL fileURLWithPath:pathToExclude isDirectory:YES];
+    NSError* excludeBackupError = nil;
+    if (![directoryURL setResourceValue:@(YES) forKey:NSURLIsExcludedFromBackupKey error:&excludeBackupError]) {
+        DDLogError(@"Error excluding MWKDataStore path from backup: %@", excludeBackupError);
+    }
+    self.articleCache            = [[NSCache alloc] init];
+    self.articleCache.countLimit = 50;
+    self.userDataStore     = [[MWKUserDataStore alloc] initWithDataStore:self];
+    self.cacheRemovalQueue = dispatch_queue_create("org.wikimedia.cache_removal", DISPATCH_QUEUE_SERIAL);
+    dispatch_async(self.cacheRemovalQueue, ^{ self.cacheRemovalActive = true; });
+}
+
+
 
 #pragma mark - path methods
 
@@ -274,19 +313,6 @@ static NSString* const MWKImageInfoFilename = @"ImageInfo.plist";
     NSString* path       = [self pathForImage:image];
     NSDictionary* export = [image dataExport];
     [self saveDictionary:export path:path name:@"Image.plist"];
-}
-
-- (BOOL)saveHistoryList:(MWKHistoryList*)list error:(NSError**)error {
-    NSString* path       = self.basePath;
-    NSDictionary* export = @{@"entries": [list dataExport]};
-    return [self saveDictionary:export path:path name:@"History.plist" error:error];
-}
-
-- (BOOL)saveSavedPageList:(MWKSavedPageList*)list error:(NSError**)error {
-    return [self saveDictionary:[list dataExport]
-                           path:self.basePath
-                           name:@"SavedPages.plist"
-                          error:error];
 }
 
 - (BOOL)saveRecentSearchList:(MWKRecentSearchList*)list error:(NSError**)error {

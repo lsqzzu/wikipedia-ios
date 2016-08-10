@@ -1,14 +1,22 @@
 
-#import "MediaWikiKit.h"
-#import "MWKList+Subclass.h"
+#import "MWKHistoryList.h"
+#import "MWKDataStore.h"
+#import "WMFDatabase+WMFDatabaseViews.h"
+#import "YapDatabaseConnection+WMFExtensions.h"
+#import "NSDateFormatter+WMFExtensions.h"
+#import "MWKHistoryEntry+WMFDatabaseStorable.h"
+#import "Wikipedia-Swift.h"
+
 
 #define MAX_HISTORY_ENTRIES 100
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSString* const MWKHistoryListDidUpdateNotification = @"MWKHistoryListDidUpdateNotification";
-
 @interface MWKHistoryList ()
+
+@property (readwrite, weak, nonatomic) WMFDatabase* database;
+
+@property (readwrite, strong, nonatomic) YapDatabaseConnection* writeConnection;
 
 @property (readwrite, weak, nonatomic) MWKDataStore* dataStore;
 
@@ -18,8 +26,31 @@ NSString* const MWKHistoryListDidUpdateNotification = @"MWKHistoryListDidUpdateN
 
 #pragma mark - Setup
 
-- (instancetype)initWithDataStore:(MWKDataStore*)dataStore {
-    NSArray* entries = [[dataStore historyListData] wmf_mapAndRejectNil:^id (id obj) {
+- (instancetype)initWithDatabase:(WMFDatabase*)database {
+    self = [self initWithDatabase:database migrateDataFromLegacyStore:nil];
+    return self;
+}
+
+- (instancetype)initWithDatabase:(WMFDatabase*)database migrateDataFromLegacyStore:(nullable MWKDataStore*)dataStore {
+    NSParameterAssert(database);
+    self = [super init];
+    if (self) {
+        self.dataStore       = dataStore;
+        self.database        = database;
+        self.writeConnection = [self.database newWriteConnection];
+        [self migrateLegacyDataIfNeeded];
+    }
+    return self;
+}
+
+#pragma mark - Legacy Migration
+
+- (void)migrateLegacyDataIfNeeded {
+    if ([[NSUserDefaults standardUserDefaults] wmf_didMigrateHistoryList]) {
+        return;
+    }
+
+    NSArray<MWKHistoryEntry*>* entries = [[self.dataStore historyListData] wmf_mapAndRejectNil:^id (id obj) {
         @try {
             return [[MWKHistoryEntry alloc] initWithDict:obj];
         } @catch (NSException* exception) {
@@ -27,21 +58,52 @@ NSString* const MWKHistoryListDidUpdateNotification = @"MWKHistoryListDidUpdateN
         }
     }];
 
-    self = [super initWithEntries:entries];
-    if (self) {
-        self.dataStore = dataStore;
+    if ([entries count] > 0) {
+        YapDatabaseConnection* connection = [self.database newWriteConnection];
+
+        [connection readWriteWithBlock:^(YapDatabaseReadWriteTransaction* _Nonnull transaction) {
+            [entries enumerateObjectsUsingBlock:^(MWKHistoryEntry* _Nonnull obj, NSUInteger idx, BOOL* _Nonnull stop) {
+                MWKHistoryEntry* existing = [transaction objectForKey:[obj databaseKey] inCollection:[MWKHistoryEntry databaseCollectionName]];
+                if (existing) {
+                    obj.dateSaved = existing.dateSaved;
+                    obj.blackListed = existing.isBlackListed;
+                }
+
+                [transaction setObject:obj forKey:[obj databaseKey] inCollection:[MWKHistoryEntry databaseCollectionName]];
+            }];
+        }];
+
+        [[NSUserDefaults standardUserDefaults] wmf_setDidMigrateHistoryList:YES];
+
+#warning remove legacy data?
+#warning handle any errors
     }
-    return self;
 }
 
 #pragma mark - Entry Access
 
+- (nullable id)readAndReturnResultsWithBlock:(id (^)(YapDatabaseReadTransaction* _Nonnull transaction, YapDatabaseViewTransaction* _Nonnull view))block {
+    return [self.database.articleReferenceReadConnection wmf_readAndReturnResultsInViewWithName:WMFHistorySortedByDateUngroupedView withBlock:block];
+}
+
+#pragma mark - Convienence Methods
+
+- (NSInteger)numberOfItems {
+    return [[self readAndReturnResultsWithBlock:^id _Nonnull (YapDatabaseReadTransaction* _Nonnull transaction, YapDatabaseViewTransaction* _Nonnull view) {
+        return @([view numberOfItemsInAllGroups]);
+    }] integerValue];
+}
+
 - (nullable MWKHistoryEntry*)mostRecentEntry {
-    return [self.entries firstObject];
+    return [self readAndReturnResultsWithBlock:^id _Nonnull (YapDatabaseReadTransaction* _Nonnull transaction, YapDatabaseViewTransaction* _Nonnull view) {
+        return [view objectAtIndex:0 inGroup:[[view allGroups] firstObject]];
+    }];
 }
 
 - (nullable MWKHistoryEntry*)entryForURL:(NSURL*)url {
-    return [self entryForListIndex:url];
+    return [self readAndReturnResultsWithBlock:^id _Nonnull (YapDatabaseReadTransaction* _Nonnull transaction, YapDatabaseViewTransaction* _Nonnull view) {
+        return [transaction objectForKey:[MWKHistoryEntry databaseKeyForURL:url] inCollection:[MWKHistoryEntry databaseCollectionName]];
+    }];
 }
 
 #pragma mark - Update Methods
@@ -51,30 +113,36 @@ NSString* const MWKHistoryListDidUpdateNotification = @"MWKHistoryListDidUpdateN
     if ([url wmf_isNonStandardURL]) {
         return nil;
     }
-    MWKHistoryEntry* entry = [[MWKHistoryEntry alloc] initWithURL:url];
-    [self addEntry:entry];
-    return entry;
-}
+    if ([url.wmf_title length] == 0) {
+        return nil;
+    }
 
-- (void)addEntry:(MWKHistoryEntry*)entry {
-    if ([entry.url.wmf_title length] == 0) {
-        return;
-    }
-    MWKHistoryEntry* oldEntry = [self entryForListIndex:entry.url];
-    if (oldEntry) {
-        [super removeEntry:oldEntry];
-    }
-    [super addEntry:entry];
-    [[NSNotificationCenter defaultCenter] postNotificationName:MWKHistoryListDidUpdateNotification object:self];
+    __block MWKHistoryEntry* entry = nil;
+
+    [self.writeConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction* _Nonnull transaction) {
+        entry = [transaction objectForKey:[MWKHistoryEntry databaseKeyForURL:url] inCollection:[MWKHistoryEntry databaseCollectionName]];
+        if (!entry) {
+            entry = [[MWKHistoryEntry alloc] initWithURL:url];
+        }
+        entry.dateViewed = [NSDate date];
+
+        [transaction setObject:entry forKey:[MWKHistoryEntry databaseKeyForURL:url] inCollection:[MWKHistoryEntry databaseCollectionName]];
+    }];
+
+    return entry;
 }
 
 - (void)setPageScrollPosition:(CGFloat)scrollposition onPageInHistoryWithURL:(NSURL*)url {
     if ([url.wmf_title length] == 0) {
         return;
     }
-    [self updateEntryWithListIndex:url update:^BOOL (MWKHistoryEntry* __nullable entry) {
-        entry.scrollPosition = scrollposition;
-        return YES;
+
+    [self.writeConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction* _Nonnull transaction) {
+        MWKHistoryEntry* entry = [transaction objectForKey:[MWKHistoryEntry databaseKeyForURL:url] inCollection:[MWKHistoryEntry databaseCollectionName]];
+        if (entry) {
+            entry.scrollPosition = scrollposition;
+            [transaction setObject:entry forKey:[MWKHistoryEntry databaseKeyForURL:url] inCollection:[MWKHistoryEntry databaseCollectionName]];
+        }
     }];
 }
 
@@ -82,102 +150,32 @@ NSString* const MWKHistoryListDidUpdateNotification = @"MWKHistoryListDidUpdateN
     if ([url.wmf_title length] == 0) {
         return;
     }
-    [self updateEntryWithListIndex:url update:^BOOL (MWKHistoryEntry* __nullable entry) {
-        if (entry.titleWasSignificantlyViewed) {
-            return NO;
+    [self.writeConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction* _Nonnull transaction) {
+        MWKHistoryEntry* entry = [transaction objectForKey:[MWKHistoryEntry databaseKeyForURL:url] inCollection:[MWKHistoryEntry databaseCollectionName]];
+        if (entry) {
+            entry.titleWasSignificantlyViewed = YES;
+            [transaction setObject:entry forKey:[MWKHistoryEntry databaseKeyForURL:url] inCollection:[MWKHistoryEntry databaseCollectionName]];
         }
-        entry.titleWasSignificantlyViewed = YES;
-        return YES;
     }];
 }
 
-- (void)cleanupRemovedEntries:(NSArray<MWKHistoryEntry*>*)entries {
-    if (entries == nil || entries.count == 0) {
+- (void)removeEntryWithURL:(NSURL*)url {
+    if ([[url wmf_title] length] == 0) {
         return;
     }
-    MWKSavedPageList* savedPageList = self.dataStore.userDataStore.savedPageList;
-    NSSet* savedURLs                = [NSSet setWithArray:[savedPageList.entries valueForKey:WMF_SAFE_KEYPATH([MWKSavedPageEntry new], url)]];
-    NSMutableSet* removedURLs       = [NSMutableSet setWithArray:[entries valueForKey:WMF_SAFE_KEYPATH([MWKHistoryEntry new], url)]];
-    [removedURLs minusSet:savedURLs];
-    [self.dataStore removeArticlesWithURLsFromCache:[removedURLs allObjects]];
-}
-
-- (void)removeEntry:(MWKListEntry)entry {
-    [super removeEntry:entry];
-    if (entry != nil) {
-        [self cleanupRemovedEntries:@[entry]];
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:MWKHistoryListDidUpdateNotification object:self];
-}
-
-- (void)removeEntryWithListIndex:(NSURL*)listIndex {
-    if ([[listIndex wmf_title] length] == 0) {
-        return;
-    }
-    MWKHistoryEntry* entry = [self entryForListIndex:listIndex];
-    if (entry != nil) {
-        [self cleanupRemovedEntries:@[entry]];
-    }
-    [super removeEntryWithListIndex:listIndex];
-    [[NSNotificationCenter defaultCenter] postNotificationName:MWKHistoryListDidUpdateNotification object:self];
-}
-
-- (void)removeEntriesFromHistory:(NSArray*)historyEntries {
-    if ([historyEntries count] == 0) {
-        return;
-    }
-    [self cleanupRemovedEntries:historyEntries];
-    [historyEntries enumerateObjectsUsingBlock:^(MWKHistoryEntry* entry, NSUInteger idx, BOOL* stop) {
-        [self removeEntryWithListIndex:entry.url];
+    [self.writeConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction* _Nonnull transaction) {
+        MWKHistoryEntry* entry = [transaction objectForKey:[MWKHistoryEntry databaseKeyForURL:url] inCollection:[MWKHistoryEntry databaseCollectionName]];
+        entry.dateViewed = nil;
+        [transaction setObject:entry forKey:[MWKHistoryEntry databaseKeyForURL:url] inCollection:[MWKHistoryEntry databaseCollectionName]];
     }];
-    [[NSNotificationCenter defaultCenter] postNotificationName:MWKHistoryListDidUpdateNotification object:self];
 }
 
 - (void)removeAllEntries {
-    [self cleanupRemovedEntries:[self.entries copy]];
-    [super removeAllEntries];
-    [[NSNotificationCenter defaultCenter] postNotificationName:MWKHistoryListDidUpdateNotification object:self];
-}
-
-- (void)prune {
-    NSArray* removed = [super pruneToMaximumCount:MAX_HISTORY_ENTRIES];
-    [self cleanupRemovedEntries:removed];
-    [self save];
-    [[NSNotificationCenter defaultCenter] postNotificationName:MWKHistoryListDidUpdateNotification object:self];
-}
-
-#pragma mark - Sort Descriptors
-
-- (nullable NSArray<NSSortDescriptor*>*)sortDescriptors {
-    static NSArray<NSSortDescriptor*>* sortDescriptors;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:WMF_SAFE_KEYPATH([MWKHistoryEntry new], dateViewed)
-                                                          ascending:NO]];
-    });
-    return sortDescriptors;
-}
-
-#pragma mark - Save
-
-- (void)performSaveWithCompletion:(dispatch_block_t)completion error:(WMFErrorHandler)errorHandler {
-    NSError* error;
-    if ([self.dataStore saveHistoryList:self error:&error]) {
-        if (completion) {
-            completion();
-        }
-    } else {
-        if (errorHandler) {
-            errorHandler(error);
-        }
-    }
-}
-
-#pragma mark - Export
-
-- (NSArray*)dataExport {
-    return [self.entries bk_map:^id (MWKHistoryEntry* obj) {
-        return [obj dataExport];
+    [self.writeConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction* _Nonnull transaction) {
+        [transaction enumerateKeysAndObjectsInCollection:[MWKHistoryEntry databaseCollectionName] usingBlock:^(NSString* _Nonnull key, MWKHistoryEntry* _Nonnull object, BOOL* _Nonnull stop) {
+            object.dateViewed = nil;
+            [transaction setObject:object forKey:key inCollection:[MWKHistoryEntry databaseCollectionName]];
+        }];
     }];
 }
 

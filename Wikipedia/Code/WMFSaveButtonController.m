@@ -23,6 +23,8 @@
         self.control       = button;
         self.url           = url;
         self.savedPageList = savedPageList;
+        [self observeSavedPages];
+        [self updateSavedButtonState];
     }
     return self;
 }
@@ -36,6 +38,8 @@
         self.barButtonItem = barButtonItem;
         self.url           = url;
         self.savedPageList = savedPageList;
+        [self observeSavedPages];
+        [self updateSavedButtonState];
     }
     return self;
 }
@@ -50,9 +54,8 @@
     if (self.savedPageList == savedPageList) {
         return;
     }
-    [self unobserveSavedPages];
     _savedPageList = savedPageList;
-    [self observeSavedPages];
+    [self updateSavedButtonState];
 }
 
 - (void)setUrl:(NSURL*)url {
@@ -92,30 +95,30 @@
     return _savedPagesFunnel;
 }
 
-#pragma mark - KVO
+#pragma mark - Notifications
 
 - (void)observeSavedPages {
-    if (!self.savedPageList) {
-        return;
-    }
-    [self.KVOControllerNonRetaining observe:self.savedPageList
-                                    keyPath:WMF_SAFE_KEYPATH(self.savedPageList, entries)
-                                    options:NSKeyValueObservingOptionInitial
-                                      block:^(WMFSaveButtonController* observer, id object, NSDictionary* change) {
-        [observer updateSavedButtonState];
-    }];
+    [self unobserveSavedPages];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSavedButtonState) name:MWKSavedPageListDidSaveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSavedButtonState) name:MWKSavedPageListDidUnsaveNotification object:nil];
 }
 
 - (void)unobserveSavedPages {
-    if (!self.savedPageList) {
-        return;
-    }
-    [self.KVOControllerNonRetaining unobserve:self.savedPageList keyPath:WMF_SAFE_KEYPATH(self.savedPageList, entries)];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - Save State
 
 - (void)updateSavedButtonState {
+    if(self.barButtonItem == nil && self.control == nil){
+        return;
+    }
+    if(self.savedPageList == nil){
+        return;
+    }
+    if(self.url == nil){
+        return;
+    }
     BOOL isSaved = [self isSaved];
     self.control.selected = isSaved;
     if (isSaved) {
@@ -130,9 +133,8 @@
 }
 
 - (void)toggleSave:(id)sender {
-    [self unobserveSavedPages];
+//    [self unobserveSavedPages];
     [self.savedPageList toggleSavedPageForURL:self.url];
-    [self.savedPageList save];
 
     BOOL isSaved = [self.savedPageList isSaved:self.url];
     if (isSaved) {
@@ -143,7 +145,7 @@
         [[PiwikTracker wmf_configuredInstance] wmf_logActionUnsaveInContext:self.analyticsContext contentType:self.analyticsContentType];
     }
 
-    [self observeSavedPages];
+//    [self observeSavedPages];
 }
 
 @end

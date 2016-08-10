@@ -52,10 +52,8 @@ public class WMFSavedPageSpotlightManager: NSObject {
     }
     
     public func reindexSavedPages() {
-        for element in savedPageList.entries {
-            if let element = element as? MWKSavedPageEntry {
-                addToIndex(element.url)
-            }
+        self.savedPageList.enumerateItemsWithBlock { (item, stop) in
+            self.addToIndex(item.url)
         }
     }
     

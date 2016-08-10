@@ -10,6 +10,7 @@
 @class MWKUserDataStore;
 @class MWKImageInfo;
 @class MWKImageList;
+@class WMFDatabase;
 
 FOUNDATION_EXPORT NSString* const MWKDataStoreValidImageSitePrefix;
 
@@ -30,7 +31,23 @@ extern NSString* const MWKArticleKey;
 
 @interface MWKDataStore : NSObject
 
+@property (readonly, strong, nonatomic) WMFDatabase* database;
+
+/**
+ *  Initialize with default database and legacyDataBasePath
+ *
+ *  @return A data store
+ */
+- (instancetype)init;
+
+- (instancetype)initWithDatabase:(WMFDatabase*)database legacyDataBasePath:(NSString*)basePath NS_DESIGNATED_INITIALIZER;
+
+
+#pragma mark - Legacy Datastore methods
+
+
 @property (readonly, copy, nonatomic) NSString* basePath;
+
 
 @property (readonly, strong, nonatomic) MWKUserDataStore* userDataStore;
 
@@ -42,7 +59,6 @@ extern NSString* const MWKArticleKey;
  */
 + (NSString*)mainDataStorePath;
 
-- (instancetype)initWithBasePath:(NSString*)basePath;
 
 // Path methods
 - (NSString*)joinWithBasePath:(NSString*)path;
@@ -106,8 +122,6 @@ extern NSString* const MWKArticleKey;
  */
 - (void)saveImage:(MWKImage*)image;
 
-- (BOOL)saveHistoryList:(MWKHistoryList*)list error:(NSError**)error;
-- (BOOL)saveSavedPageList:(MWKSavedPageList*)list error:(NSError**)error;
 - (BOOL)saveRecentSearchList:(MWKRecentSearchList*)list error:(NSError**)error;
 
 - (void)deleteArticle:(MWKArticle*)article;
@@ -187,6 +201,6 @@ extern NSString* const MWKArticleKey;
 - (void)startCacheRemoval;
 - (void)stopCacheRemoval;
 
-- (NSArray *)legacyImageURLsForArticle:(MWKArticle *)article;
+- (NSArray*)legacyImageURLsForArticle:(MWKArticle*)article;
 
 @end

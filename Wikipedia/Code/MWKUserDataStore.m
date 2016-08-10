@@ -1,6 +1,13 @@
 
-#import "MediaWikiKit.h"
+#import "MWKUserDataStore.h"
+#import "MWKDataStore.h"
+#import "WMFDatabase.h"
+#import "MWKHistoryList.h"
+#import "MWKSavedPageList.h"
+#import "MWKRecentSearchList.h"
 #import "Wikipedia-Swift.h"
+#import <YapDataBase/YapDatabase.h>
+#import "MWKHistoryEntry+WMFDatabaseStorable.h"
 
 
 @interface MWKUserDataStore ()
@@ -24,14 +31,14 @@
 
 - (MWKHistoryList*)historyList {
     if (!_historyList) {
-        _historyList = [[MWKHistoryList alloc] initWithDataStore:self.dataStore];
+        _historyList = [[MWKHistoryList alloc] initWithDatabase:self.dataStore.database migrateDataFromLegacyStore:self.dataStore];
     }
     return _historyList;
 }
 
 - (MWKSavedPageList*)savedPageList {
     if (!_savedPageList) {
-        _savedPageList = [[MWKSavedPageList alloc] initWithDataStore:self.dataStore];
+        _savedPageList = [[MWKSavedPageList alloc] initWithDatabase:self.dataStore.database migrateDataFromLegacyStore:self.dataStore];
     }
     return _savedPageList;
 }
@@ -41,10 +48,6 @@
         _recentSearchList = [[MWKRecentSearchList alloc] initWithDataStore:self.dataStore];
     }
     return _recentSearchList;
-}
-
-- (AnyPromise*)save {
-    return [self.historyList save].then([self.savedPageList save]).then([self.recentSearchList save]);
 }
 
 - (AnyPromise*)reset {

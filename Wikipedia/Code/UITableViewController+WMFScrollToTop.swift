@@ -18,7 +18,7 @@ extension UICollectionViewController {
 }
 
 
-extension WMFArticleListTableViewController {
+extension WMFArticleListDataSourceTableViewController {
     func scrollToTop(isScrollable: Bool) {
         guard isScrollable else { return }
         scrollToFirstIndexPath()

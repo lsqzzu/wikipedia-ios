@@ -23,6 +23,7 @@ static NSString* const MWKSavedPageEntryDidMigrateImageDataKey = @"didMigrateIma
 @implementation MWKSavedPageEntry
 
 - (instancetype)initWithURL:(NSURL*)url {
+    url = [NSURL wmf_desktopURLForURL:url];
     NSParameterAssert(url.wmf_title);
     self = [super initWithURL:url];
     if (self) {
